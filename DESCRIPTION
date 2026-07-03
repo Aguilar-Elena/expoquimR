@@ -1,0 +1,54 @@
+Package: expoquimR
+Title: Qualitative and Quantitative Assessment of Occupational Chemical
+    Exposure Risk
+Version: 0.1.0
+Authors@R: c(
+    person(
+        given = "Raúl",
+        family = "Aguilar Elena",
+        role = c("aut", "cre"),
+        email = "raguilar@universidadviu.com",
+        comment = c(ORCID = "0000-0001-8656-8155")
+    ),
+    person(
+        given = "Ana",
+        family = "Delgado-Garcia",
+        role = "aut",
+        email = "a.delgado@usal.es",
+        comment = c(ORCID = "0009-0003-7079-5507")
+    )
+    )
+Description: Provides a unified toolkit for occupational chemical exposure
+    risk assessment, implementing three internationally recognised
+    methods end to end: the qualitative control-banding methods 'COSHH
+    Essentials' (UK Health and Safety Executive) and the method of the
+    French National Research and Safety Institute ('INRS'), together
+    with the quantitative statistical procedure of the UNE-EN 689
+    standard for comparing measured exposure levels against
+    occupational exposure limits. Every step of each method, from
+    hazard banding and exposure scoring to lognormal or normal
+    distribution fitting, one-sided tolerance limits, and
+    monitoring-interval recommendations, is implemented as a small,
+    independently callable, and unit-tested function, so assessments
+    are reproducible and auditable without depending on any graphical
+    interface. Optional 'shiny' applications provide a guided,
+    interactive workflow for occupational hygienists and health and
+    safety practitioners who prefer not to write code.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+URL: https://github.com/Aguilar-Elena/expoquimR
+BugReports: https://github.com/Aguilar-Elena/expoquimR/issues
+Depends: R (>= 4.1.0)
+Imports:
+    stats
+Suggests:
+    DT,
+    ggplot2,
+    shiny,
+    testthat (>= 3.0.0),
+    tibble,
+    usethis
+Config/testthat/edition: 3
