@@ -47,7 +47,9 @@ Imports:
 Suggests:
     DT,
     ggplot2,
+    readxl,
     shiny,
+    shinyjs,
     testthat (>= 3.0.0),
     tibble,
     usethis
