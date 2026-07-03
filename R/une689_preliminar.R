@@ -60,9 +60,9 @@ une689_ie_jornada <- function(ed, vla) {
 #'   (vease [une689_ie_jornada()]). Los valores `NA` (jornadas sin datos
 #'   suficientes) se ignoran.
 #'
-#' @return Character escalar: `"CONFORMIDAD"` si todos los IE son
-#'   menores que 0,1; `"NO CONFORMIDAD"` si algun IE es mayor que 1;
-#'   `"NO DECISION"` si algun IE esta entre 0,1 y 1 (ambos inclusive) y
+#' @return Character escalar: `.t("une689_conformity")` si todos los IE son
+#'   menores que 0,1; `.t("une689_no_conformity")` si algun IE es mayor que 1;
+#'   `.t("une689_no_decision")` si algun IE esta entre 0,1 y 1 (ambos inclusive) y
 #'   ninguno supera 1. Devuelve `NA_character_` si no hay ningun IE valido
 #'   (no hay datos suficientes para clasificar).
 #'
@@ -71,7 +71,7 @@ une689_ie_jornada <- function(ed, vla) {
 #' falta de datos), la comprobacion `all(IEs < 0.1, na.rm = TRUE)`
 #' devolvia `TRUE` (porque `all()` sobre un vector vacio es `TRUE` en R),
 #' y el resultado se informaba incorrectamente como
-#' **"CONFORMIDAD"** sin haber datos reales. Esta funcion corrige ese caso
+#' **.t("une689_conformity")** sin haber datos reales. Esta funcion corrige ese caso
 #' devolviendo `NA_character_` (sin datos suficientes) en lugar de una
 #' falsa conformidad. Te aviso de este cambio porque, a diferencia de los
 #' puntos de INRS, no te pregunte antes de aplicarlo: informar
@@ -89,14 +89,14 @@ une689_clasificar_conformidad <- function(ie) {
   if (length(ie_validos) == 0) return(NA_character_)
 
   if (all(ie_validos < 0.1)) {
-    "CONFORMIDAD"
+    .t("une689_conformity")
   } else if (any(ie_validos > 1)) {
-    "NO CONFORMIDAD"
+    .t("une689_no_conformity")
   } else if (any(ie_validos >= 0.1 & ie_validos <= 1)) {
-    "NO DECISION"
+    .t("une689_no_decision")
   } else {
     # No deberia alcanzarse nunca con datos validos; se deja por completitud.
-    "INDETERMINADO"
+    .t("une689_indeterminate")
   }
 }
 

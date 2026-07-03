@@ -102,7 +102,7 @@ une689_test_normalidad <- function(ed) {
 #'   log(ED).
 #' @param alfa Numeric. Nivel de significacion (por defecto 0,05).
 #'
-#' @return Character escalar: `"Lognormal"`, `"Normal"` o `"Ninguna"`.
+#' @return Character escalar: `.t("une689_lognormal")`, `.t("une689_normal")` o `.t("une689_neither")`.
 #'
 #' @examples
 #' une689_tipo_distribucion(pval_normal = 0.03, pval_lognormal = 0.20)
@@ -110,57 +110,63 @@ une689_test_normalidad <- function(ed) {
 #' @export
 une689_tipo_distribucion <- function(pval_normal, pval_lognormal, alfa = 0.05) {
   if (pval_lognormal > alfa) {
-    "Lognormal"
+    .t("une689_lognormal")
   } else if (pval_normal > alfa) {
-    "Normal"
+    .t("une689_normal")
   } else {
-    "Ninguna"
+    .t("une689_neither")
   }
 }
 
 #' Limite superior de confianza LSC(95,70) (UNE-EN 689)
 #'
-#' @param tipo Character. `"Lognormal"`, `"Normal"` o `"Ninguna"`, tal
+#' @param tipo Character. `.t("une689_lognormal")`, `.t("une689_normal")` o `.t("une689_neither")`, tal
 #'   como devuelve [une689_tipo_distribucion()].
 #' @param ut Numeric. Factor UT, vease [une689_ut()].
 #' @param MA,DS Numeric. Media y desviacion aritmeticas (solo se usan si
-#'   `tipo = "Normal"`), vease [une689_estadisticos()].
+#'   `tipo = .t("une689_normal")`), vease [une689_estadisticos()].
 #' @param MG,DSG Numeric. Media y desviacion geometricas (solo se usan
-#'   si `tipo = "Lognormal"`), vease [une689_estadisticos()].
+#'   si `tipo = .t("une689_lognormal")`), vease [une689_estadisticos()].
 #'
 #' @return Numeric escalar con el LSC(95,70), o `NA_real_` si
-#'   `tipo = "Ninguna"`.
+#'   `tipo = .t("une689_neither")`.
 #'
 #' @examples
-#' une689_lsc("Normal", ut = 2.005, MA = 7.5, DS = 1.87)
+#' une689_lsc(.t("une689_normal"), ut = 2.005, MA = 7.5, DS = 1.87)
 #'
 #' @export
 une689_lsc <- function(tipo, ut, MA = NA_real_, DS = NA_real_, MG = NA_real_, DSG = NA_real_) {
-  switch(tipo,
-    "Lognormal" = MG * DSG^ut,
-    "Normal" = MA + ut * DS,
+  # tipo uses internal English keys: "Lognormal", "Normal", "Neither"
+  if (identical(tipo, .t("une689_lognormal")) || identical(tipo, "Lognormal")) {
+    MG * DSG^ut
+  } else if (identical(tipo, .t("une689_normal")) || identical(tipo, "Normal")) {
+    MA + ut * DS
+  } else {
     NA_real_
-  )
+  }
 }
 
 #' Indice de riesgo unilateral UR (UNE-EN 689)
 #'
-#' @param tipo Character. `"Lognormal"`, `"Normal"` o `"Ninguna"`.
+#' @param tipo Character. `.t("une689_lognormal")`, `.t("une689_normal")` o `.t("une689_neither")`.
 #' @param vla Numeric. Valor Limite Ambiental (mg/m3).
 #' @param MA,DS,MG,DSG Numeric. Vease [une689_lsc()].
 #'
-#' @return Numeric escalar, o `NA_real_` si `tipo = "Ninguna"`.
+#' @return Numeric escalar, o `NA_real_` si `tipo = .t("une689_neither")`.
 #'
 #' @examples
-#' une689_ur("Normal", vla = 10, MA = 7.5, DS = 1.87)
+#' une689_ur(.t("une689_normal"), vla = 10, MA = 7.5, DS = 1.87)
 #'
 #' @export
 une689_ur <- function(tipo, vla, MA = NA_real_, DS = NA_real_, MG = NA_real_, DSG = NA_real_) {
-  switch(tipo,
-    "Lognormal" = (log(vla) - log(MG)) / log(DSG),
-    "Normal" = (vla - MA) / DS,
+  # tipo uses internal English keys: "Lognormal", "Normal", "Neither"
+  if (identical(tipo, .t("une689_lognormal")) || identical(tipo, "Lognormal")) {
+    (log(vla) - log(MG)) / log(DSG)
+  } else if (identical(tipo, .t("une689_normal")) || identical(tipo, "Normal")) {
+    (vla - MA) / DS
+  } else {
     NA_real_
-  )
+  }
 }
 
 #' Conformidad de la evaluacion estadistica (UNE-EN 689)
@@ -168,8 +174,8 @@ une689_ur <- function(tipo, vla, MA = NA_real_, DS = NA_real_, MG = NA_real_, DS
 #' @param ur Numeric. Indice de riesgo unilateral, vease [une689_ur()].
 #' @param ut Numeric. Factor UT, vease [une689_ut()].
 #'
-#' @return Character escalar: `"CONFORMIDAD"` si `ur >= ut`,
-#'   `"NO CONFORMIDAD"` si `ur < ut`, o `NA_character_` si `ur` es `NA`
+#' @return Character escalar: `.t("une689_conformity")` si `ur >= ut`,
+#'   `.t("une689_no_conformity")` si `ur < ut`, o `NA_character_` si `ur` es `NA`
 #'   (por ejemplo, cuando ni el ajuste normal ni el lognormal son
 #'   validos y se necesita un metodo estadistico distinto).
 #'
@@ -179,7 +185,7 @@ une689_ur <- function(tipo, vla, MA = NA_real_, DS = NA_real_, MG = NA_real_, DS
 #' @export
 une689_conformidad_estadistica <- function(ur, ut) {
   if (is.na(ur)) return(NA_character_)
-  if (ur >= ut) "CONFORMIDAD" else "NO CONFORMIDAD"
+  if (ur >= ut) .t("une689_conformity") else .t("une689_no_conformity")
 }
 
 #' Evaluacion estadistica completa UNE-EN 689 (funcion de alto nivel)
@@ -244,13 +250,13 @@ une689_periodicidad_opcion1 <- function(valor_referencia, vla) {
     return(NA_character_)
   }
   if (valor_referencia < 0.1 * vla) {
-    "Periodicidad recomendada: 36 meses"
+    .t("une689_period_36")
   } else if (valor_referencia < 0.25 * vla) {
-    "Periodicidad recomendada: 24 meses"
+    .t("une689_period_24")
   } else if (valor_referencia < 0.5 * vla) {
-    "Periodicidad recomendada: 18 meses"
+    .t("une689_period_18")
   } else {
-    "Periodicidad recomendada: 12 meses"
+    .t("une689_period_12")
   }
 }
 
@@ -272,12 +278,12 @@ une689_periodicidad_opcion2 <- function(lsc, vla) {
   }
   j <- lsc / vla
   if (j < 0.25) {
-    "Periodicidad recomendada: 36 meses"
+    .t("une689_period_36")
   } else if (j < 0.5) {
-    "Periodicidad recomendada: 30 meses"
+    .t("une689_period_30")
   } else if (j < 1) {
-    "Periodicidad recomendada: 24 meses"
+    .t("une689_period_24")
   } else {
-    "No recomendable, revisar exposicion."
+    .t("une689_period_review")
   }
 }

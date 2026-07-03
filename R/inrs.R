@@ -431,11 +431,11 @@ inrs_riesgo_inhalacion <- function(puntuacion_riesgo_potencial,
 inrs_caracterizacion <- function(riesgo_inhalacion) {
   if (is.na(riesgo_inhalacion)) return(NA_character_)
   if (riesgo_inhalacion > 1000) {
-    "1 - Riesgo muy elevado (medidas correctoras inmediatas)"
+    .t("inrs_char_3")
   } else if (riesgo_inhalacion > 100) {
-    "2 - Riesgo moderado (probablemente necesita medidas correctoras y/o evaluacion mas detallada)"
+    .t("inrs_char_2")
   } else {
-    "3 - Riesgo a priori bajo (sin necesidad de modificaciones)"
+    .t("inrs_char_1")
   }
 }
 

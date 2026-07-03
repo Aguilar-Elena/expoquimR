@@ -27,8 +27,7 @@
 #' @export
 coshh_desde_excel <- function(ruta, hoja = "COSHH_datos") {
   if (!requireNamespace("readxl", quietly = TRUE)) {
-    stop("El paquete 'readxl' es necesario para leer ficheros Excel.\n",
-         "Instalalo con: install.packages('readxl')", call. = FALSE)
+    stop(.t("need_readxl"), call. = FALSE)
   }
 
   df <- as.data.frame(readxl::read_excel(ruta, sheet = hoja, skip = 2, col_types = "text"))
@@ -36,8 +35,7 @@ coshh_desde_excel <- function(ruta, hoja = "COSHH_datos") {
   cols_req <- c("sustancia", "cantidad", "es_liquido")
   faltan <- setdiff(cols_req, names(df))
   if (length(faltan) > 0) {
-    stop("Faltan columnas obligatorias en el Excel: ",
-         paste(faltan, collapse = ", "), call. = FALSE)
+    stop(.t("missing_cols", paste(faltan, collapse = ", ")), call. = FALSE)
   }
 
   resultados <- lapply(seq_len(nrow(df)), function(i) {
@@ -89,8 +87,7 @@ coshh_desde_excel <- function(ruta, hoja = "COSHH_datos") {
 #' @export
 inrs_desde_excel <- function(ruta, hoja = "INRS_datos") {
   if (!requireNamespace("readxl", quietly = TRUE)) {
-    stop("El paquete 'readxl' es necesario para leer ficheros Excel.\n",
-         "Instalalo con: install.packages('readxl')", call. = FALSE)
+    stop(.t("need_readxl"), call. = FALSE)
   }
 
   df <- as.data.frame(readxl::read_excel(ruta, sheet = hoja, skip = 2, col_types = "text"))
@@ -98,8 +95,7 @@ inrs_desde_excel <- function(ruta, hoja = "INRS_datos") {
   cols_req <- c("producto", "procedimiento", "proteccion")
   faltan <- setdiff(cols_req, names(df))
   if (length(faltan) > 0) {
-    stop("Faltan columnas obligatorias en el Excel: ",
-         paste(faltan, collapse = ", "), call. = FALSE)
+    stop(.t("missing_cols", paste(faltan, collapse = ", ")), call. = FALSE)
   }
 
   resultados <- lapply(seq_len(nrow(df)), function(i) {
@@ -166,8 +162,7 @@ inrs_desde_excel <- function(ruta, hoja = "INRS_datos") {
 #' @export
 une689_desde_excel <- function(ruta) {
   if (!requireNamespace("readxl", quietly = TRUE)) {
-    stop("El paquete 'readxl' es necesario para leer ficheros Excel.\n",
-         "Instalalo con: install.packages('readxl')", call. = FALSE)
+    stop(.t("need_readxl"), call. = FALSE)
   }
 
   hojas <- readxl::excel_sheets(ruta)
@@ -216,7 +211,7 @@ une689_desde_excel <- function(ruta) {
     res <- une689_evaluar_preliminar(datos, vla = vla)
 
     # Si NO DECISION, intentar evaluacion estadistica con jornadas adicionales
-    if (!is.na(res$resultado) && res$resultado == "NO DECISION") {
+    if (!is.na(res$resultado) && res$resultado == .t("une689_no_decision")) {
       sub_add <- med_df[
         trimws(tolower(med_df$agente)) == trimws(tolower(nombre)) &
           trimws(tolower(med_df$tipo)) == "add",
@@ -281,13 +276,13 @@ une689_desde_excel <- function(ruta) {
       ie_combinado <- if (tiene_na) NA_real_ else sum(ie_por_agente)
 
       resultado_grupo <- if (tiene_na) {
-        "SIN DATOS SUFICIENTES"
+        .t("une689_additive_na")
       } else if (ie_combinado < 0.1) {
-        "CONFORMIDAD"
+        .t("une689_conformity")
       } else if (ie_combinado > 1) {
-        "NO CONFORMIDAD"
+        .t("une689_no_conformity")
       } else {
-        "NO DECISION"
+        .t("une689_no_decision")
       }
       data.frame(
         grupo           = g,

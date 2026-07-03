@@ -1,46 +1,50 @@
-#' Clasificar la volatilidad de un liquido segun el metodo COSHH Essentials
+#' Classify the volatility of a liquid using the COSHH Essentials method
 #'
-#' Compara la temperatura de ebullicion de la sustancia con su temperatura
-#' de proceso para asignar una clase de volatilidad ("Baja", "Media" o
-#' "Alta"), siguiendo los umbrales del metodo COSHH Essentials.
+#' Compares the boiling point of a substance with its process temperature
+#' to assign a volatility class (`"Low"` / `"Medium"` / `"High"` in English,
+#' `"Baja"` / `"Media"` / `"Alta"` in Spanish), following the thresholds of
+#' the COSHH Essentials method.
 #'
-#' @param t_ebullicion Numeric. Punto de ebullicion de la sustancia, en
-#'   grados Celsius.
-#' @param t_proceso Numeric. Temperatura a la que se manipula la sustancia,
-#'   en grados Celsius.
+#' The active language is controlled by [expoquimr_lang()].
 #'
-#' @return Character escalar: `"Baja"`, `"Media"` o `"Alta"`.
+#' @param t_ebullicion Numeric. Boiling point of the substance, in degrees
+#'   Celsius.
+#' @param t_proceso Numeric. Temperature at which the substance is handled,
+#'   in degrees Celsius.
+#'
+#' @return Character scalar: volatility class in the active language.
 #'
 #' @examples
 #' coshh_clasificar_volatilidad(t_ebullicion = 111, t_proceso = 20)
-#' coshh_clasificar_volatilidad(t_ebullicion = 56, t_proceso = 40)
+#' expoquimr_lang("es")
+#' coshh_clasificar_volatilidad(t_ebullicion = 111, t_proceso = 20)
+#' expoquimr_lang("en")
 #'
 #' @export
 coshh_clasificar_volatilidad <- function(t_ebullicion, t_proceso) {
   stopifnot(is.numeric(t_ebullicion), is.numeric(t_proceso))
   if (anyNA(t_ebullicion) || anyNA(t_proceso)) {
-    stop("t_ebullicion y t_proceso no pueden ser NA.", call. = FALSE)
+    stop("t_ebullicion and t_proceso must not be NA.", call. = FALSE)
   }
-
   ifelse(
-    t_ebullicion > 5 * t_proceso + 50, "Baja",
-    ifelse(t_ebullicion > 2 * t_proceso + 10, "Media", "Alta")
+    t_ebullicion > 5 * t_proceso + 50, .t("coshh_vol_low"),
+    ifelse(t_ebullicion > 2 * t_proceso + 10, .t("coshh_vol_medium"),
+           .t("coshh_vol_high"))
   )
 }
 
-#' Determinar el grado de peligrosidad COSHH a partir de frases R/H
+#' Determine the COSHH hazard group from R/H phrases
 #'
-#' Busca cada frase de riesgo (R) o de peligro (H) introducida en la tabla
-#' de asignacion de grados del metodo COSHH Essentials (grados A a E) y
-#' devuelve el grado mas desfavorable encontrado. Cualquier frase que no
-#' figure explicitamente en los grupos B-E se asigna al grado A, siguiendo
-#' la regla del metodo original.
+#' Looks up each risk phrase (R) or hazard phrase (H) in the COSHH Essentials
+#' hazard group assignment table (groups A to E) and returns the most
+#' unfavourable group found. Any phrase not listed explicitly in groups B-E is
+#' assigned to group A, following the default rule of the original method.
 #'
-#' @param frases Character escalar con una o varias frases separadas por
-#'   comas, p. ej. `"H315, H319"` o `"R20/21/22"`.
+#' @param frases Character scalar containing one or more phrases separated by
+#'   commas, e.g. `"H315, H319"` or `"R20/21/22"`.
 #'
-#' @return Character escalar con el grado (`"A"` a `"E"`), o `NA_character_`
-#'   si `frases` esta vacio o es `NA`.
+#' @return Character scalar with the group (`"A"` to `"E"`), or
+#'   `NA_character_` if `frases` is empty or `NA`.
 #'
 #' @examples
 #' coshh_grado("H315, H319")
@@ -67,7 +71,6 @@ coshh_grado <- function(frases) {
         return(tabla$grado[i])
       }
     }
-    # Regla COSHH: cualquier frase no listada en B-E pertenece al grado A
     "A"
   }
 
@@ -75,95 +78,111 @@ coshh_grado <- function(frases) {
   orden[max(match(grados, orden))]
 }
 
-#' Calcular el nivel de riesgo COSHH
+#' Calculate the COSHH risk level
 #'
-#' Consulta la matriz peligrosidad x cantidad x volatilidad del metodo
-#' COSHH Essentials para obtener el nivel de riesgo potencial (1 a 4). Las
-#' sustancias de grado `"E"` (cancerigenas, mutagenas o similares) obtienen
-#' siempre el nivel maximo, con independencia de la cantidad o volatilidad.
+#' Queries the hazard x quantity x volatility matrix of the COSHH Essentials
+#' method to obtain the potential risk level (1 to 4). Substances of grade
+#' `"E"` (carcinogenic, mutagenic or similar) always receive the maximum
+#' level, regardless of quantity or volatility.
 #'
-#' @param grado Character. Grado de peligrosidad (`"A"` a `"E"`), tal como
-#'   lo devuelve [coshh_grado()].
-#' @param cantidad Character. Uno de `"Pequeña"`, `"Mediana"` o `"Grande"`.
-#' @param volatilidad Character. Uno de `"Baja"`, `"Media"` o `"Alta"`
-#'   (vease [coshh_clasificar_volatilidad()] para liquidos; para solidos
-#'   corresponde a la pulverulencia).
+#' @param grado Character. Hazard group (`"A"` to `"E"`), as returned by
+#'   [coshh_grado()].
+#' @param cantidad Character. Quantity class in the active language. Use
+#'   `"Small"` / `"Medium"` / `"Large"` (English) or `"Pequeña"` /
+#'   `"Mediana"` / `"Grande"` (Spanish). See [expoquimr_lang()].
+#' @param volatilidad Character. Volatility class in the active language.
+#'   Use `"Low"` / `"Medium"` / `"High"` (English) or `"Baja"` / `"Media"`
+#'   / `"Alta"` (Spanish). For solids, this corresponds to dustiness.
 #'
-#' @return Integer con el nivel de riesgo (1 a 4), o `NA_integer_` si la
-#'   combinacion no esta definida en la tabla o si `grado` es `NA`.
+#' @return Integer with the risk level (1 to 4), or `NA_integer_` if the
+#'   combination is not defined in the table or `grado` is `NA`.
 #'
 #' @examples
-#' coshh_riesgo(grado = "C", cantidad = "Mediana", volatilidad = "Alta")
-#' coshh_riesgo(grado = "E", cantidad = "Pequeña", volatilidad = "Baja")
+#' coshh_riesgo(grado = "C", cantidad = "Medium", volatilidad = "High")
+#' coshh_riesgo(grado = "E", cantidad = "Small",  volatilidad = "Low")
 #'
 #' @export
 coshh_riesgo <- function(grado, cantidad, volatilidad) {
   if (is.na(grado)) return(NA_integer_)
   if (grado == "E") return(4L)
 
+  # Normalise quantity and volatility to Spanish (internal table keys)
+  cantidad_es <- switch(cantidad,
+    "Small"  = "Peque\u00f1a", "Medium" = "Mediana", "Large" = "Grande",
+    cantidad  # already Spanish
+  )
+  volatilidad_es <- switch(volatilidad,
+    "Low"    = "Baja", "Medium" = "Media", "High"  = "Alta",
+    volatilidad  # already Spanish
+  )
+
   resultado <- coshh_tabla_riesgo[
     coshh_tabla_riesgo$peligrosidad == grado &
-      coshh_tabla_riesgo$cantidad == cantidad &
-      coshh_tabla_riesgo$volatilidad == volatilidad,
-    "riesgo",
-    drop = TRUE
+      coshh_tabla_riesgo$cantidad    == cantidad_es &
+      coshh_tabla_riesgo$volatilidad == volatilidad_es,
+    "riesgo", drop = TRUE
   ]
 
   if (length(resultado) == 0) NA_integer_ else as.integer(resultado[1])
 }
 
-#' Obtener las medidas de control recomendadas para un nivel de riesgo COSHH
+#' Get the recommended control measures for a COSHH risk level
 #'
-#' @param nivel_riesgo Integer o character. Nivel de riesgo (1 a 4), tal
-#'   como lo devuelve [coshh_riesgo()].
+#' @param nivel_riesgo Integer or character. Risk level (1 to 4), as returned
+#'   by [coshh_riesgo()].
 #'
-#' @return Character escalar con las medidas de control recomendadas, o
-#'   `NA_character_` si el nivel no esta definido.
+#' @return Character scalar with the recommended control measures in the
+#'   active language (see [expoquimr_lang()]), or `NA_character_` if the
+#'   level is not defined.
 #'
 #' @examples
 #' coshh_medidas(3)
+#' expoquimr_lang("es")
+#' coshh_medidas(3)
+#' expoquimr_lang("en")
 #'
 #' @export
 coshh_medidas <- function(nivel_riesgo) {
   if (is.na(nivel_riesgo)) return(NA_character_)
-  nivel_riesgo <- as.character(nivel_riesgo)
-
-  resultado <- coshh_tabla_medidas[
-    coshh_tabla_medidas$nivel_riesgo == nivel_riesgo,
-    "medidas_control",
-    drop = TRUE
-  ]
-
-  if (length(resultado) == 0) NA_character_ else resultado[1]
+  switch(as.character(nivel_riesgo),
+    "1" = .t("coshh_risk_1_measures"),
+    "2" = .t("coshh_risk_2_measures"),
+    "3" = .t("coshh_risk_3_measures"),
+    "4" = .t("coshh_risk_4_measures"),
+    NA_character_
+  )
 }
 
-#' Evaluar una sustancia con el metodo COSHH Essentials (funcion de alto nivel)
+#' Evaluate a substance using the COSHH Essentials method (high-level wrapper)
 #'
-#' Encadena [coshh_grado()], [coshh_clasificar_volatilidad()] (si procede),
-#' [coshh_riesgo()] y [coshh_medidas()] para producir una fila de resultado
-#' completa a partir de los datos brutos de una sustancia. Pensada para
-#' usarse directamente desde codigo (scripts, informes, `purrr::pmap`,
-#' vignettes) sin pasar por la aplicacion Shiny.
+#' Chains [coshh_grado()], [coshh_clasificar_volatilidad()] (if applicable),
+#' [coshh_riesgo()] and [coshh_medidas()] to produce a complete result row
+#' from the raw data of a substance. Designed to be called directly from code
+#' (scripts, reports, `purrr::pmap`, vignettes) without going through the
+#' Shiny application.
 #'
-#' @param nombre Character. Nombre identificativo de la sustancia.
-#' @param frases Character. Frases R/H, ver [coshh_grado()].
-#' @param cantidad Character. Uno de `"Pequeña"`, `"Mediana"`, `"Grande"`.
-#' @param es_liquido Logical. `TRUE` si la sustancia es liquida (se
-#'   calculara la volatilidad a partir de `t_ebullicion`/`t_proceso`);
-#'   `FALSE` si es solida (se usara `pulverulencia` directamente).
-#' @param t_ebullicion,t_proceso Numeric. Necesarios solo si
-#'   `es_liquido = TRUE`. Vease [coshh_clasificar_volatilidad()].
-#' @param pulverulencia Character. Necesario solo si `es_liquido = FALSE`.
-#'   Uno de `"Baja"`, `"Media"`, `"Alta"`.
+#' Output labels (volatility class, quantity class, control measures) are
+#' returned in the active language; see [expoquimr_lang()].
 #'
-#' @return Un `data.frame` de una fila con las columnas `sustancia`,
-#'   `frases`, `grado`, `volatilidad`, `cantidad`, `riesgo` y `medidas`.
+#' @param nombre Character. Identifying name of the substance.
+#' @param frases Character. H/R phrases; see [coshh_grado()].
+#' @param cantidad Character. Quantity class in the active language.
+#' @param es_liquido Logical. `TRUE` if the substance is liquid (volatility
+#'   will be calculated from `t_ebullicion` / `t_proceso`); `FALSE` if solid
+#'   (`pulverulencia` will be used directly).
+#' @param t_ebullicion,t_proceso Numeric. Required only if
+#'   `es_liquido = TRUE`. See [coshh_clasificar_volatilidad()].
+#' @param pulverulencia Character. Required only if `es_liquido = FALSE`.
+#'   Dustiness class in the active language.
+#'
+#' @return A one-row `data.frame` with columns `sustancia`, `frases`,
+#'   `grado`, `volatilidad`, `cantidad`, `riesgo` and `medidas`.
 #'
 #' @examples
 #' coshh_evaluar(
-#'   nombre = "Toluendo",
+#'   nombre = "Toluene",
 #'   frases = "H315, H336",
-#'   cantidad = "Mediana",
+#'   cantidad = "Medium",
 #'   es_liquido = TRUE,
 #'   t_ebullicion = 111,
 #'   t_proceso = 20
@@ -175,7 +194,7 @@ coshh_evaluar <- function(nombre,
                            cantidad,
                            es_liquido,
                            t_ebullicion = NA_real_,
-                           t_proceso = NA_real_,
+                           t_proceso    = NA_real_,
                            pulverulencia = NA_character_) {
   grado <- coshh_grado(frases)
 
@@ -185,17 +204,17 @@ coshh_evaluar <- function(nombre,
     pulverulencia
   }
 
-  riesgo <- coshh_riesgo(grado, cantidad, volatilidad)
+  riesgo  <- coshh_riesgo(grado, cantidad, volatilidad)
   medidas <- coshh_medidas(riesgo)
 
   data.frame(
-    sustancia = nombre,
-    frases = frases,
-    grado = grado,
+    sustancia   = nombre,
+    frases      = frases,
+    grado       = grado,
     volatilidad = volatilidad,
-    cantidad = cantidad,
-    riesgo = riesgo,
-    medidas = medidas,
+    cantidad    = cantidad,
+    riesgo      = riesgo,
+    medidas     = medidas,
     stringsAsFactors = FALSE
   )
 }
