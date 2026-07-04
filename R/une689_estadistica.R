@@ -45,10 +45,10 @@ une689_ut <- function(n) {
 #' @return Una lista con los elementos `MA`, `DS`, `MG`, `DSG`.
 #'
 #' @examples
-#' une689_estadisticos(c(5, 6, 7, 8, 9, 10))
+#' une689_statistics(c(5, 6, 7, 8, 9, 10))
 #'
 #' @export
-une689_estadisticos <- function(ed) {
+une689_statistics <- function(ed) {
   if (any(is.na(ed)) || any(ed <= 0)) {
     stop("Todos los valores de ED deben ser numeros positivos, sin NA.", call. = FALSE)
   }
@@ -75,10 +75,10 @@ une689_estadisticos <- function(ed) {
 #'   `W_lognormal`, `pval_lognormal`.
 #'
 #' @examples
-#' une689_test_normalidad(c(5, 6, 7, 8, 9, 10))
+#' une689_normality_test(c(5, 6, 7, 8, 9, 10))
 #'
 #' @export
-une689_test_normalidad <- function(ed) {
+une689_normality_test <- function(ed) {
   test_normal <- stats::shapiro.test(ed)
   test_lognormal <- stats::shapiro.test(log(ed))
 
@@ -106,10 +106,10 @@ une689_test_normalidad <- function(ed) {
 #'   the default), or the equivalent Spanish labels when `expoquimr_lang("es")` is active.
 #'
 #' @examples
-#' une689_tipo_distribucion(pval_normal = 0.03, pval_lognormal = 0.20)
+#' une689_distribution_type(pval_normal = 0.03, pval_lognormal = 0.20)
 #'
 #' @export
-une689_tipo_distribucion <- function(pval_normal, pval_lognormal, alfa = 0.05) {
+une689_distribution_type <- function(pval_normal, pval_lognormal, alfa = 0.05) {
   if (pval_lognormal > alfa) {
     .t("une689_lognormal")
   } else if (pval_normal > alfa) {
@@ -121,13 +121,13 @@ une689_tipo_distribucion <- function(pval_normal, pval_lognormal, alfa = 0.05) {
 
 #' Limite superior de confianza LSC(95,70) (UNE-EN 689)
 #'
-#' @param tipo Character. Distribution type as returned by [une689_tipo_distribucion()].
+#' @param tipo Character. Distribution type as returned by [une689_distribution_type()].
 #'   Accepts both English (`"Lognormal"`, `"Normal"`, `"Neither"`) and Spanish labels.
 #' @param ut Numeric. Factor UT, vease [une689_ut()].
 #' @param MA,DS Numeric. Media y desviacion aritmeticas (solo se usan si
-#'   needed when `tipo = "Normal"`); see [une689_estadisticos()].
+#'   needed when `tipo = "Normal"`); see [une689_statistics()].
 #' @param MG,DSG Numeric. Media y desviacion geometricas (solo se usan
-#'   needed when `tipo = "Lognormal"`); see [une689_estadisticos()].
+#'   needed when `tipo = "Lognormal"`); see [une689_statistics()].
 #'
 #' @return Numeric escalar con el LSC(95,70), o `NA_real_` si
 #'   `tipo = "Neither"` (or `"Ninguna"` in Spanish).
@@ -181,10 +181,10 @@ une689_ur <- function(tipo, vla, MA = NA_real_, DS = NA_real_, MG = NA_real_, DS
 #'   see [expoquimr_lang()].
 #'
 #' @examples
-#' une689_conformidad_estadistica(ur = 2.1, ut = 2.005)
+#' une689_statistical_conformity(ur = 2.1, ut = 2.005)
 #'
 #' @export
-une689_conformidad_estadistica <- function(ur, ut) {
+une689_statistical_conformity <- function(ur, ut) {
   if (is.na(ur)) return(NA_character_)
   if (ur >= ut) .t("une689_conformity") else .t("une689_no_conformity")
 }
@@ -198,7 +198,7 @@ une689_conformidad_estadistica <- function(ur, ut) {
 #'
 #' @param ed Numeric vector. Valores de ED (uno por jornada), todos
 #'   positivos. Se exige un minimo de 6 (vease
-#'   [une689_validar_min_jornadas()]).
+#'   [une689_validate_min_days()]).
 #' @param vla Numeric. Valor Limite Ambiental (mg/m3).
 #'
 #' @return Una lista con los elementos `n`, `tipo`, `MA`, `DS`, `MG`,
@@ -206,22 +206,22 @@ une689_conformidad_estadistica <- function(ur, ut) {
 #'   `ut`, `lsc`, `ur`, `conformidad`.
 #'
 #' @examples
-#' une689_evaluar_estadistica(c(5, 6, 7, 8, 9, 10), vla = 10)
+#' une689_evaluate_statistical(c(5, 6, 7, 8, 9, 10), vla = 10)
 #'
 #' @export
-une689_evaluar_estadistica <- function(ed, vla) {
+une689_evaluate_statistical <- function(ed, vla) {
   n <- length(ed)
-  if (!une689_validar_min_jornadas(n, minimo = 6L)) {
+  if (!une689_validate_min_days(n, minimo = 6L)) {
     stop("Se necesitan al menos 6 jornadas (valores de ED) para la evaluacion estadistica.", call. = FALSE)
   }
 
-  est <- une689_estadisticos(ed)
-  test <- une689_test_normalidad(ed)
-  tipo <- une689_tipo_distribucion(test$pval_normal, test$pval_lognormal)
+  est <- une689_statistics(ed)
+  test <- une689_normality_test(ed)
+  tipo <- une689_distribution_type(test$pval_normal, test$pval_lognormal)
   ut <- une689_ut(n)
   lsc <- une689_lsc(tipo, ut, MA = est$MA, DS = est$DS, MG = est$MG, DSG = est$DSG)
   ur <- une689_ur(tipo, vla, MA = est$MA, DS = est$DS, MG = est$MG, DSG = est$DSG)
-  conformidad <- une689_conformidad_estadistica(ur, ut)
+  conformidad <- une689_statistical_conformity(ur, ut)
 
   list(
     n = n,
@@ -236,17 +236,17 @@ une689_evaluar_estadistica <- function(ed, vla) {
 #' Periodicidad recomendada, opcion 1 (MG o MA frente al VLA)
 #'
 #' @param valor_referencia Numeric. MG si la distribucion es lognormal,
-#'   o MA si es normal (vease [une689_estadisticos()]).
+#'   o MA si es normal (vease [une689_statistics()]).
 #' @param vla Numeric. Valor Limite Ambiental (mg/m3).
 #'
 #' @return Character escalar describiendo la periodicidad recomendada,
 #'   en meses.
 #'
 #' @examples
-#' une689_periodicidad_opcion1(valor_referencia = 0.8, vla = 10)
+#' une689_monitoring_interval_opt1(valor_referencia = 0.8, vla = 10)
 #'
 #' @export
-une689_periodicidad_opcion1 <- function(valor_referencia, vla) {
+une689_monitoring_interval_opt1 <- function(valor_referencia, vla) {
   if (is.na(valor_referencia) || is.na(vla)) {
     return(NA_character_)
   }
@@ -270,10 +270,10 @@ une689_periodicidad_opcion1 <- function(valor_referencia, vla) {
 #'   en meses, o un aviso de que la exposicion debe revisarse.
 #'
 #' @examples
-#' une689_periodicidad_opcion2(lsc = 4, vla = 10)
+#' une689_monitoring_interval_opt2(lsc = 4, vla = 10)
 #'
 #' @export
-une689_periodicidad_opcion2 <- function(lsc, vla) {
+une689_monitoring_interval_opt2 <- function(lsc, vla) {
   if (is.na(lsc) || is.na(vla) || vla <= 0) {
     return(NA_character_)
   }

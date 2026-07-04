@@ -10,11 +10,11 @@
 #'   `valor` es `NA`.
 #'
 #' @examples
-#' inrs_clase_cantidad(50, "g")
-#' inrs_clase_cantidad(500, "kg")
+#' inrs_quantity_class(50, "g")
+#' inrs_quantity_class(500, "kg")
 #'
 #' @export
-inrs_clase_cantidad <- function(valor, unidad = c("g", "ml", "kg", "l")) {
+inrs_quantity_class <- function(valor, unidad = c("g", "ml", "kg", "l")) {
   unidad <- match.arg(unidad)
   if (is.na(valor)) return(NA_character_)
 
@@ -41,11 +41,11 @@ inrs_clase_cantidad <- function(valor, unidad = c("g", "ml", "kg", "l")) {
 #'   coincidencia en la tabla de referencia.
 #'
 #' @examples
-#' inrs_clase_frecuencia(3, "horas")
-#' inrs_clase_frecuencia(unidad = "no_se_usa")
+#' inrs_frequency_class(3, "horas")
+#' inrs_frequency_class(unidad = "no_se_usa")
 #'
 #' @export
-inrs_clase_frecuencia <- function(valor = NA_real_,
+inrs_frequency_class <- function(valor = NA_real_,
                                    unidad = c("minutos", "horas", "dias", "meses", "no_se_usa")) {
   unidad <- match.arg(unidad)
   if (unidad == "no_se_usa") return("0")
@@ -95,12 +95,12 @@ inrs_clase_frecuencia <- function(valor = NA_real_,
 #'   cuyo caso no hay informacion suficiente para clasificar.
 #'
 #' @examples
-#' inrs_clase_peligro(frases_h = "H335")
-#' inrs_clase_peligro(vla = 0.05)
-#' inrs_clase_peligro(vla = 200) # cae en la clase 1 por defecto
+#' inrs_hazard_class(frases_h = "H335")
+#' inrs_hazard_class(vla = 0.05)
+#' inrs_hazard_class(vla = 200) # cae en la clase 1 por defecto
 #'
 #' @export
-inrs_clase_peligro <- function(frases_r = character(0),
+inrs_hazard_class <- function(frases_r = character(0),
                                 frases_h = character(0),
                                 proceso = NULL,
                                 vla = NA_real_) {
@@ -152,17 +152,17 @@ inrs_clase_peligro <- function(frases_r = character(0),
 #' Consulta la Tabla 4 del metodo INRS (clase de cantidad x clase de
 #' frecuencia) para obtener la clase de exposicion potencial.
 #'
-#' @param clase_cantidad Character. Vease [inrs_clase_cantidad()].
-#' @param clase_frecuencia Character. Vease [inrs_clase_frecuencia()].
+#' @param clase_cantidad Character. Vease [inrs_quantity_class()].
+#' @param clase_frecuencia Character. Vease [inrs_frequency_class()].
 #'
 #' @return Character escalar (`"0"` a `"5"`), o `NA_character_` si la
 #'   combinacion no esta definida.
 #'
 #' @examples
-#' inrs_clase_exposicion_potencial("3", "2")
+#' inrs_potential_exposure_class("3", "2")
 #'
 #' @export
-inrs_clase_exposicion_potencial <- function(clase_cantidad, clase_frecuencia) {
+inrs_potential_exposure_class <- function(clase_cantidad, clase_frecuencia) {
   if (is.na(clase_cantidad) || is.na(clase_frecuencia)) return(NA_character_)
 
   tabla <- inrs_tabla_exposicion_potencial
@@ -181,17 +181,17 @@ inrs_clase_exposicion_potencial <- function(clase_cantidad, clase_frecuencia) {
 #' clase de peligro) para obtener la clase de riesgo potencial.
 #'
 #' @param clase_exposicion_potencial Character. Vease
-#'   [inrs_clase_exposicion_potencial()].
-#' @param clase_peligro Character. Vease [inrs_clase_peligro()].
+#'   [inrs_potential_exposure_class()].
+#' @param clase_peligro Character. Vease [inrs_hazard_class()].
 #'
 #' @return Character escalar (`"1"` a `"5"`), o `NA_character_` si la
 #'   combinacion no esta definida.
 #'
 #' @examples
-#' inrs_clase_riesgo_potencial("4", "3")
+#' inrs_potential_risk_class("4", "3")
 #'
 #' @export
-inrs_clase_riesgo_potencial <- function(clase_exposicion_potencial, clase_peligro) {
+inrs_potential_risk_class <- function(clase_exposicion_potencial, clase_peligro) {
   if (is.na(clase_exposicion_potencial) || is.na(clase_peligro)) return(NA_character_)
 
   tabla <- inrs_tabla_riesgo_potencial
@@ -207,15 +207,15 @@ inrs_clase_riesgo_potencial <- function(clase_exposicion_potencial, clase_peligr
 #' Puntuacion de riesgo potencial (metodo INRS)
 #'
 #' @param clase_riesgo_potencial Character. Vease
-#'   [inrs_clase_riesgo_potencial()].
+#'   [inrs_potential_risk_class()].
 #'
 #' @return Numeric (1, 10, 100, 1000 o 10000), o `NA_real_`.
 #'
 #' @examples
-#' inrs_puntuacion_riesgo_potencial("3")
+#' inrs_potential_risk_score("3")
 #'
 #' @export
-inrs_puntuacion_riesgo_potencial <- function(clase_riesgo_potencial) {
+inrs_potential_risk_score <- function(clase_riesgo_potencial) {
   if (is.na(clase_riesgo_potencial)) return(NA_real_)
 
   tabla <- inrs_tabla_puntuacion_riesgo
@@ -239,11 +239,11 @@ inrs_puntuacion_riesgo_potencial <- function(clase_riesgo_potencial) {
 #' @return Character escalar (`"1"` baja, `"2"` media, `"3"` alta).
 #'
 #' @examples
-#' inrs_volatilidad_liquido_grafico(temperatura_uso = 20, punto_ebullicion = 200)
-#' inrs_volatilidad_liquido_grafico(temperatura_uso = 20, punto_ebullicion = 80)
+#' inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 200)
+#' inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 80)
 #'
 #' @export
-inrs_volatilidad_liquido_grafico <- function(temperatura_uso, punto_ebullicion) {
+inrs_liquid_volatility_graph <- function(temperatura_uso, punto_ebullicion) {
   if (is.na(temperatura_uso) || is.na(punto_ebullicion)) {
     return(NA_character_)
   }
@@ -274,10 +274,10 @@ inrs_volatilidad_liquido_grafico <- function(temperatura_uso, punto_ebullicion) 
 #'   0,5 <= Pv < 25 kPa, `"3"` si Pv >= 25 kPa).
 #'
 #' @examples
-#' inrs_volatilidad_liquido_presion(15)
+#' inrs_liquid_volatility_pressure(15)
 #'
 #' @export
-inrs_volatilidad_liquido_presion <- function(presion_vapor) {
+inrs_liquid_volatility_pressure <- function(presion_vapor) {
   if (is.na(presion_vapor)) return(NA_character_)
   if (presion_vapor < 0.5) "1" else if (presion_vapor < 25) "2" else "3"
 }
@@ -292,10 +292,10 @@ inrs_volatilidad_liquido_presion <- function(presion_vapor) {
 #'   descripcion no coincide con ninguna opcion valida.
 #'
 #' @examples
-#' inrs_pulverulencia_solido("Polvo fino con poca dispersion visible")
+#' inrs_solid_dustiness("Polvo fino con poca dispersion visible")
 #'
 #' @export
-inrs_pulverulencia_solido <- function(descripcion) {
+inrs_solid_dustiness <- function(descripcion) {
   switch(descripcion,
     "Polvo que genera mucha dispersion visible en el aire" = "3",
     "Polvo fino con poca dispersion visible" = "2",
@@ -307,16 +307,16 @@ inrs_pulverulencia_solido <- function(descripcion) {
 #' Puntuacion de volatilidad o pulverulencia (metodo INRS)
 #'
 #' @param clase_volatilidad Character. `"1"`, `"2"` o `"3"`, tal como
-#'   devuelven [inrs_volatilidad_liquido_grafico()],
-#'   [inrs_volatilidad_liquido_presion()] o [inrs_pulverulencia_solido()].
+#'   devuelven [inrs_liquid_volatility_graph()],
+#'   [inrs_liquid_volatility_pressure()] o [inrs_solid_dustiness()].
 #'
 #' @return Numeric (1, 10 o 100), o `NA_real_`.
 #'
 #' @examples
-#' inrs_puntuacion_volatilidad("2")
+#' inrs_volatility_score("2")
 #'
 #' @export
-inrs_puntuacion_volatilidad <- function(clase_volatilidad) {
+inrs_volatility_score <- function(clase_volatilidad) {
   if (is.na(clase_volatilidad)) return(NA_real_)
   switch(clase_volatilidad,
     "1" = 1, "2" = 10, "3" = 100,
@@ -333,10 +333,10 @@ inrs_puntuacion_volatilidad <- function(clase_volatilidad) {
 #'   `puntuacion`.
 #'
 #' @examples
-#' inrs_procedimiento("Abierto")
+#' inrs_process_type("Abierto")
 #'
 #' @export
-inrs_procedimiento <- function(tipo) {
+inrs_process_type <- function(tipo) {
   tabla <- inrs_tabla_procedimiento
   fila <- tabla[tabla$tipo == tipo, c("clase", "puntuacion")]
   if (nrow(fila) == 0) {
@@ -355,10 +355,10 @@ inrs_procedimiento <- function(tipo) {
 #'   `puntuacion`.
 #'
 #' @examples
-#' inrs_proteccion("Captacion envolvente")
+#' inrs_collective_protection("Captacion envolvente")
 #'
 #' @export
-inrs_proteccion <- function(situacion) {
+inrs_collective_protection <- function(situacion) {
   tabla <- inrs_tabla_proteccion
   fila <- tabla[tabla$situacion == situacion, c("clase", "puntuacion")]
   if (nrow(fila) == 0) {
@@ -375,10 +375,10 @@ inrs_proteccion <- function(situacion) {
 #' @return Numeric (1, 10, 30 o 100), o `NA_real_` si `vla` es `NA`.
 #'
 #' @examples
-#' inrs_fc_vla(0.05)
+#' inrs_oel_correction_factor(0.05)
 #'
 #' @export
-inrs_fc_vla <- function(vla) {
+inrs_oel_correction_factor <- function(vla) {
   if (is.na(vla)) return(NA_real_)
   if (vla > 0.1) 1
   else if (vla <= 0.1 && vla > 0.01) 10
@@ -391,20 +391,20 @@ inrs_fc_vla <- function(vla) {
 #' Producto de las cinco puntuaciones parciales del metodo INRS.
 #'
 #' @param puntuacion_riesgo_potencial Numeric. Vease
-#'   [inrs_puntuacion_riesgo_potencial()].
+#'   [inrs_potential_risk_score()].
 #' @param puntuacion_volatilidad Numeric. Vease
-#'   [inrs_puntuacion_volatilidad()].
-#' @param puntuacion_procedimiento Numeric. Vease [inrs_procedimiento()].
-#' @param puntuacion_proteccion Numeric. Vease [inrs_proteccion()].
-#' @param fc_vla Numeric. Vease [inrs_fc_vla()].
+#'   [inrs_volatility_score()].
+#' @param puntuacion_procedimiento Numeric. Vease [inrs_process_type()].
+#' @param puntuacion_proteccion Numeric. Vease [inrs_collective_protection()].
+#' @param fc_vla Numeric. Vease [inrs_oel_correction_factor()].
 #'
 #' @return Numeric, o `NA_real_` si falta algun componente.
 #'
 #' @examples
-#' inrs_riesgo_inhalacion(100, 10, 0.5, 0.7, 10)
+#' inrs_inhalation_risk(100, 10, 0.5, 0.7, 10)
 #'
 #' @export
-inrs_riesgo_inhalacion <- function(puntuacion_riesgo_potencial,
+inrs_inhalation_risk <- function(puntuacion_riesgo_potencial,
                                     puntuacion_volatilidad,
                                     puntuacion_procedimiento,
                                     puntuacion_proteccion,
@@ -419,16 +419,16 @@ inrs_riesgo_inhalacion <- function(puntuacion_riesgo_potencial,
 
 #' Caracterizacion del riesgo por inhalacion (metodo INRS)
 #'
-#' @param riesgo_inhalacion Numeric. Vease [inrs_riesgo_inhalacion()].
+#' @param riesgo_inhalacion Numeric. Vease [inrs_inhalation_risk()].
 #'
 #' @return Character escalar describiendo la prioridad de accion, o
 #'   `NA_character_` si `riesgo_inhalacion` es `NA`.
 #'
 #' @examples
-#' inrs_caracterizacion(2500)
+#' inrs_risk_characterisation(2500)
 #'
 #' @export
-inrs_caracterizacion <- function(riesgo_inhalacion) {
+inrs_risk_characterisation <- function(riesgo_inhalacion) {
   if (is.na(riesgo_inhalacion)) return(NA_character_)
   if (riesgo_inhalacion > 1000) {
     .t("inrs_char_3")
@@ -450,12 +450,12 @@ inrs_caracterizacion <- function(riesgo_inhalacion) {
 #'
 #' @param nombre Character. Nombre del producto.
 #' @param frases_r,frases_h Character vectors. Vease
-#'   [inrs_clase_peligro()].
-#' @param proceso Character. Vease [inrs_clase_peligro()].
+#'   [inrs_hazard_class()].
+#' @param proceso Character. Vease [inrs_hazard_class()].
 #' @param vla Numeric. VLA en mg/m3.
-#' @param cantidad_valor,cantidad_unidad Vease [inrs_clase_cantidad()].
+#' @param cantidad_valor,cantidad_unidad Vease [inrs_quantity_class()].
 #' @param frecuencia_valor,frecuencia_unidad Vease
-#'   [inrs_clase_frecuencia()].
+#'   [inrs_frequency_class()].
 #' @param tipo_sustancia Character. `"liquida"` o `"solida"`.
 #' @param metodo_liquido Character. `"grafico"` o `"presion"`. Solo se usa
 #'   si `tipo_sustancia = "liquida"`.
@@ -463,16 +463,16 @@ inrs_caracterizacion <- function(riesgo_inhalacion) {
 #'   `metodo_liquido = "grafico"`.
 #' @param presion_vapor Numeric. Solo si `metodo_liquido = "presion"`.
 #' @param descripcion_solida Character. Solo si
-#'   `tipo_sustancia = "solida"`. Vease [inrs_pulverulencia_solido()].
-#' @param procedimiento Character. Vease [inrs_procedimiento()].
-#' @param proteccion Character. Vease [inrs_proteccion()].
+#'   `tipo_sustancia = "solida"`. Vease [inrs_solid_dustiness()].
+#' @param procedimiento Character. Vease [inrs_process_type()].
+#' @param proteccion Character. Vease [inrs_collective_protection()].
 #'
 #' @return Un `data.frame` de una fila con todas las clases y puntuaciones
 #'   intermedias, la puntuacion final de riesgo por inhalacion y su
 #'   caracterizacion.
 #'
 #' @examples
-#' inrs_evaluar(
+#' inrs_evaluate(
 #'   nombre = "Disolvente X",
 #'   frases_h = "H336",
 #'   vla = 50,
@@ -486,7 +486,7 @@ inrs_caracterizacion <- function(riesgo_inhalacion) {
 #' )
 #'
 #' @export
-inrs_evaluar <- function(nombre,
+inrs_evaluate <- function(nombre,
                           frases_r = character(0),
                           frases_h = character(0),
                           proceso = NULL,
@@ -508,32 +508,32 @@ inrs_evaluar <- function(nombre,
   tipo_sustancia <- match.arg(tipo_sustancia)
   metodo_liquido <- match.arg(metodo_liquido)
 
-  clase_peligro <- inrs_clase_peligro(frases_r, frases_h, proceso, vla)
-  clase_cantidad <- inrs_clase_cantidad(cantidad_valor, cantidad_unidad)
-  clase_frecuencia <- inrs_clase_frecuencia(frecuencia_valor, frecuencia_unidad)
-  clase_expo_pot <- inrs_clase_exposicion_potencial(clase_cantidad, clase_frecuencia)
-  clase_riesgo_pot <- inrs_clase_riesgo_potencial(clase_expo_pot, clase_peligro)
-  punt_riesgo_pot <- inrs_puntuacion_riesgo_potencial(clase_riesgo_pot)
+  clase_peligro <- inrs_hazard_class(frases_r, frases_h, proceso, vla)
+  clase_cantidad <- inrs_quantity_class(cantidad_valor, cantidad_unidad)
+  clase_frecuencia <- inrs_frequency_class(frecuencia_valor, frecuencia_unidad)
+  clase_expo_pot <- inrs_potential_exposure_class(clase_cantidad, clase_frecuencia)
+  clase_riesgo_pot <- inrs_potential_risk_class(clase_expo_pot, clase_peligro)
+  punt_riesgo_pot <- inrs_potential_risk_score(clase_riesgo_pot)
 
   clase_volatilidad <- if (tipo_sustancia == "liquida") {
     if (metodo_liquido == "grafico") {
-      inrs_volatilidad_liquido_grafico(temperatura_uso, punto_ebullicion)
+      inrs_liquid_volatility_graph(temperatura_uso, punto_ebullicion)
     } else {
-      inrs_volatilidad_liquido_presion(presion_vapor)
+      inrs_liquid_volatility_pressure(presion_vapor)
     }
   } else {
-    inrs_pulverulencia_solido(descripcion_solida)
+    inrs_solid_dustiness(descripcion_solida)
   }
-  punt_volatilidad <- inrs_puntuacion_volatilidad(clase_volatilidad)
+  punt_volatilidad <- inrs_volatility_score(clase_volatilidad)
 
-  proc <- inrs_procedimiento(procedimiento)
-  prot <- inrs_proteccion(proteccion)
-  fc_vla <- inrs_fc_vla(vla)
+  proc <- inrs_process_type(procedimiento)
+  prot <- inrs_collective_protection(proteccion)
+  fc_vla <- inrs_oel_correction_factor(vla)
 
-  riesgo <- inrs_riesgo_inhalacion(
+  riesgo <- inrs_inhalation_risk(
     punt_riesgo_pot, punt_volatilidad, proc$puntuacion, prot$puntuacion, fc_vla
   )
-  caracterizacion <- inrs_caracterizacion(riesgo)
+  caracterizacion <- inrs_risk_characterisation(riesgo)
 
   data.frame(
     producto = nombre,

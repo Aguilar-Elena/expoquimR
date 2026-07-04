@@ -16,11 +16,11 @@
 #'   pareja (concentracion, tiempo) valida.
 #'
 #' @examples
-#' une689_ed_jornada(concentracion = c(12, 8), tiempo = c(4, 4))
-#' une689_ed_jornada(concentracion = 9, tiempo = 8)
+#' une689_daily_exposure(concentracion = c(12, 8), tiempo = c(4, 4))
+#' une689_daily_exposure(concentracion = 9, tiempo = 8)
 #'
 #' @export
-une689_ed_jornada <- function(concentracion, tiempo) {
+une689_daily_exposure <- function(concentracion, tiempo) {
   stopifnot(length(concentracion) == length(tiempo))
   validas <- !is.na(concentracion) & !is.na(tiempo)
   conc <- concentracion[validas]
@@ -34,17 +34,17 @@ une689_ed_jornada <- function(concentracion, tiempo) {
 
 #' Indice de exposicion (IE) de una jornada, segun UNE-EN 689
 #'
-#' @param ed Numeric. Exposicion diaria, vease [une689_ed_jornada()].
+#' @param ed Numeric. Exposicion diaria, vease [une689_daily_exposure()].
 #' @param vla Numeric. Valor Limite Ambiental (mg/m3).
 #'
 #' @return Numeric escalar (`ed / vla`), o `NA_real_` si `ed` o `vla` no
 #'   son validos (`vla` debe ser `> 0`).
 #'
 #' @examples
-#' une689_ie_jornada(ed = 9, vla = 10)
+#' une689_exposure_index(ed = 9, vla = 10)
 #'
 #' @export
-une689_ie_jornada <- function(ed, vla) {
+une689_exposure_index <- function(ed, vla) {
   if (is.na(ed) || is.na(vla) || vla <= 0) return(NA_real_)
   ed / vla
 }
@@ -57,7 +57,7 @@ une689_ie_jornada <- function(ed, vla) {
 #' criterios de la evaluacion preliminar de UNE-EN 689.
 #'
 #' @param ie Numeric vector. Indices de exposicion, uno por jornada
-#'   (vease [une689_ie_jornada()]). Los valores `NA` (jornadas sin datos
+#'   (vease [une689_exposure_index()]). Los valores `NA` (jornadas sin datos
 #'   suficientes) se ignoran.
 #'
 #' @return Character escalar: `.t("une689_conformity")` si todos los IE son
@@ -79,12 +79,12 @@ une689_ie_jornada <- function(ed, vla) {
 #' criterio metodologico.
 #'
 #' @examples
-#' une689_clasificar_conformidad(c(0.02))
-#' une689_clasificar_conformidad(c(1, 0.9, 0.56))
-#' une689_clasificar_conformidad(c(1.2, 0.05))
+#' une689_classify_conformity(c(0.02))
+#' une689_classify_conformity(c(1, 0.9, 0.56))
+#' une689_classify_conformity(c(1.2, 0.05))
 #'
 #' @export
-une689_clasificar_conformidad <- function(ie) {
+une689_classify_conformity <- function(ie) {
   ie_validos <- ie[!is.na(ie)]
   if (length(ie_validos) == 0) return(NA_character_)
 
@@ -112,11 +112,11 @@ une689_clasificar_conformidad <- function(ie) {
 #' @return Logical: `TRUE` si `n_jornadas >= minimo`.
 #'
 #' @examples
-#' une689_validar_min_jornadas(2)
-#' une689_validar_min_jornadas(3)
+#' une689_validate_min_days(2)
+#' une689_validate_min_days(3)
 #'
 #' @export
-une689_validar_min_jornadas <- function(n_jornadas, minimo = 3L) {
+une689_validate_min_days <- function(n_jornadas, minimo = 3L) {
   n_jornadas >= minimo
 }
 
@@ -137,7 +137,7 @@ une689_validar_min_jornadas <- function(n_jornadas, minimo = 3L) {
 #'     \item{`tabla_jornadas`}{Un `data.frame` con columnas `jornada`,
 #'       `ED` e `IE`, una fila por jornada.}
 #'     \item{`resultado`}{Character escalar con la clasificacion global,
-#'       vease [une689_clasificar_conformidad()].}
+#'       vease [une689_classify_conformity()].}
 #'   }
 #'
 #' @examples
@@ -146,23 +146,23 @@ une689_validar_min_jornadas <- function(n_jornadas, minimo = 3L) {
 #'   concentracion = c(12, 8, 9, 5, 6),
 #'   tiempo = c(4, 4, 8, 3, 5)
 #' )
-#' une689_evaluar_preliminar(datos, vla = 10)
+#' une689_evaluate_preliminary(datos, vla = 10)
 #'
 #' @export
-une689_evaluar_preliminar <- function(datos, vla) {
+une689_evaluate_preliminary <- function(datos, vla) {
   stopifnot(all(c("jornada", "concentracion", "tiempo") %in% names(datos)))
 
   jornadas <- sort(unique(datos$jornada))
   filas <- lapply(jornadas, function(j) {
     sub <- datos[datos$jornada == j, ]
-    ed <- une689_ed_jornada(sub$concentracion, sub$tiempo)
-    ie <- une689_ie_jornada(ed, vla)
+    ed <- une689_daily_exposure(sub$concentracion, sub$tiempo)
+    ie <- une689_exposure_index(ed, vla)
     data.frame(jornada = j, ED = ed, IE = ie)
   })
   tabla_jornadas <- do.call(rbind, filas)
   rownames(tabla_jornadas) <- NULL
 
-  resultado <- une689_clasificar_conformidad(tabla_jornadas$IE)
+  resultado <- une689_classify_conformity(tabla_jornadas$IE)
 
   list(tabla_jornadas = tabla_jornadas, resultado = resultado)
 }

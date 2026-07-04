@@ -54,7 +54,7 @@ server <- function(input, output, session) {
       return()
     }
 
-    nueva <- coshh_evaluar(
+    nueva <- coshh_evaluate(
       nombre = input$nombre,
       frases = input$frases,
       cantidad = input$cantidad,

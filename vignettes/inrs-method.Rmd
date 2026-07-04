@@ -62,25 +62,25 @@ default.
 
 ```{r peligro}
 # From H phrases
-inrs_clase_peligro(frases_h = "H336")
+inrs_hazard_class(frases_h = "H336")
 
 # From VLA
-inrs_clase_peligro(vla = 0.05)   # <= 0.1 mg/m³ → class 5
-inrs_clase_peligro(vla = 50)     # > 10 mg/m³   → class 1 (default)
+inrs_hazard_class(vla = 0.05)   # <= 0.1 mg/m³ → class 5
+inrs_hazard_class(vla = 50)     # > 10 mg/m³   → class 1 (default)
 ```
 
 ### 2. Quantity and frequency classes
 
 ```{r cantidad_frecuencia}
-inrs_clase_cantidad(5, "l")          # 5 litres → class 2
-inrs_clase_frecuencia(3, "horas")    # 3 hours/day → class 3
+inrs_quantity_class(5, "l")          # 5 litres → class 2
+inrs_frequency_class(3, "horas")    # 3 hours/day → class 3
 ```
 
 ### 3. Exposure potential
 
 ```{r exposicion}
-inrs_clase_exposicion_potencial("2", "3")   # → class 2
-inrs_puntuacion_riesgo_potencial("2")        # → 10
+inrs_potential_exposure_class("2", "3")   # → class 2
+inrs_potential_risk_score("2")        # → 10
 ```
 
 ### 4. Volatility (liquid)
@@ -89,36 +89,36 @@ Two approaches are available:
 
 ```{r volatilidad}
 # From boiling point graph (official INRS Figure 2)
-inrs_volatilidad_liquido_grafico(temperatura_uso = 20, punto_ebullicion = 111)
+inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 111)
 
 # From vapour pressure (Table 8 thresholds: 0.5 kPa / 25 kPa)
-inrs_volatilidad_liquido_presion(presion_vapor = 5)
+inrs_liquid_volatility_pressure(presion_vapor = 5)
 ```
 
 For solids, dustiness is classified by description:
 
 ```{r pulverulencia}
-inrs_pulverulencia_solido("Polvo fino con poca dispersion visible")
+inrs_solid_dustiness("Polvo fino con poca dispersion visible")
 ```
 
 ### 5. Process and collective protection
 
 ```{r proceso_proteccion}
-inrs_procedimiento("Abierto")
-inrs_proteccion("Condiciones moderadas de dispersion")
+inrs_process_type("Abierto")
+inrs_collective_protection("Condiciones moderadas de dispersion")
 ```
 
 ### 6. VLA correction factor
 
 ```{r fc_vla}
-inrs_fc_vla(vla = 50)    # VLA > 0.1 → FC = 1
-inrs_fc_vla(vla = 0.05)  # VLA <= 0.1 → FC = 10
+inrs_oel_correction_factor(vla = 50)    # VLA > 0.1 → FC = 1
+inrs_oel_correction_factor(vla = 0.05)  # VLA <= 0.1 → FC = 10
 ```
 
 ### 7. Final inhalation risk score
 
 ```{r riesgo}
-inrs_riesgo_inhalacion(
+inrs_inhalation_risk(
   puntuacion_riesgo_potencial = 10,
   puntuacion_volatilidad      = 10,
   puntuacion_procedimiento    = 0.5,
@@ -130,15 +130,15 @@ inrs_riesgo_inhalacion(
 ### 8. Risk characterisation
 
 ```{r caracterizacion}
-inrs_caracterizacion(35)
-inrs_caracterizacion(500)
-inrs_caracterizacion(5000)
+inrs_risk_characterisation(35)
+inrs_risk_characterisation(500)
+inrs_risk_characterisation(5000)
 ```
 
 ## Full assessment in one call
 
 ```{r full}
-inrs_evaluar(
+inrs_evaluate(
   nombre            = "Toluene",
   frases_h          = "H336",
   vla               = 50,
@@ -159,15 +159,15 @@ inrs_evaluar(
 
 ```{r excel, eval = FALSE}
 ruta <- system.file("plantillas", "plantilla_inrs.xlsx", package = "expoquimR")
-inrs_desde_excel(ruta)
+inrs_from_excel(ruta)
 ```
 
 ## Language
 
 ```{r language}
 expoquimr_lang("es")
-inrs_caracterizacion(35)
-inrs_caracterizacion(5000)
+inrs_risk_characterisation(35)
+inrs_risk_characterisation(5000)
 expoquimr_lang("en")
 ```
 

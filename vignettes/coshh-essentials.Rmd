@@ -61,34 +61,34 @@ guide.
 
 ```{r volatility}
 # Toluene: boiling point 111 °C, process temperature 20 °C
-coshh_clasificar_volatilidad(t_ebullicion = 111, t_proceso = 20)
+coshh_classify_volatility(t_ebullicion = 111, t_proceso = 20)
 ```
 
 ### 2. Assign the hazard group
 
 ```{r grade}
 # Toluene: H315 (skin irritation), H336 (drowsiness/dizziness)
-coshh_grado("H315, H336")
+coshh_grade("H315, H336")
 ```
 
 ### 3. Obtain the risk level
 
 ```{r risk}
-coshh_riesgo(grado = "A", cantidad = "Medium", volatilidad = "Medium")
+coshh_risk(grado = "A", cantidad = "Medium", volatilidad = "Medium")
 ```
 
 ### 4. Get the recommended control measures
 
 ```{r measures}
-coshh_medidas(1)
+coshh_measures(1)
 ```
 
 ### 5. Full assessment in one call
 
-The high-level wrapper `coshh_evaluar()` chains all four steps:
+The high-level wrapper `coshh_evaluate()` chains all four steps:
 
 ```{r full}
-coshh_evaluar(
+coshh_evaluate(
   nombre       = "Toluene",
   frases       = "H315, H336",
   cantidad     = "Medium",
@@ -100,7 +100,7 @@ coshh_evaluar(
 
 ## Evaluating multiple substances
 
-`coshh_evaluar()` is designed to work well with `lapply()` or `purrr::pmap()`
+`coshh_evaluate()` is designed to work well with `lapply()` or `purrr::pmap()`
 for batch evaluation:
 
 ```{r batch}
@@ -114,7 +114,7 @@ sustancias <- list(
 )
 
 resultados <- do.call(rbind, lapply(sustancias, function(s) {
-  do.call(coshh_evaluar, s)
+  do.call(coshh_evaluate, s)
 }))
 
 resultados
@@ -124,7 +124,7 @@ resultados
 
 For users who prefer not to write R code, `expoquimR` includes a ready-to-fill
 Excel template. Download it, fill in one row per substance, and pass the file
-path to `coshh_desde_excel()`:
+path to `coshh_from_excel()`:
 
 ```{r excel, eval = FALSE}
 # Access the built-in template
@@ -134,7 +134,7 @@ ruta <- system.file("plantillas", "plantilla_coshh.xlsx", package = "expoquimR")
 file.copy(ruta, ".")
 
 # Run the assessment
-coshh_desde_excel("plantilla_coshh.xlsx")
+coshh_from_excel("plantilla_coshh.xlsx")
 ```
 
 ## Language
@@ -144,7 +144,7 @@ All output labels are available in English (default) and Spanish:
 ```{r language}
 expoquimr_lang("es")
 
-coshh_evaluar(
+coshh_evaluate(
   nombre       = "Tolueno",
   frases       = "H315, H336",
   cantidad     = "Mediana",

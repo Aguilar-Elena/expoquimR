@@ -54,35 +54,35 @@ It helps answer questions such as:
 
 | Function | Method | What it does |
 |---|---|---|
-| `coshh_clasificar_volatilidad()` | COSHH | Classifies liquid volatility from boiling point and process temperature |
-| `coshh_grado()` | COSHH | Assigns hazard group A–E from H/R phrases |
-| `coshh_riesgo()` | COSHH | Returns risk level 1–4 from group, quantity and volatility |
-| `coshh_medidas()` | COSHH | Returns recommended control measures for a risk level |
-| `coshh_evaluar()` | COSHH | Full COSHH assessment in one call |
-| `coshh_desde_excel()` | COSHH | Reads an Excel template and evaluates all substances |
-| `inrs_clase_peligro()` | INRS | Assigns hazard class 1–5 from H/R phrases, process or VLA |
-| `inrs_clase_cantidad()` | INRS | Classifies daily quantity handled |
-| `inrs_clase_frecuencia()` | INRS | Classifies frequency of use |
-| `inrs_volatilidad_liquido_grafico()` | INRS | Classifies liquid volatility from the official INRS graph |
-| `inrs_volatilidad_liquido_presion()` | INRS | Classifies liquid volatility from vapour pressure |
-| `inrs_riesgo_inhalacion()` | INRS | Calculates the final inhalation risk score |
-| `inrs_caracterizacion()` | INRS | Characterises the risk band from the score |
-| `inrs_evaluar()` | INRS | Full INRS assessment in one call |
-| `inrs_desde_excel()` | INRS | Reads an Excel template and evaluates all products |
-| `une689_ed_jornada()` | UNE-EN 689 | Calculates daily exposure (ED) from samples and times |
-| `une689_ie_jornada()` | UNE-EN 689 | Calculates exposure index (IE = ED / VLA) |
-| `une689_clasificar_conformidad()` | UNE-EN 689 | Classifies conformity from a set of IE values |
-| `une689_evaluar_preliminar()` | UNE-EN 689 | Full preliminary assessment from a data frame of measurements |
-| `une689_estadisticos()` | UNE-EN 689 | Computes MA, DS, MG, DSG from ED values |
-| `une689_test_normalidad()` | UNE-EN 689 | Shapiro-Wilk test for normality and lognormality |
-| `une689_tipo_distribucion()` | UNE-EN 689 | Infers the best-fitting distribution |
+| `coshh_classify_volatility()` | COSHH | Classifies liquid volatility from boiling point and process temperature |
+| `coshh_grade()` | COSHH | Assigns hazard group A–E from H/R phrases |
+| `coshh_risk()` | COSHH | Returns risk level 1–4 from group, quantity and volatility |
+| `coshh_measures()` | COSHH | Returns recommended control measures for a risk level |
+| `coshh_evaluate()` | COSHH | Full COSHH assessment in one call |
+| `coshh_from_excel()` | COSHH | Reads an Excel template and evaluates all substances |
+| `inrs_hazard_class()` | INRS | Assigns hazard class 1–5 from H/R phrases, process or VLA |
+| `inrs_quantity_class()` | INRS | Classifies daily quantity handled |
+| `inrs_frequency_class()` | INRS | Classifies frequency of use |
+| `inrs_liquid_volatility_graph()` | INRS | Classifies liquid volatility from the official INRS graph |
+| `inrs_liquid_volatility_pressure()` | INRS | Classifies liquid volatility from vapour pressure |
+| `inrs_inhalation_risk()` | INRS | Calculates the final inhalation risk score |
+| `inrs_risk_characterisation()` | INRS | Characterises the risk band from the score |
+| `inrs_evaluate()` | INRS | Full INRS assessment in one call |
+| `inrs_from_excel()` | INRS | Reads an Excel template and evaluates all products |
+| `une689_daily_exposure()` | UNE-EN 689 | Calculates daily exposure (ED) from samples and times |
+| `une689_exposure_index()` | UNE-EN 689 | Calculates exposure index (IE = ED / VLA) |
+| `une689_classify_conformity()` | UNE-EN 689 | Classifies conformity from a set of IE values |
+| `une689_evaluate_preliminary()` | UNE-EN 689 | Full preliminary assessment from a data frame of measurements |
+| `une689_statistics()` | UNE-EN 689 | Computes MA, DS, MG, DSG from ED values |
+| `une689_normality_test()` | UNE-EN 689 | Shapiro-Wilk test for normality and lognormality |
+| `une689_distribution_type()` | UNE-EN 689 | Infers the best-fitting distribution |
 | `une689_lsc()` | UNE-EN 689 | Computes the one-sided tolerance limit LSC(95,70) |
 | `une689_ur()` | UNE-EN 689 | Computes the risk index UR |
-| `une689_conformidad_estadistica()` | UNE-EN 689 | Declares conformity or non-conformity (UR vs UT) |
-| `une689_evaluar_estadistica()` | UNE-EN 689 | Full statistical assessment in one call |
-| `une689_periodicidad_opcion1()` | UNE-EN 689 | Monitoring interval recommendation (MG or MA vs VLA) |
-| `une689_periodicidad_opcion2()` | UNE-EN 689 | Monitoring interval recommendation (LSC vs VLA) |
-| `une689_desde_excel()` | UNE-EN 689 | Reads a three-sheet Excel template and runs the full workflow |
+| `une689_statistical_conformity()` | UNE-EN 689 | Declares conformity or non-conformity (UR vs UT) |
+| `une689_evaluate_statistical()` | UNE-EN 689 | Full statistical assessment in one call |
+| `une689_monitoring_interval_opt1()` | UNE-EN 689 | Monitoring interval recommendation (MG or MA vs VLA) |
+| `une689_monitoring_interval_opt2()` | UNE-EN 689 | Monitoring interval recommendation (LSC vs VLA) |
+| `une689_from_excel()` | UNE-EN 689 | Reads a three-sheet Excel template and runs the full workflow |
 | `run_coshh()` | COSHH | Launches the interactive Shiny application |
 | `run_inrs()` | INRS | Launches the interactive Shiny application |
 | `run_une689()` | UNE-EN 689 | Launches the interactive Shiny application |
@@ -125,7 +125,7 @@ The Shiny applications include an in-app language selector and do not depend on 
 library(expoquimR)
 
 # Full assessment in one call
-coshh_evaluar(
+coshh_evaluate(
   nombre       = "Toluene",
   frases       = "H315, H336",
   cantidad     = "Medium",
@@ -138,7 +138,7 @@ coshh_evaluar(
 ### INRS
 
 ```r
-inrs_evaluar(
+inrs_evaluate(
   nombre            = "Toluene",
   frases_h          = "H336",
   vla               = 50,
@@ -164,11 +164,11 @@ datos <- data.frame(
   concentracion = c(12, 8, 9, 5, 6),
   tiempo        = c(4,  4, 8, 3, 5)
 )
-une689_evaluar_preliminar(datos, vla = 10)
+une689_evaluate_preliminary(datos, vla = 10)
 
 # Statistical assessment (>= 6 measurement days)
 ed_values <- c(10, 9, 5.6, 11, 8, 13)
-une689_evaluar_estadistica(ed_values, vla = 10)
+une689_evaluate_statistical(ed_values, vla = 10)
 ```
 
 ### Interactive applications
@@ -184,13 +184,13 @@ run_une689()   # UNE-EN 689 app (multi-agent, additive effects, full workflow)
 ```r
 # Copy the template to your working directory, fill it in, then:
 ruta <- system.file("plantillas", "plantilla_coshh.xlsx", package = "expoquimR")
-coshh_desde_excel(ruta)
+coshh_from_excel(ruta)
 
 ruta <- system.file("plantillas", "plantilla_inrs.xlsx", package = "expoquimR")
-inrs_desde_excel(ruta)
+inrs_from_excel(ruta)
 
 ruta <- system.file("plantillas", "plantilla_une689.xlsx", package = "expoquimR")
-une689_desde_excel(ruta)   # returns preliminary results, statistical assessment and additive effects
+une689_from_excel(ruta)   # returns preliminary results, statistical assessment and additive effects
 ```
 
 <hr>
@@ -203,7 +203,7 @@ When workers are simultaneously exposed to multiple chemical agents affecting th
 IE_combined = IE_agent1 + IE_agent2 + ... + IE_agentN
 ```
 
-Conformity requires IE_combined ≤ 1. The `une689_desde_excel()` function handles this automatically from the `Additive_effects` sheet of the UNE-EN 689 template. The Shiny application allows the user to define independent additive groups interactively, where each group covers a different target organ and agents can appear in more than one group.
+Conformity requires IE_combined ≤ 1. The `une689_from_excel()` function handles this automatically from the `Additive_effects` sheet of the UNE-EN 689 template. The Shiny application allows the user to define independent additive groups interactively, where each group covers a different target organ and agents can appear in more than one group.
 
 <hr>
 
@@ -253,7 +253,7 @@ After running the high-level wrapper functions or `*_desde_excel()`:
 
 **INRS:** the volatility classification via the official graph uses the two boundary lines defined in the INRS ND 2233 guide (Figure 2). Vapour pressure thresholds follow Table 8 of the same guide (0.5 kPa / 25 kPa). These corrections were applied relative to an earlier version of the implementation, where the graph and the calculation were not fully consistent.
 
-**UNE-EN 689:** the false-conformity bug present in some implementations of this standard — where `all(IE < 0.1, na.rm = TRUE)` returns `TRUE` on an empty vector, incorrectly declaring conformity without data — has been corrected. `une689_clasificar_conformidad()` returns `NA` when no valid IE value is available.
+**UNE-EN 689:** the false-conformity bug present in some implementations of this standard — where `all(IE < 0.1, na.rm = TRUE)` returns `TRUE` on an empty vector, incorrectly declaring conformity without data — has been corrected. `une689_classify_conformity()` returns `NA` when no valid IE value is available.
 
 `expoquimR` does not embed country-specific occupational exposure limits, as these vary by jurisdiction. The user must supply the applicable VLA/OEL when calling any UNE-EN 689 function.
 

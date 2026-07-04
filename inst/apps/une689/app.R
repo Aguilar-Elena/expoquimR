@@ -257,7 +257,7 @@ server <- function(input, output, session) {
         showNotification(paste("VLA inv\u00e1lido para", nombre), type = "warning")
         return()
       }
-      if (!une689_validar_min_jornadas(np, minimo = 3L)) {
+      if (!une689_validate_min_days(np, minimo = 3L)) {
         showNotification(paste(nombre, ": m\u00ednimo 3 jornadas preliminares."),
                          type = "warning")
         return()
@@ -269,7 +269,7 @@ server <- function(input, output, session) {
         return()
       }
 
-      res <- une689_evaluar_preliminar(datos, vla = vla)
+      res <- une689_evaluate_preliminary(datos, vla = vla)
 
       # Si NO DECISION -> desbloquear jornadas adicionales
       na <- n_add()
@@ -534,11 +534,11 @@ server <- function(input, output, session) {
     jids <- sort(unique(datos$jornada))
     eds  <- vapply(jids, function(j) {
       sub <- datos[datos$jornada == j, ]
-      une689_ed_jornada(sub$concentracion, sub$tiempo)
+      une689_daily_exposure(sub$concentracion, sub$tiempo)
     }, numeric(1))
     eds <- eds[!is.na(eds) & eds > 0]
 
-    if (!une689_validar_min_jornadas(length(eds), minimo = 6L)) {
+    if (!une689_validate_min_days(length(eds), minimo = 6L)) {
       showNotification(
         paste0("M\u00ednimo 6 jornadas v\u00e1lidas en total (hay ", length(eds), ")."),
         type = "error"
@@ -546,7 +546,7 @@ server <- function(input, output, session) {
       return()
     }
 
-    res <- une689_evaluar_estadistica(eds, vla = vla)
+    res <- une689_evaluate_statistical(eds, vla = vla)
     re  <- res_estadistica()
     re[[key]] <- c(res, list(eds = eds, vla = vla))
     res_estadistica(re)
@@ -619,9 +619,9 @@ server <- function(input, output, session) {
     }
     texto <- if (input$opcion_periodicidad == "opc1") {
       valor <- if (!is.na(re$MG)) re$MG else re$MA
-      une689_periodicidad_opcion1(valor, vla = re$vla)
+      une689_monitoring_interval_opt1(valor, vla = re$vla)
     } else {
-      une689_periodicidad_opcion2(re$lsc, vla = re$vla)
+      une689_monitoring_interval_opt2(re$lsc, vla = re$vla)
     }
     nombre <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
     output$resultado_periodicidad <- renderPrint({

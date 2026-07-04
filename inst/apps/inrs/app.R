@@ -160,7 +160,7 @@ server <- function(input, output, session) {
     frases_h <- if (input$criterio_peligro == "H")    strsplit(input$frasesH, ",")[[1]] else character(0)
     proceso  <- if (input$criterio_peligro == "PROC") input$proceso               else NULL
 
-    nuevo <- inrs_evaluar(
+    nuevo <- inrs_evaluate(
       nombre            = input$nombre,
       frases_r          = frases_r,
       frases_h          = frases_h,

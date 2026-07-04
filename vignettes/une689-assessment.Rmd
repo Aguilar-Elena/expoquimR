@@ -62,7 +62,7 @@ datos <- data.frame(
   tiempo        = c(4,  4, 8, 3, 5)    # hours
 )
 
-res_pre <- une689_evaluar_preliminar(datos, vla = 10)
+res_pre <- une689_evaluate_preliminary(datos, vla = 10)
 res_pre$tabla_jornadas
 res_pre$resultado
 ```
@@ -71,13 +71,13 @@ res_pre$resultado
 
 ```{r prelim_steps}
 # Daily exposure for day 1 (two samples)
-une689_ed_jornada(concentracion = c(12, 8), tiempo = c(4, 4))
+une689_daily_exposure(concentracion = c(12, 8), tiempo = c(4, 4))
 
 # Exposure index
-une689_ie_jornada(ed = 10, vla = 10)
+une689_exposure_index(ed = 10, vla = 10)
 
 # Classify conformity from a set of IE values
-une689_clasificar_conformidad(c(1.0, 0.9, 0.5625))
+une689_classify_conformity(c(1.0, 0.9, 0.5625))
 ```
 
 ## Stage 2 example
@@ -90,7 +90,7 @@ combined dataset.
 # Six ED values (3 preliminary + 3 additional)
 eds <- c(10, 9, 5.625, 11, 8, 13)
 
-res_est <- une689_evaluar_estadistica(eds, vla = 10)
+res_est <- une689_evaluate_statistical(eds, vla = 10)
 
 cat("Distribution:", res_est$tipo, "\n")
 cat("MG =",  round(res_est$MG,  3), "\n")
@@ -105,15 +105,15 @@ cat("Result:", res_est$conformidad, "\n")
 
 ```{r stat_steps}
 # Descriptive statistics
-est <- une689_estadisticos(eds)
+est <- une689_statistics(eds)
 est$MG; est$DSG
 
 # Normality and lognormality tests
-test <- une689_test_normalidad(eds)
+test <- une689_normality_test(eds)
 test$pval_lognormal
 
 # Distribution type (lognormal has priority)
-tipo <- une689_tipo_distribucion(
+tipo <- une689_distribution_type(
   pval_normal    = test$pval_normal,
   pval_lognormal = test$pval_lognormal
 )
@@ -129,7 +129,7 @@ une689_lsc(tipo, ut = une689_ut(6), MG = est$MG, DSG = est$DSG)
 une689_ur(tipo, vla = 10, MG = est$MG, DSG = est$DSG)
 
 # Conformity decision
-une689_conformidad_estadistica(ur = une689_ur(tipo, vla = 10,
+une689_statistical_conformity(ur = une689_ur(tipo, vla = 10,
                                                MG = est$MG, DSG = est$DSG),
                                 ut = une689_ut(6))
 ```
@@ -141,10 +141,10 @@ frequently measurements should be repeated. Two options are available:
 
 ```{r periodic}
 # Option 1: MG or MA versus the OEL
-une689_periodicidad_opcion1(valor_referencia = res_est$MG, vla = 10)
+une689_monitoring_interval_opt1(valor_referencia = res_est$MG, vla = 10)
 
 # Option 2: LSC(95,70) versus the OEL
-une689_periodicidad_opcion2(lsc = res_est$lsc, vla = 10)
+une689_monitoring_interval_opt2(lsc = res_est$lsc, vla = 10)
 ```
 
 ## Additive effects
@@ -166,11 +166,11 @@ ie_xylene  <- 0.30
 ie_combined <- ie_toluene + ie_xylene
 
 cat("Combined IE:", ie_combined, "\n")
-une689_clasificar_conformidad(ie_combined)
+une689_classify_conformity(ie_combined)
 ```
 
 Agents can appear in more than one additive group if they affect multiple
-target organs. The `une689_desde_excel()` function and the Shiny application
+target organs. The `une689_from_excel()` function and the Shiny application
 handle multiple independent additive groups automatically.
 
 ## From Excel (no coding required)
@@ -184,7 +184,7 @@ The UNE-EN 689 Excel template has three sheets:
 
 ```{r excel, eval = FALSE}
 ruta <- system.file("plantillas", "plantilla_une689.xlsx", package = "expoquimR")
-res <- une689_desde_excel(ruta)
+res <- une689_from_excel(ruta)
 
 # Preliminary results and statistical assessment per agent
 res$preliminar$Tolueno$resultado
@@ -198,9 +198,9 @@ res$aditivo
 
 ```{r language}
 expoquimr_lang("es")
-une689_clasificar_conformidad(c(0.02, 0.05))
-une689_tipo_distribucion(0.5, 0.5)
-une689_periodicidad_opcion1(0.5, vla = 10)
+une689_classify_conformity(c(0.02, 0.05))
+une689_distribution_type(0.5, 0.5)
+une689_monitoring_interval_opt1(0.5, vla = 10)
 expoquimr_lang("en")
 ```
 
@@ -225,7 +225,7 @@ A known implementation error in some versions of this standard involves the
 use of `all(IE < 0.1, na.rm = TRUE)` to test conformity. In R, `all()` on
 an empty vector returns `TRUE`, which would incorrectly declare conformity
 when no valid IE values are available. `expoquimR` corrects this by returning
-`NA` from `une689_clasificar_conformidad()` when the input contains no valid
+`NA` from `une689_classify_conformity()` when the input contains no valid
 IE values.
 
 ## References
