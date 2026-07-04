@@ -2,7 +2,7 @@
 % Please edit documentation in R/coshh.R
 \name{coshh_evaluar}
 \alias{coshh_evaluar}
-\title{Evaluar una sustancia con el metodo COSHH Essentials (funcion de alto nivel)}
+\title{Evaluate a substance using the COSHH Essentials method (high-level wrapper)}
 \usage{
 coshh_evaluar(
   nombre,
@@ -15,38 +15,42 @@ coshh_evaluar(
 )
 }
 \arguments{
-\item{nombre}{Character. Nombre identificativo de la sustancia.}
+\item{nombre}{Character. Identifying name of the substance.}
 
-\item{frases}{Character. Frases R/H, ver \code{\link[=coshh_grado]{coshh_grado()}}.}
+\item{frases}{Character. H/R phrases; see \code{\link[=coshh_grado]{coshh_grado()}}.}
 
-\item{cantidad}{Character. Uno de \code{"Pequeña"}, \code{"Mediana"}, \code{"Grande"}.}
+\item{cantidad}{Character. Quantity class in the active language.}
 
-\item{es_liquido}{Logical. \code{TRUE} si la sustancia es liquida (se
-calculara la volatilidad a partir de \code{t_ebullicion}/\code{t_proceso});
-\code{FALSE} si es solida (se usara \code{pulverulencia} directamente).}
+\item{es_liquido}{Logical. \code{TRUE} if the substance is liquid (volatility
+will be calculated from \code{t_ebullicion} / \code{t_proceso}); \code{FALSE} if solid
+(\code{pulverulencia} will be used directly).}
 
-\item{t_ebullicion, t_proceso}{Numeric. Necesarios solo si
-\code{es_liquido = TRUE}. Vease \code{\link[=coshh_clasificar_volatilidad]{coshh_clasificar_volatilidad()}}.}
+\item{t_ebullicion, t_proceso}{Numeric. Required only if
+\code{es_liquido = TRUE}. See \code{\link[=coshh_clasificar_volatilidad]{coshh_clasificar_volatilidad()}}.}
 
-\item{pulverulencia}{Character. Necesario solo si \code{es_liquido = FALSE}.
-Uno de \code{"Baja"}, \code{"Media"}, \code{"Alta"}.}
+\item{pulverulencia}{Character. Required only if \code{es_liquido = FALSE}.
+Dustiness class in the active language.}
 }
 \value{
-Un \code{data.frame} de una fila con las columnas \code{sustancia},
-\code{frases}, \code{grado}, \code{volatilidad}, \code{cantidad}, \code{riesgo} y \code{medidas}.
+A one-row \code{data.frame} with columns \code{sustancia}, \code{frases},
+\code{grado}, \code{volatilidad}, \code{cantidad}, \code{riesgo} and \code{medidas}.
 }
 \description{
-Encadena \code{\link[=coshh_grado]{coshh_grado()}}, \code{\link[=coshh_clasificar_volatilidad]{coshh_clasificar_volatilidad()}} (si procede),
-\code{\link[=coshh_riesgo]{coshh_riesgo()}} y \code{\link[=coshh_medidas]{coshh_medidas()}} para producir una fila de resultado
-completa a partir de los datos brutos de una sustancia. Pensada para
-usarse directamente desde codigo (scripts, informes, \code{purrr::pmap},
-vignettes) sin pasar por la aplicacion Shiny.
+Chains \code{\link[=coshh_grado]{coshh_grado()}}, \code{\link[=coshh_clasificar_volatilidad]{coshh_clasificar_volatilidad()}} (if applicable),
+\code{\link[=coshh_riesgo]{coshh_riesgo()}} and \code{\link[=coshh_medidas]{coshh_medidas()}} to produce a complete result row
+from the raw data of a substance. Designed to be called directly from code
+(scripts, reports, \code{purrr::pmap}, vignettes) without going through the
+Shiny application.
+}
+\details{
+Output labels (volatility class, quantity class, control measures) are
+returned in the active language; see \code{\link[=expoquimr_lang]{expoquimr_lang()}}.
 }
 \examples{
 coshh_evaluar(
-  nombre = "Toluendo",
+  nombre = "Toluene",
   frases = "H315, H336",
-  cantidad = "Mediana",
+  cantidad = "Medium",
   es_liquido = TRUE,
   t_ebullicion = 111,
   t_proceso = 20

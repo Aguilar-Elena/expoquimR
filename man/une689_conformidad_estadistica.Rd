@@ -12,10 +12,10 @@ une689_conformidad_estadistica(ur, ut)
 \item{ut}{Numeric. Factor UT, vease \code{\link[=une689_ut]{une689_ut()}}.}
 }
 \value{
-Character escalar: \code{"CONFORMIDAD"} si \code{ur >= ut},
-\code{"NO CONFORMIDAD"} si \code{ur < ut}, o \code{NA_character_} si \code{ur} es \code{NA}
-(por ejemplo, cuando ni el ajuste normal ni el lognormal son
-validos y se necesita un metodo estadistico distinto).
+Character scalar: \code{"CONFORMITY"} if \code{ur >= ut}, \code{"NON-CONFORMITY"} if
+\code{ur < ut}, or \code{NA_character_} if \code{ur} is \code{NA} (e.g. when neither the normal
+nor the lognormal fit is adequate). Labels are returned in the active language;
+see \code{\link[=expoquimr_lang]{expoquimr_lang()}}.
 }
 \description{
 Conformidad de la evaluacion estadistica (UNE-EN 689)

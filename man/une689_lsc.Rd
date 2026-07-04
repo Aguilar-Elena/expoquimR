@@ -14,20 +14,20 @@ une689_lsc(
 )
 }
 \arguments{
-\item{tipo}{Character. \code{"Lognormal"}, \code{"Normal"} o \code{"Ninguna"}, tal
-como devuelve \code{\link[=une689_tipo_distribucion]{une689_tipo_distribucion()}}.}
+\item{tipo}{Character. Distribution type as returned by \code{\link[=une689_tipo_distribucion]{une689_tipo_distribucion()}}.
+Accepts both English (\code{"Lognormal"}, \code{"Normal"}, \code{"Neither"}) and Spanish labels.}
 
 \item{ut}{Numeric. Factor UT, vease \code{\link[=une689_ut]{une689_ut()}}.}
 
 \item{MA, DS}{Numeric. Media y desviacion aritmeticas (solo se usan si
-\code{tipo = "Normal"}), vease \code{\link[=une689_estadisticos]{une689_estadisticos()}}.}
+needed when \code{tipo = "Normal"}); see \code{\link[=une689_estadisticos]{une689_estadisticos()}}.}
 
 \item{MG, DSG}{Numeric. Media y desviacion geometricas (solo se usan
-si \code{tipo = "Lognormal"}), vease \code{\link[=une689_estadisticos]{une689_estadisticos()}}.}
+needed when \code{tipo = "Lognormal"}); see \code{\link[=une689_estadisticos]{une689_estadisticos()}}.}
 }
 \value{
 Numeric escalar con el LSC(95,70), o \code{NA_real_} si
-\code{tipo = "Ninguna"}.
+\code{tipo = "Neither"} (or \code{"Ninguna"} in Spanish).
 }
 \description{
 Limite superior de confianza LSC(95,70) (UNE-EN 689)

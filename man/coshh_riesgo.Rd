@@ -2,32 +2,34 @@
 % Please edit documentation in R/coshh.R
 \name{coshh_riesgo}
 \alias{coshh_riesgo}
-\title{Calcular el nivel de riesgo COSHH}
+\title{Calculate the COSHH risk level}
 \usage{
 coshh_riesgo(grado, cantidad, volatilidad)
 }
 \arguments{
-\item{grado}{Character. Grado de peligrosidad (\code{"A"} a \code{"E"}), tal como
-lo devuelve \code{\link[=coshh_grado]{coshh_grado()}}.}
+\item{grado}{Character. Hazard group (\code{"A"} to \code{"E"}), as returned by
+\code{\link[=coshh_grado]{coshh_grado()}}.}
 
-\item{cantidad}{Character. Uno de \code{"Pequeña"}, \code{"Mediana"} o \code{"Grande"}.}
+\item{cantidad}{Character. Quantity class in the active language. Use
+\code{"Small"} / \code{"Medium"} / \code{"Large"} (English) or \code{"Pequeña"} /
+\code{"Mediana"} / \code{"Grande"} (Spanish). See \code{\link[=expoquimr_lang]{expoquimr_lang()}}.}
 
-\item{volatilidad}{Character. Uno de \code{"Baja"}, \code{"Media"} o \code{"Alta"}
-(vease \code{\link[=coshh_clasificar_volatilidad]{coshh_clasificar_volatilidad()}} para liquidos; para solidos
-corresponde a la pulverulencia).}
+\item{volatilidad}{Character. Volatility class in the active language.
+Use \code{"Low"} / \code{"Medium"} / \code{"High"} (English) or \code{"Baja"} / \code{"Media"}
+/ \code{"Alta"} (Spanish). For solids, this corresponds to dustiness.}
 }
 \value{
-Integer con el nivel de riesgo (1 a 4), o \code{NA_integer_} si la
-combinacion no esta definida en la tabla o si \code{grado} es \code{NA}.
+Integer with the risk level (1 to 4), or \code{NA_integer_} if the
+combination is not defined in the table or \code{grado} is \code{NA}.
 }
 \description{
-Consulta la matriz peligrosidad x cantidad x volatilidad del metodo
-COSHH Essentials para obtener el nivel de riesgo potencial (1 a 4). Las
-sustancias de grado \code{"E"} (cancerigenas, mutagenas o similares) obtienen
-siempre el nivel maximo, con independencia de la cantidad o volatilidad.
+Queries the hazard x quantity x volatility matrix of the COSHH Essentials
+method to obtain the potential risk level (1 to 4). Substances of grade
+\code{"E"} (carcinogenic, mutagenic or similar) always receive the maximum
+level, regardless of quantity or volatility.
 }
 \examples{
-coshh_riesgo(grado = "C", cantidad = "Mediana", volatilidad = "Alta")
-coshh_riesgo(grado = "E", cantidad = "Pequeña", volatilidad = "Baja")
+coshh_riesgo(grado = "C", cantidad = "Medium", volatilidad = "High")
+coshh_riesgo(grado = "E", cantidad = "Small",  volatilidad = "Low")
 
 }

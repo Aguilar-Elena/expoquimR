@@ -2,24 +2,23 @@
 % Please edit documentation in R/coshh.R
 \name{coshh_grado}
 \alias{coshh_grado}
-\title{Determinar el grado de peligrosidad COSHH a partir de frases R/H}
+\title{Determine the COSHH hazard group from R/H phrases}
 \usage{
 coshh_grado(frases)
 }
 \arguments{
-\item{frases}{Character escalar con una o varias frases separadas por
-comas, p. ej. \code{"H315, H319"} o \code{"R20/21/22"}.}
+\item{frases}{Character scalar containing one or more phrases separated by
+commas, e.g. \code{"H315, H319"} or \code{"R20/21/22"}.}
 }
 \value{
-Character escalar con el grado (\code{"A"} a \code{"E"}), o \code{NA_character_}
-si \code{frases} esta vacio o es \code{NA}.
+Character scalar with the group (\code{"A"} to \code{"E"}), or
+\code{NA_character_} if \code{frases} is empty or \code{NA}.
 }
 \description{
-Busca cada frase de riesgo (R) o de peligro (H) introducida en la tabla
-de asignacion de grados del metodo COSHH Essentials (grados A a E) y
-devuelve el grado mas desfavorable encontrado. Cualquier frase que no
-figure explicitamente en los grupos B-E se asigna al grado A, siguiendo
-la regla del metodo original.
+Looks up each risk phrase (R) or hazard phrase (H) in the COSHH Essentials
+hazard group assignment table (groups A to E) and returns the most
+unfavourable group found. Any phrase not listed explicitly in groups B-E is
+assigned to group A, following the default rule of the original method.
 }
 \examples{
 coshh_grado("H315, H319")

@@ -14,14 +14,14 @@ une689_ur(
 )
 }
 \arguments{
-\item{tipo}{Character. \code{"Lognormal"}, \code{"Normal"} o \code{"Ninguna"}.}
+\item{tipo}{Character. Distribution type; see \code{\link[=une689_lsc]{une689_lsc()}}.}
 
 \item{vla}{Numeric. Valor Limite Ambiental (mg/m3).}
 
 \item{MA, DS, MG, DSG}{Numeric. Vease \code{\link[=une689_lsc]{une689_lsc()}}.}
 }
 \value{
-Numeric escalar, o \code{NA_real_} si \code{tipo = "Ninguna"}.
+Numeric scalar, or \code{NA_real_} if \code{tipo = "Neither"}.
 }
 \description{
 Indice de riesgo unilateral UR (UNE-EN 689)

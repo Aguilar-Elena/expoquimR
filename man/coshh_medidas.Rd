@@ -2,22 +2,26 @@
 % Please edit documentation in R/coshh.R
 \name{coshh_medidas}
 \alias{coshh_medidas}
-\title{Obtener las medidas de control recomendadas para un nivel de riesgo COSHH}
+\title{Get the recommended control measures for a COSHH risk level}
 \usage{
 coshh_medidas(nivel_riesgo)
 }
 \arguments{
-\item{nivel_riesgo}{Integer o character. Nivel de riesgo (1 a 4), tal
-como lo devuelve \code{\link[=coshh_riesgo]{coshh_riesgo()}}.}
+\item{nivel_riesgo}{Integer or character. Risk level (1 to 4), as returned
+by \code{\link[=coshh_riesgo]{coshh_riesgo()}}.}
 }
 \value{
-Character escalar con las medidas de control recomendadas, o
-\code{NA_character_} si el nivel no esta definido.
+Character scalar with the recommended control measures in the
+active language (see \code{\link[=expoquimr_lang]{expoquimr_lang()}}), or \code{NA_character_} if the
+level is not defined.
 }
 \description{
-Obtener las medidas de control recomendadas para un nivel de riesgo COSHH
+Get the recommended control measures for a COSHH risk level
 }
 \examples{
 coshh_medidas(3)
+expoquimr_lang("es")
+coshh_medidas(3)
+expoquimr_lang("en")
 
 }

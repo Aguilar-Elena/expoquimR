@@ -12,9 +12,9 @@ une689_clasificar_conformidad(ie)
 suficientes) se ignoran.}
 }
 \value{
-Character escalar: \code{"CONFORMIDAD"} si todos los IE son
-menores que 0,1; \code{"NO CONFORMIDAD"} si algun IE es mayor que 1;
-\code{"NO DECISION"} si algun IE esta entre 0,1 y 1 (ambos inclusive) y
+Character escalar: \code{.t("une689_conformity")} si todos los IE son
+menores que 0,1; \code{.t("une689_no_conformity")} si algun IE es mayor que 1;
+\code{.t("une689_no_decision")} si algun IE esta entre 0,1 y 1 (ambos inclusive) y
 ninguno supera 1. Devuelve \code{NA_character_} si no hay ningun IE valido
 (no hay datos suficientes para clasificar).
 }
@@ -30,7 +30,7 @@ En la app Shiny original, si todas las jornadas tenian IE = \code{NA} (por
 falta de datos), la comprobacion \code{all(IEs < 0.1, na.rm = TRUE)}
 devolvia \code{TRUE} (porque \code{all()} sobre un vector vacio es \code{TRUE} en R),
 y el resultado se informaba incorrectamente como
-\strong{"CONFORMIDAD"} sin haber datos reales. Esta funcion corrige ese caso
+\strong{.t("une689_conformity")} sin haber datos reales. Esta funcion corrige ese caso
 devolviendo \code{NA_character_} (sin datos suficientes) en lugar de una
 falsa conformidad. Te aviso de este cambio porque, a diferencia de los
 puntos de INRS, no te pregunte antes de aplicarlo: informar

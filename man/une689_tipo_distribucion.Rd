@@ -15,7 +15,8 @@ log(ED).}
 \item{alfa}{Numeric. Nivel de significacion (por defecto 0,05).}
 }
 \value{
-Character escalar: \code{"Lognormal"}, \code{"Normal"} o \code{"Ninguna"}.
+Character scalar: one of \code{"Lognormal"}, \code{"Normal"} or \code{"Neither"} (in English,
+the default), or the equivalent Spanish labels when \code{expoquimr_lang("es")} is active.
 }
 \description{
 Decide si los datos se ajustan mejor a una distribucion lognormal,

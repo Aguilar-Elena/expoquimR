@@ -2,27 +2,33 @@
 % Please edit documentation in R/coshh.R
 \name{coshh_clasificar_volatilidad}
 \alias{coshh_clasificar_volatilidad}
-\title{Clasificar la volatilidad de un liquido segun el metodo COSHH Essentials}
+\title{Classify the volatility of a liquid using the COSHH Essentials method}
 \usage{
 coshh_clasificar_volatilidad(t_ebullicion, t_proceso)
 }
 \arguments{
-\item{t_ebullicion}{Numeric. Punto de ebullicion de la sustancia, en
-grados Celsius.}
+\item{t_ebullicion}{Numeric. Boiling point of the substance, in degrees
+Celsius.}
 
-\item{t_proceso}{Numeric. Temperatura a la que se manipula la sustancia,
-en grados Celsius.}
+\item{t_proceso}{Numeric. Temperature at which the substance is handled,
+in degrees Celsius.}
 }
 \value{
-Character escalar: \code{"Baja"}, \code{"Media"} o \code{"Alta"}.
+Character scalar: volatility class in the active language.
 }
 \description{
-Compara la temperatura de ebullicion de la sustancia con su temperatura
-de proceso para asignar una clase de volatilidad ("Baja", "Media" o
-"Alta"), siguiendo los umbrales del metodo COSHH Essentials.
+Compares the boiling point of a substance with its process temperature
+to assign a volatility class (\code{"Low"} / \code{"Medium"} / \code{"High"} in English,
+\code{"Baja"} / \code{"Media"} / \code{"Alta"} in Spanish), following the thresholds of
+the COSHH Essentials method.
+}
+\details{
+The active language is controlled by \code{\link[=expoquimr_lang]{expoquimr_lang()}}.
 }
 \examples{
 coshh_clasificar_volatilidad(t_ebullicion = 111, t_proceso = 20)
-coshh_clasificar_volatilidad(t_ebullicion = 56, t_proceso = 40)
+expoquimr_lang("es")
+coshh_clasificar_volatilidad(t_ebullicion = 111, t_proceso = 20)
+expoquimr_lang("en")
 
 }
