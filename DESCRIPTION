@@ -54,6 +54,7 @@ Imports:
 Suggests:
     DT,
     ggplot2,
+    kableExtra,
     knitr,
     readxl,
     rmarkdown,

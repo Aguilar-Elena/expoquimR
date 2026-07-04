@@ -1,0 +1,381 @@
+---
+title: "Occupational Chemical Exposure Risk Assessment Report"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: true
+params:
+  evaluator: ""
+  workplace: ""
+  lang: "en"
+  coshh: NULL
+  inrs: NULL
+  une689: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.width = 8, fig.height = 4, dpi = 150)
+library(expoquimR)
+library(ggplot2)
+if (!is.null(params$lang) && nzchar(params$lang)) expoquimr_lang(params$lang)
+
+result_box <- function(result) {
+  css <- switch(result %||% "x",
+    "CONFORMITY"     = , "CONFORMIDAD"    = "conform",
+    "NON-CONFORMITY" = , "NO CONFORMIDAD" = "no-conform",
+    "no-decision"
+  )
+  sprintf('<div class="result-box %s">%s</div>', css, result %||% "No data")
+}
+`%||%` <- function(a, b) if (is.null(a) || (length(a) == 1 && is.na(a))) b else a
+```
+
+<style>
+body { font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 14px; }
+.report-header { background:#1F4E79; color:white; padding:20px 24px;
+                 border-radius:6px; margin-bottom:24px; }
+.report-header h2 { margin:0; font-size:1.5em; }
+.report-header p  { margin:4px 0 0 0; opacity:0.8; font-size:0.9em; }
+.method-intro { background:#f8f9fa; border-left:4px solid #1F4E79;
+                padding:10px 14px; margin-bottom:16px; border-radius:0 4px 4px 0; }
+.result-box   { padding:10px 14px; border-radius:4px; margin:10px 0;
+                font-weight:bold; font-size:1.05em; }
+.conform      { background:#d4edda; border-left:4px solid #28a745; color:#155724; }
+.no-conform   { background:#f8d7da; border-left:4px solid #dc3545; color:#721c24; }
+.no-decision  { background:#fff3cd; border-left:4px solid #ffc107; color:#856404; }
+.agent-block  { border:1px solid #dee2e6; border-radius:6px;
+                padding:16px; margin-bottom:20px; }
+.agent-title  { font-size:1.15em; font-weight:bold; color:#1F4E79;
+                border-bottom:1px solid #dee2e6; padding-bottom:6px; margin-bottom:12px; }
+hr { border-top:1px solid #dee2e6; }
+</style>
+
+<div class="report-header">
+<h2>Occupational Chemical Exposure Risk Assessment</h2>
+<p>Generated with <strong>expoquimR</strong> &middot; `r format(Sys.Date(), '%d %B %Y')`
+`r if(nzchar(params$evaluator)) paste0(' &middot; Evaluator: <strong>', params$evaluator, '</strong>')`
+`r if(nzchar(params$workplace)) paste0(' &middot; Workplace: <strong>', params$workplace, '</strong>')`
+</p>
+</div>
+
+---
+
+```{r coshh_block, results='asis', eval=!is.null(params$coshh)}
+cat("## COSHH Essentials\n\n")
+cat('<div class="method-intro">Qualitative control-banding method (UK HSE). ',
+    'Assigns substances to hazard groups A–E and produces a risk level (1–4) ',
+    'with recommended control measures.</div>\n\n')
+
+# Reference tables
+hg <- data.frame(
+  Group = c("A","B","C","D","E"),
+  `Hazard level` = c("Low","Moderate","Significant","High","Very high (CMR)"),
+  `Typical H phrases` = c(
+    "H303, H315, H319, H336 — or any not listed in B–E (default)",
+    "H302, H312, H332, H371",
+    "H301, H311, H314, H317, H331, H335",
+    "H300, H310, H330, H351, H360, H372",
+    "H334, H340, H341, H350, H350i"),
+  check.names = FALSE)
+
+cat(knitr::kable(hg, caption = "Reference — COSHH hazard groups", align=c("c","l","l")) |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","bordered","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+
+rl <- data.frame(
+  `Risk level` = 1:4,
+  `Typical situation` = c(
+    "Low hazard (A/B), small quantity, low volatility/dustiness",
+    "Medium hazard or moderate quantity/volatility",
+    "High hazard or large quantity — containment needed",
+    "CMR substances or very high hazard"),
+  `Control approach` = c(
+    "General ventilation",
+    "Local exhaust ventilation",
+    "Containment or closed systems",
+    "Comply with CMR legislation; detailed exposure assessment"),
+  check.names = FALSE)
+
+cat(knitr::kable(rl, caption="Reference — COSHH risk levels", align=c("c","l","l")) |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","bordered","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+
+cat("\n### Assessment results\n\n")
+df <- if (is.data.frame(params$coshh)) params$coshh else as.data.frame(params$coshh)
+cat(knitr::kable(df, caption="COSHH Essentials — Results by substance", align="l") |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","hover","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+```
+
+---
+
+```{r inrs_block, results='asis', eval=!is.null(params$inrs)}
+cat("## INRS Method\n\n")
+cat('<div class="method-intro">Qualitative inhalation risk score (INRS France). ',
+    'Score = hazard potential × quantity/frequency × volatility/dustiness × ',
+    'process type × collective protection.</div>\n\n')
+
+ih <- data.frame(
+  `Hazard class` = 1:5,
+  `VLA (mg/m³)` = c("> 100","> 10 – 100","> 1 – 10","> 0.1 – 1","≤ 0.1"),
+  Score = c(1,10,100,1000,10000),
+  `Typical H phrases` = c(
+    "Any not in classes 2–5 (default)",
+    "H335, H336","H304, H332, H361, H373",
+    "H331, H334, H341, H351, H360, H370",
+    "H330, H340, H350, H350i"),
+  check.names=FALSE)
+
+cat(knitr::kable(ih, caption="Reference — INRS hazard classes", align=c("c","c","c","l")) |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","bordered","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+
+ir <- data.frame(
+  `Risk score` = c("≤ 100","101 – 1 000","> 1 000"),
+  Band = c("Low","Moderate","Very high"),
+  Action = c("No modifications needed a priori",
+             "Corrective measures or more detailed assessment likely needed",
+             "Immediate corrective action required"),
+  check.names=FALSE)
+
+cat(knitr::kable(ir, caption="Reference — INRS risk bands", align=c("c","l","l")) |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","bordered","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+
+cat("\n### Assessment results\n\n")
+df <- if (is.data.frame(params$inrs)) params$inrs else as.data.frame(params$inrs)
+cols_sum <- intersect(c("producto","clase_peligro","clase_exposicion_potencial",
+                         "clase_riesgo_potencial","clase_volatilidad_pulverulencia",
+                         "clase_procedimiento","clase_proteccion",
+                         "riesgo_inhalacion","caracterizacion_riesgo"), names(df))
+cat(knitr::kable(df[,cols_sum,drop=FALSE], caption="INRS — Summary", align="l") |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","hover","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+
+cols_det <- intersect(c("producto","clase_cantidad","clase_frecuencia",
+                         "puntuacion_riesgo_potencial","puntuacion_volatilidad_pulverulencia",
+                         "puntuacion_procedimiento","puntuacion_proteccion","fc_vla"), names(df))
+cat("\n#### Intermediate scores (audit trail)\n\n")
+cat(knitr::kable(df[,cols_det,drop=FALSE], caption="INRS — Partial scores", align="l") |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+```
+
+---
+
+```{r une689_intro, results='asis', eval=!is.null(params$une689)}
+cat("## UNE-EN 689\n\n")
+cat('<div class="method-intro">Quantitative statistical assessment (European standard ',
+    'EN 689). Compares daily exposure (ED) values against the OEL using lognormal ',
+    'or normal distribution fitting and a one-sided tolerance limit LSC(95,70).</div>\n\n')
+
+pr <- data.frame(
+  Condition=c("All IE < 0.1","Any IE > 1.0","Any IE between 0.1 and 1.0"),
+  Result=c("CONFORMITY","NON-CONFORMITY","NO DECISION"),
+  `Next step`=c("No further action required","Immediate corrective action",
+                 "Proceed to statistical assessment (≥ 6 days total)"),
+  check.names=FALSE)
+cat(knitr::kable(pr, caption="Reference — Preliminary assessment decision rules",
+                 align=c("l","l","l")) |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","bordered","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+
+sr <- data.frame(
+  Condition=c("UR ≥ UT","UR < UT"),
+  Result=c("CONFORMITY","NON-CONFORMITY"),
+  Meaning=c("LSC(95,70) is below the OEL with 95% confidence",
+            "Insufficient evidence that exposure is below the OEL"))
+cat(knitr::kable(sr, caption="Reference — Statistical assessment decision rule",
+                 align=c("l","l","l")) |>
+  kableExtra::kable_styling(bootstrap_options=c("striped","bordered","condensed"),
+                            full_width=TRUE) |>
+  kableExtra::row_spec(0, background="#1F4E79", color="white"))
+```
+
+```{r une689_agents, results='asis', eval=!is.null(params$une689)}
+if (!is.null(params$une689$preliminar)) {
+
+  # Generamos un bloque por agente usando knit_child sobre texto en memoria
+  agent_chunks <- lapply(names(params$une689$preliminar), function(nombre) {
+    ag  <- params$une689$preliminar[[nombre]]
+    est <- ag$estadistica
+    eds <- if (!is.null(est)) est$eds else NULL
+
+    # Construimos el texto del chunk dinámicamente
+    lines <- c(
+      sprintf('\n<div class="agent-block">'),
+      sprintf('<div class="agent-title">Agent: %s &nbsp;|&nbsp; OEL = %s mg/m³</div>',
+              ag$nombre, ag$vla),
+      ""
+    )
+
+    # Tabla de jornadas
+    if (!is.null(ag$tabla_jornadas) && nrow(ag$tabla_jornadas) > 0) {
+      tbl <- knitr::kable(ag$tabla_jornadas, digits=4, align="c",
+                           caption=paste("Measurement days —", ag$nombre)) |>
+        kableExtra::kable_styling(bootstrap_options=c("striped","condensed"),
+                                  full_width=FALSE) |>
+        kableExtra::row_spec(0, background="#1F4E79", color="white")
+      lines <- c(lines, "**Preliminary assessment — measurement days:**", "", tbl, "")
+    }
+
+    # Resultado preliminar
+    lines <- c(lines, result_box(ag$resultado), "")
+
+    # Estadística
+    if (!is.null(est)) {
+      tbl_est <- data.frame(
+        Parameter=c("Days (n)","Distribution","MG or MA","DSG or DS",
+                    "UT","LSC(95,70)","UR","Result"),
+        Value=c(est$n, est$tipo,
+                round(ifelse(!is.na(est$MG), est$MG, est$MA), 4),
+                round(ifelse(!is.na(est$DSG), est$DSG, est$DS), 4),
+                round(est$ut,3), round(est$lsc,4), round(est$ur,3),
+                est$conformidad %||% "?"),
+        stringsAsFactors=FALSE)
+
+      tbl <- knitr::kable(tbl_est, align=c("l","r"),
+                           caption=paste("Statistical parameters —", ag$nombre)) |>
+        kableExtra::kable_styling(bootstrap_options=c("striped","condensed"),
+                                  full_width=FALSE) |>
+        kableExtra::row_spec(0, background="#1F4E79", color="white") |>
+        kableExtra::row_spec(nrow(tbl_est), bold=TRUE)
+      lines <- c(lines, "**Statistical assessment:**", "", tbl, "")
+      lines <- c(lines, result_box(est$conformidad %||% "?"), "")
+
+      # Periodicidad
+      if (!is.na(est$MG) && !is.na(ag$vla)) {
+        per1 <- une689_monitoring_interval_opt1(est$MG, vla = ag$vla)
+      } else if (!is.na(est$MA) && !is.na(ag$vla)) {
+        per1 <- une689_monitoring_interval_opt1(est$MA, vla = ag$vla)
+      } else {
+        per1 <- NA_character_
+      }
+      per2 <- if (!is.na(est$lsc) && !is.na(ag$vla)) {
+        une689_monitoring_interval_opt2(est$lsc, vla = ag$vla)
+      } else NA_character_
+
+      tbl_per <- data.frame(
+        Option = c("Option 1 (MG or MA vs OEL)", "Option 2 (LSC vs OEL)"),
+        Recommendation = c(per1 %||% "Not available", per2 %||% "Not available"),
+        stringsAsFactors = FALSE
+      )
+      tbl <- knitr::kable(tbl_per, align = c("l","l"),
+                           caption = paste("Monitoring interval —", ag$nombre)) |>
+        kableExtra::kable_styling(bootstrap_options = c("striped","condensed"),
+                                  full_width = FALSE) |>
+        kableExtra::row_spec(0, background = "#1F4E79", color = "white")
+      lines <- c(lines, "**Monitoring interval (periodic assessment):**", "", tbl, "")
+    }
+
+    lines <- c(lines, '</div>', "")
+    paste(lines, collapse="\n")
+  })
+
+  cat(paste(agent_chunks, collapse="\n"))
+}
+```
+
+```{r une689_plots, eval=!is.null(params$une689), fig.show='hold'}
+# Los graficos se renderizan en un chunk separado (sin results='asis')
+# para que knitr los procese correctamente
+if (!is.null(params$une689$preliminar)) {
+  for (nombre in names(params$une689$preliminar)) {
+    ag  <- params$une689$preliminar[[nombre]]
+    est <- ag$estadistica
+    eds <- if (!is.null(est)) est$eds else NULL
+
+    if (!is.null(eds) && length(eds) >= 3 && !is.null(est$lsc)) {
+      centro  <- ifelse(!is.na(est$MG), est$MG, est$MA)
+      label_c <- ifelse(!is.na(est$MG), "MG", "MA")
+
+      p <- ggplot(data.frame(ED = eds), aes(x = ED)) +
+        geom_density(fill="#F0A500", alpha=0.35, color="#F0A500", linewidth=1) +
+        geom_rug(color="#1F4E79", alpha=0.7) +
+        geom_vline(xintercept=centro,  color="#28a745", linetype="dashed", linewidth=1) +
+        geom_vline(xintercept=ag$vla,  color="#dc3545", linetype="dashed", linewidth=1) +
+        geom_vline(xintercept=est$lsc, color="#8B0000", linetype="dotted", linewidth=1) +
+        annotate("label", x=centro,  y=Inf, vjust=1.5,
+                 label=paste0(label_c," = ",round(centro,2)),
+                 color="#28a745", fill="white", size=3.2) +
+        annotate("label", x=ag$vla,  y=Inf, vjust=3.5,
+                 label=paste0("OEL = ",round(ag$vla,2)),
+                 color="#dc3545", fill="white", size=3.2) +
+        annotate("label", x=est$lsc, y=Inf, vjust=5.5,
+                 label=paste0("LSC = ",round(est$lsc,2)),
+                 color="#8B0000", fill="white", size=3.2) +
+        labs(title=paste0("ED distribution — ", ag$nombre,
+                          "  |  ", est$tipo),
+             subtitle=paste0("n=",est$n," | UR=",round(est$ur,3),
+                              " | UT=",round(est$ut,3),
+                              " | ",est$conformidad %||% "?"),
+             x="Daily exposure ED (mg/m³)", y="Density") +
+        theme_minimal(base_size=12) +
+        theme(plot.title=element_text(color="#1F4E79", face="bold"),
+              plot.subtitle=element_text(color="#555"))
+      print(p)
+    }
+  }
+}
+```
+
+```{r une689_additive, results='asis', eval=!is.null(params$une689) && !is.null(params$une689$aditivo)}
+df_ad <- params$une689$aditivo
+if (!is.null(df_ad) && nrow(df_ad) > 0) {
+  cat("\n### Additive effects\n\n")
+  cat("Combined exposure index for groups sharing the same target organ ",
+      "(Art. 7, UNE-EN 689). Conformity requires IE_combined ≤ 1.\n\n")
+
+  for (g in sort(unique(df_ad$grupo[!is.na(df_ad$grupo)]))) {
+    sub <- df_ad[df_ad$grupo == g, ]
+    cat(sprintf("**Group %d** — %s\n\n", g, sub$descripcion[1]))
+    cat(knitr::kable(sub[,c("agente","ie_medio","ie_combinado","resultado_grupo")],
+                      align=c("l","r","r","l"), row.names=FALSE) |>
+          kableExtra::kable_styling(bootstrap_options=c("striped","condensed"),
+                                    full_width=FALSE) |>
+          kableExtra::row_spec(0, background="#1F4E79", color="white"))
+    cat("\n")
+    cat(result_box(sub$resultado_grupo[1]))
+    cat("\n\n")
+  }
+}
+```
+
+---
+
+## Citation
+
+```{r citation, results='asis'}
+cat(paste0(
+  "This report was generated using the **expoquimR** R package:\n\n",
+  "> Aguilar-Elena, R., Delgado-Garcia, A. & Guillem-Riquelme, A. (2025). ",
+  "*expoquimR: Qualitative and Quantitative Assessment of Occupational ",
+  "Chemical Exposure Risk.* R package version ",
+  as.character(utils::packageVersion("expoquimR")),". ",
+  "Universidad Internacional de Valencia (VIU) & Universidad de Salamanca (USAL). ",
+  "https://github.com/Aguilar-Elena/expoquimR\n\n",
+  "**Session:** R ",R.version$major,".",R.version$minor,
+  " | expoquimR v",as.character(utils::packageVersion("expoquimR")),
+  " | ",format(Sys.Date(),"%d %B %Y"),"\n"
+))
+```
+
+---
+
+<p style="text-align:center; color:#aaa; font-size:0.8em; margin-top:30px;">
+Generated with <a href="https://github.com/Aguilar-Elena/expoquimR" style="color:#1F4E79;">expoquimR</a>
+&middot; MIT License &middot; `r format(Sys.Date(), '%Y')`
+</p>

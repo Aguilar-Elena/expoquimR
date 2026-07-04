@@ -237,6 +237,8 @@ une689_from_excel <- function(ruta) {
 
         if (une689_validate_min_days(length(eds), minimo = 6L)) {
           est <- une689_evaluate_statistical(eds, vla = vla)
+          est$eds <- eds   # needed for density plot in expoquimr_report()
+          est$vla <- vla
           return(list(
             nombre         = nombre,
             vla            = vla,
