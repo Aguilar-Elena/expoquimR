@@ -41,6 +41,12 @@ Description: Provides a unified toolkit for occupational chemical exposure
     interface. Optional 'shiny' applications provide a guided,
     interactive workflow for occupational hygienists and health and
     safety practitioners who prefer not to write code.
+    References: UK Health and Safety Executive (2003)
+    <https://www.hse.gov.uk/coshh/essentials/index.htm>;
+    Mallet, Pilorget and Berne (2013, ISBN:978-2-7389-2166-2)
+    "Evaluation du risque chimique" INRS ED 6084;
+    European Committee for Standardisation (2018)
+    <https://www.en-standard.eu/bs-en-689-2018/>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB

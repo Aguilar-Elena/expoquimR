@@ -3,7 +3,8 @@
 #' @param ... Argumentos adicionales pasados a [shiny::runApp()] (p. ej.
 #'   `launch.browser`, `port`).
 #'
-#' @return No devuelve nada; lanza la app Shiny de forma bloqueante.
+#' @return No return value, called for side effects. Launches a Shiny
+#'   application in the default browser.
 #'
 #' @examplesIf interactive()
 #' run_coshh()
@@ -16,7 +17,8 @@ run_coshh <- function(...) {
 #' Lanzar la app Shiny del metodo INRS
 #'
 #' @inheritParams run_coshh
-#' @return No devuelve nada; lanza la app Shiny de forma bloqueante.
+#' @return No return value, called for side effects. Launches a Shiny
+#'   application in the default browser.
 #'
 #' @examplesIf interactive()
 #' run_inrs()
@@ -29,7 +31,8 @@ run_inrs <- function(...) {
 #' Lanzar la app Shiny de UNE-EN 689 (preliminar, estadistica y periodicidad)
 #'
 #' @inheritParams run_coshh
-#' @return No devuelve nada; lanza la app Shiny de forma bloqueante.
+#' @return No return value, called for side effects. Launches a Shiny
+#'   application in the default browser.
 #'
 #' @examplesIf interactive()
 #' run_une689()

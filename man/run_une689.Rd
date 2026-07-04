@@ -11,7 +11,8 @@ run_une689(...)
 \code{launch.browser}, \code{port}).}
 }
 \value{
-No devuelve nada; lanza la app Shiny de forma bloqueante.
+No return value, called for side effects. Launches a Shiny
+application in the default browser.
 }
 \description{
 Lanzar la app Shiny de UNE-EN 689 (preliminar, estadistica y periodicidad)
