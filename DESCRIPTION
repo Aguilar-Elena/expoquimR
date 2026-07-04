@@ -16,6 +16,13 @@ Authors@R: c(
         role = "aut",
         email = "a.delgado@usal.es",
         comment = c(ORCID = "0009-0003-7079-5507")
+    ),
+    person(
+        given = "Alejandro",
+        family = "Guillem-Riquelme",
+        role = "aut",
+        email = "aguillem@universidadviu.com",
+        comment = c(ORCID = "0000-0002-6373-5237")
     )
     )
 Description: Provides a unified toolkit for occupational chemical exposure

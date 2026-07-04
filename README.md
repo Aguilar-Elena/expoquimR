@@ -274,10 +274,11 @@ The statistical assessment in UNE-EN 689 assumes that measurements are represent
 If you use `expoquimR` in your research, please cite:
 
 ```
-Aguilar-Elena, R. & Delgado-Garcia, A. (2025). expoquimR: Qualitative and
-Quantitative Assessment of Occupational Chemical Exposure Risk. R package
-version 0.1.0. Universidad Internacional de Valencia (VIU) & Universidad de
-Salamanca (USAL). https://github.com/Aguilar-Elena/expoquimR
+Aguilar-Elena, R., Delgado-Garcia, A. & Guillem-Riquelme, A. (2025).
+expoquimR: Qualitative and Quantitative Assessment of Occupational Chemical
+Exposure Risk. R package version 0.1.0. Universidad Internacional de Valencia
+(VIU) & Universidad de Salamanca (USAL).
+https://github.com/Aguilar-Elena/expoquimR
 ```
 
 <hr>
@@ -291,6 +292,10 @@ Universidad Internacional de Valencia (VIU), Valencia, Spain
 **Ana Delgado-Garcia** &middot; a.delgado@usal.es  
 BISITE Research Group  
 Universidad de Salamanca (USAL), Salamanca, Spain
+
+**PhD. Alejandro Guillem-Riquelme** &middot; aguillem@universidadviu.com  
+Occupational Risk Prevention and Occupational Health Research Group  
+Universidad Internacional de Valencia (VIU), Valencia, Spain
 
 <hr>
 
