@@ -1,0 +1,172 @@
+---
+title: "COSHH Essentials: Qualitative Chemical Risk Assessment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{COSHH Essentials: Qualitative Chemical Risk Assessment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>"
+)
+library(expoquimR)
+```
+
+## Overview
+
+COSHH Essentials (Control of Substances Hazardous to Health) is a qualitative
+control-banding method developed by the UK Health and Safety Executive (HSE).
+It is designed to help employers and occupational hygienists identify the
+appropriate level of control for chemical substances without requiring
+exposure measurements.
+
+The method assigns substances to one of five **hazard groups** (A to E) based
+on their hazard phrases (H or R), and combines this with the **quantity**
+handled daily and the **volatility** (for liquids) or **dustiness** (for
+solids) to produce a **risk level** (1 to 4) with associated recommended
+control measures.
+
+## Hazard groups
+
+| Group | Hazard level | Typical H phrases |
+|---|---|---|
+| A | Low | H303, H315, H319, H336 |
+| B | Moderate | H302, H312, H332, H371 |
+| C | Significant | H301, H311, H314, H317, H331 |
+| D | High | H300, H310, H330, H351, H360 |
+| E | Very high (CMR) | H334, H340, H341, H350 |
+
+Any substance with H or R phrases not listed in groups B–E is assigned to
+group A by default (precautionary principle).
+
+## Risk levels and control measures
+
+| Risk level | Typical situation | Control approach |
+|---|---|---|
+| 1 | Low hazard, low quantity/volatility | General ventilation |
+| 2 | Medium hazard or moderate quantity | Local exhaust ventilation |
+| 3 | High hazard or large quantity | Containment or closed systems |
+| 4 | CMR substances or very high hazard | Comply with CMR legislation; detailed assessment |
+
+## Step-by-step example
+
+### 1. Classify liquid volatility
+
+For liquid substances, volatility is estimated from the boiling point and the
+process temperature using the boundary lines defined in the COSHH Essentials
+guide.
+
+```{r volatility}
+# Toluene: boiling point 111 °C, process temperature 20 °C
+coshh_clasificar_volatilidad(t_ebullicion = 111, t_proceso = 20)
+```
+
+### 2. Assign the hazard group
+
+```{r grade}
+# Toluene: H315 (skin irritation), H336 (drowsiness/dizziness)
+coshh_grado("H315, H336")
+```
+
+### 3. Obtain the risk level
+
+```{r risk}
+coshh_riesgo(grado = "A", cantidad = "Medium", volatilidad = "Medium")
+```
+
+### 4. Get the recommended control measures
+
+```{r measures}
+coshh_medidas(1)
+```
+
+### 5. Full assessment in one call
+
+The high-level wrapper `coshh_evaluar()` chains all four steps:
+
+```{r full}
+coshh_evaluar(
+  nombre       = "Toluene",
+  frases       = "H315, H336",
+  cantidad     = "Medium",
+  es_liquido   = TRUE,
+  t_ebullicion = 111,
+  t_proceso    = 20
+)
+```
+
+## Evaluating multiple substances
+
+`coshh_evaluar()` is designed to work well with `lapply()` or `purrr::pmap()`
+for batch evaluation:
+
+```{r batch}
+sustancias <- list(
+  list(nombre = "Toluene",  frases = "H315, H336", cantidad = "Medium",
+       es_liquido = TRUE,  t_ebullicion = 111, t_proceso = 20),
+  list(nombre = "Xylene",   frases = "H315, H336", cantidad = "Large",
+       es_liquido = TRUE,  t_ebullicion = 139, t_proceso = 20),
+  list(nombre = "Cement",   frases = "H315",        cantidad = "Large",
+       es_liquido = FALSE, pulverulencia = "High")
+)
+
+resultados <- do.call(rbind, lapply(sustancias, function(s) {
+  do.call(coshh_evaluar, s)
+}))
+
+resultados
+```
+
+## From Excel (no coding required)
+
+For users who prefer not to write R code, `expoquimR` includes a ready-to-fill
+Excel template. Download it, fill in one row per substance, and pass the file
+path to `coshh_desde_excel()`:
+
+```{r excel, eval = FALSE}
+# Access the built-in template
+ruta <- system.file("plantillas", "plantilla_coshh.xlsx", package = "expoquimR")
+
+# Or copy it to your working directory
+file.copy(ruta, ".")
+
+# Run the assessment
+coshh_desde_excel("plantilla_coshh.xlsx")
+```
+
+## Language
+
+All output labels are available in English (default) and Spanish:
+
+```{r language}
+expoquimr_lang("es")
+
+coshh_evaluar(
+  nombre       = "Tolueno",
+  frases       = "H315, H336",
+  cantidad     = "Mediana",
+  es_liquido   = TRUE,
+  t_ebullicion = 111,
+  t_proceso    = 20
+)
+
+expoquimr_lang("en")  # reset to English
+```
+
+## Interactive application
+
+For a point-and-click interface, launch the COSHH Shiny application:
+
+```{r app, eval = FALSE}
+run_coshh()
+```
+
+## References
+
+- UK Health and Safety Executive (HSE). *COSHH Essentials: Easy steps to
+  control chemicals.* Available at: https://www.hse.gov.uk/coshh/
+- European Chemicals Agency (ECHA). *Understanding CLP — Hazard statements.*
+  Available at: https://echa.europa.eu/

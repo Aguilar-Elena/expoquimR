@@ -2,3 +2,5 @@
 ^NOTAS_SIGUIENTES_PASOS\.md$
 ^cat$
 ^data-raw$
+^doc$
+^Meta$

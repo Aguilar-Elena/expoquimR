@@ -1,0 +1,236 @@
+---
+title: "UNE-EN 689: Quantitative Statistical Exposure Assessment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{UNE-EN 689: Quantitative Statistical Exposure Assessment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>"
+)
+library(expoquimR)
+```
+
+## Overview
+
+UNE-EN 689 is a European standard that defines a two-stage statistical
+procedure for comparing measured occupational exposure levels against
+occupational exposure limits (OELs). It is designed to provide a statistically
+rigorous and reproducible conformity decision based on a representative set of
+exposure measurements collected over multiple working days.
+
+The standard assumes that daily exposure (ED) values follow a **lognormal or
+normal distribution** and uses a **one-sided upper tolerance limit**
+(LSC\_{95,70}) to decide, with 95% confidence and 70% coverage, whether
+exposure is below the OEL.
+
+## The two-stage procedure
+
+### Stage 1: Preliminary assessment (minimum 3 measurement days)
+
+Each measurement day produces one or more samples. The daily exposure ED is
+calculated as the time-weighted average over an 8-hour shift. The exposure
+index IE = ED / OEL is then computed for each day.
+
+Decision rules:
+
+| Condition | Outcome |
+|---|---|
+| All IE < 0.1 | **CONFORMITY** — exposure is well below the OEL |
+| Any IE > 1 | **NON-CONFORMITY** — at least one day exceeds the OEL |
+| Any IE between 0.1 and 1 | **NO DECISION** — proceed to Stage 2 |
+
+### Stage 2: Statistical assessment (minimum 6 measurement days total)
+
+The full set of ED values (preliminary + additional days) is fitted to a
+lognormal or normal distribution using the Shapiro-Wilk test. The one-sided
+upper tolerance limit LSC\_{95,70} is then compared against the OEL via
+the risk index UR. If UR ≥ UT (tabulated tolerance factor), conformity is
+declared.
+
+## Stage 1 example
+
+```{r prelim}
+# Five samples across three working days
+datos <- data.frame(
+  jornada       = c(1, 1, 2, 3, 3),
+  concentracion = c(12, 8, 9, 5, 6),   # mg/m³
+  tiempo        = c(4,  4, 8, 3, 5)    # hours
+)
+
+res_pre <- une689_evaluar_preliminar(datos, vla = 10)
+res_pre$tabla_jornadas
+res_pre$resultado
+```
+
+### Step-by-step
+
+```{r prelim_steps}
+# Daily exposure for day 1 (two samples)
+une689_ed_jornada(concentracion = c(12, 8), tiempo = c(4, 4))
+
+# Exposure index
+une689_ie_jornada(ed = 10, vla = 10)
+
+# Classify conformity from a set of IE values
+une689_clasificar_conformidad(c(1.0, 0.9, 0.5625))
+```
+
+## Stage 2 example
+
+When the preliminary assessment returns NO DECISION, additional measurement
+days are collected and the full statistical assessment is performed on the
+combined dataset.
+
+```{r stat}
+# Six ED values (3 preliminary + 3 additional)
+eds <- c(10, 9, 5.625, 11, 8, 13)
+
+res_est <- une689_evaluar_estadistica(eds, vla = 10)
+
+cat("Distribution:", res_est$tipo, "\n")
+cat("MG =",  round(res_est$MG,  3), "\n")
+cat("DSG =", round(res_est$DSG, 3), "\n")
+cat("UT =",  res_est$ut, "\n")
+cat("LSC(95,70) =", round(res_est$lsc, 3), "\n")
+cat("UR =",  round(res_est$ur, 3), "\n")
+cat("Result:", res_est$conformidad, "\n")
+```
+
+### Step-by-step
+
+```{r stat_steps}
+# Descriptive statistics
+est <- une689_estadisticos(eds)
+est$MG; est$DSG
+
+# Normality and lognormality tests
+test <- une689_test_normalidad(eds)
+test$pval_lognormal
+
+# Distribution type (lognormal has priority)
+tipo <- une689_tipo_distribucion(
+  pval_normal    = test$pval_normal,
+  pval_lognormal = test$pval_lognormal
+)
+tipo
+
+# Tolerance factor UT for n = 6
+une689_ut(6)
+
+# LSC(95,70)
+une689_lsc(tipo, ut = une689_ut(6), MG = est$MG, DSG = est$DSG)
+
+# Risk index UR
+une689_ur(tipo, vla = 10, MG = est$MG, DSG = est$DSG)
+
+# Conformity decision
+une689_conformidad_estadistica(ur = une689_ur(tipo, vla = 10,
+                                               MG = est$MG, DSG = est$DSG),
+                                ut = une689_ut(6))
+```
+
+## Periodic assessment (monitoring interval)
+
+Once conformity has been established, the standard requires defining how
+frequently measurements should be repeated. Two options are available:
+
+```{r periodic}
+# Option 1: MG or MA versus the OEL
+une689_periodicidad_opcion1(valor_referencia = res_est$MG, vla = 10)
+
+# Option 2: LSC(95,70) versus the OEL
+une689_periodicidad_opcion2(lsc = res_est$lsc, vla = 10)
+```
+
+## Additive effects
+
+When workers are simultaneously exposed to multiple agents affecting the same
+target organ, the European standard requires that the **combined exposure
+index** be evaluated:
+
+```
+IE_combined = IE_agent1 + IE_agent2 + ... + IE_agentN
+```
+
+Conformity requires IE_combined ≤ 1. For example, if toluene (IE = 0.20) and
+xylene (IE = 0.30) both affect the central nervous system:
+
+```{r additive}
+ie_toluene <- 0.20
+ie_xylene  <- 0.30
+ie_combined <- ie_toluene + ie_xylene
+
+cat("Combined IE:", ie_combined, "\n")
+une689_clasificar_conformidad(ie_combined)
+```
+
+Agents can appear in more than one additive group if they affect multiple
+target organs. The `une689_desde_excel()` function and the Shiny application
+handle multiple independent additive groups automatically.
+
+## From Excel (no coding required)
+
+The UNE-EN 689 Excel template has three sheets:
+
+- **Agents**: agent name and VLA, one row per agent.
+- **Measurements**: one row per sample, with a `tipo` field (`pre` for
+  preliminary days, `add` for additional days).
+- **Additive_effects** (optional): groups of agents sharing a target organ.
+
+```{r excel, eval = FALSE}
+ruta <- system.file("plantillas", "plantilla_une689.xlsx", package = "expoquimR")
+res <- une689_desde_excel(ruta)
+
+# Preliminary results and statistical assessment per agent
+res$preliminar$Tolueno$resultado
+res$preliminar$Tolueno$estadistica$conformidad
+
+# Additive effects table
+res$aditivo
+```
+
+## Language
+
+```{r language}
+expoquimr_lang("es")
+une689_clasificar_conformidad(c(0.02, 0.05))
+une689_tipo_distribucion(0.5, 0.5)
+une689_periodicidad_opcion1(0.5, vla = 10)
+expoquimr_lang("en")
+```
+
+## Interactive application
+
+```{r app, eval = FALSE}
+run_une689()
+```
+
+The UNE-EN 689 Shiny application supports:
+
+- Multiple chemical agents, each with its own tab and independent measurement
+  days.
+- Sequential workflow: preliminary assessment → automatic unlock of additional
+  days on NO DECISION → statistical assessment → periodic assessment.
+- Independent additive effect groups: users define which agents share a target
+  organ, and agents can appear in more than one group.
+
+## Methodological note
+
+A known implementation error in some versions of this standard involves the
+use of `all(IE < 0.1, na.rm = TRUE)` to test conformity. In R, `all()` on
+an empty vector returns `TRUE`, which would incorrectly declare conformity
+when no valid IE values are available. `expoquimR` corrects this by returning
+`NA` from `une689_clasificar_conformidad()` when the input contains no valid
+IE values.
+
+## References
+
+- AENOR. *UNE-EN 689:2019. Workplace exposure — Measurement of exposure by
+  inhalation to chemical agents — Strategy for testing compliance with
+  occupational exposure limit values.* Madrid: AENOR.
+- European Committee for Standardisation (CEN). *EN 689:2018.*

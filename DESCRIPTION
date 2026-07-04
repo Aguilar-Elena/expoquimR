@@ -54,10 +54,13 @@ Imports:
 Suggests:
     DT,
     ggplot2,
+    knitr,
     readxl,
+    rmarkdown,
     shiny,
     shinyjs,
     testthat (>= 3.0.0),
     tibble,
     usethis
+VignetteBuilder: knitr
 Config/testthat/edition: 3

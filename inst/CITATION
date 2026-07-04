@@ -1,0 +1,26 @@
+citHeader("To cite expoquimR in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "{expoquimR}: Qualitative and Quantitative Assessment of Occupational Chemical Exposure Risk",
+  author   = c(
+    person("Ra\u00fal",      "Aguilar Elena",     comment = c(ORCID = "0000-0001-8656-8155")),
+    person("Ana",          "Delgado-Garcia",     comment = c(ORCID = "0009-0003-7079-5507")),
+    person("Alejandro",    "Guillem-Riquelme",   comment = c(ORCID = "0000-0002-6373-5237"))
+  ),
+  year         = "2025",
+  note         = "R package version 0.1.0",
+  url          = "https://github.com/Aguilar-Elena/expoquimR",
+  institution  = paste(
+    "Universidad Internacional de Valencia (VIU);",
+    "Universidad de Salamanca (USAL)"
+  ),
+  textVersion  = paste(
+    "Aguilar-Elena, R., Delgado-Garcia, A. & Guillem-Riquelme, A. (2025).",
+    "expoquimR: Qualitative and Quantitative Assessment of Occupational",
+    "Chemical Exposure Risk. R package version 0.1.0.",
+    "Universidad Internacional de Valencia (VIU) &",
+    "Universidad de Salamanca (USAL).",
+    "https://github.com/Aguilar-Elena/expoquimR"
+  )
+)
