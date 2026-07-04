@@ -119,12 +119,17 @@ The Shiny applications include an in-app language selector and do not depend on 
 
 ## Minimal usage
 
+> **Note on argument names:** function arguments follow the terminology of
+> the original normative documents (e.g. `vla` for occupational exposure
+> limit, `frases_h` for H-phrases). String values such as quantity classes,
+> process types and protection systems are language-sensitive and respond to
+> [expoquimr_lang()].
+
 ### COSHH Essentials
 
 ```r
 library(expoquimR)
 
-# Full assessment in one call
 coshh_evaluate(
   nombre       = "Toluene",
   frases       = "H315, H336",
@@ -160,9 +165,9 @@ inrs_evaluate(
 ```r
 # Preliminary assessment
 datos <- data.frame(
-  jornada       = c(1, 1, 2, 3, 3),
-  concentracion = c(12, 8, 9, 5, 6),
-  tiempo        = c(4,  4, 8, 3, 5)
+  jornada       = c(1, 1, 2, 3, 3),   # measurement day
+  concentracion = c(12, 8, 9, 5, 6),  # concentration (mg/m³)
+  tiempo        = c(4,  4, 8, 3, 5)   # duration (hours)
 )
 une689_evaluate_preliminary(datos, vla = 10)
 
