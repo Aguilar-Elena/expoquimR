@@ -1,20 +1,21 @@
 ## code to prepare the internal COSHH reference tables
-## Ejecutar este script en tu Mac (con el paquete cargado con devtools::load_all())
-## para regenerar R/sysdata.rda cada vez que cambien las tablas normativas.
+## Run this script on your Mac (with the package loaded via
+## devtools::load_all()) to regenerate R/sysdata.rda whenever the
+## normative tables change.
 ##
 ##   source("data-raw/coshh_tablas.R")
 ##
-## Esto crea/actualiza R/sysdata.rda con los objetos internos que usan las
-## funciones de R/coshh.R. Al ser internos (no exportados), no aparecen con
-## data(), pero son accesibles desde dentro del paquete.
+## This creates/updates R/sysdata.rda with the internal objects used by
+## the functions in R/coshh.R. Being internal (not exported), they are
+## not visible via data(), but are accessible from within the package.
 
 library(tibble)
 
-# Tabla de asignacion de grado de peligrosidad segun frases R / H (COSHH Essentials)
-coshh_tabla_grados <- tibble::tribble(
-  ~grado, ~frases_r, ~frases_h,
-  "A", "R36, R38, R65, R67. Tambien cualquier sustancia sin frases R contenidas en los grupos B a E.",
-       "H303, H304, H305, H313, H315, H316, H318, H319, H320, H333, H336. Tambien cualquier sustancia sin frases H contenidas en los grupos B a E.",
+# Hazard grade assignment table from R / H phrases (COSHH Essentials)
+coshh_grade_table <- tibble::tribble(
+  ~grade, ~r_phrases, ~h_phrases,
+  "A", "R36, R38, R65, R67. Also any substance with no R phrase listed in groups B to E.",
+       "H303, H304, H305, H313, H315, H316, H318, H319, H320, H333, H336. Also any substance with no H phrase listed in groups B to E.",
   "B", "R20/21/22, R68/20/21/22",
        "H302, H312, H332, H371",
   "C", "R23/24/25, R34, R35, R37, R37/38, R39/23/24/25, R41, R43, R48/20/21/22, R68/23/24/25",
@@ -25,37 +26,38 @@ coshh_tabla_grados <- tibble::tribble(
        "H334, H340, H341, H350"
 )
 
-# Tabla 5: matriz Peligrosidad x Cantidad x Volatilidad -> nivel de riesgo (1-4)
-coshh_tabla_riesgo <- tibble::tribble(
-  ~peligrosidad, ~cantidad, ~volatilidad, ~riesgo,
-  "A", "Pequeña", "Baja", 1, "A", "Pequeña", "Media", 1, "A", "Pequeña", "Alta", 1,
-  "A", "Mediana", "Baja", 1, "A", "Mediana", "Media", 1, "A", "Mediana", "Alta", 2,
-  "A", "Grande",  "Media", 2, "A", "Grande", "Alta", 2,
-  "B", "Pequeña", "Baja", 1, "B", "Pequeña", "Media", 1, "B", "Pequeña", "Alta", 1,
-  "B", "Mediana", "Baja", 1, "B", "Mediana", "Media", 2, "B", "Mediana", "Alta", 2,
-  "B", "Grande",  "Baja", 1, "B", "Grande",  "Media", 2, "B", "Grande", "Alta", 3,
-  "C", "Pequeña", "Baja", 1, "C", "Pequeña", "Media", 2, "C", "Pequeña", "Alta", 2,
-  "C", "Mediana", "Baja", 2, "C", "Mediana", "Media", 3, "C", "Mediana", "Alta", 3,
-  "C", "Grande",  "Baja", 2, "C", "Grande",  "Media", 4, "C", "Grande", "Alta", 4,
-  "D", "Pequeña", "Baja", 2, "D", "Pequeña", "Media", 3, "D", "Pequeña", "Alta", 3,
-  "D", "Mediana", "Baja", 3, "D", "Mediana", "Media", 4, "D", "Mediana", "Alta", 4,
-  "D", "Grande",  "Baja", 3, "D", "Grande",  "Media", 4, "D", "Grande", "Alta", 4,
-  "E", "Cualquiera", "Cualquiera", 4
+# Table 5: Hazard x Quantity x Volatility matrix -> risk level (1-4)
+coshh_risk_table <- tibble::tribble(
+  ~hazard, ~quantity, ~volatility, ~risk,
+  "A", "Small", "Low", 1, "A", "Small", "Medium", 1, "A", "Small", "High", 1,
+  "A", "Medium", "Low", 1, "A", "Medium", "Medium", 1, "A", "Medium", "High", 2,
+  "A", "Large",  "Medium", 2, "A", "Large", "High", 2,
+  "B", "Small", "Low", 1, "B", "Small", "Medium", 1, "B", "Small", "High", 1,
+  "B", "Medium", "Low", 1, "B", "Medium", "Medium", 2, "B", "Medium", "High", 2,
+  "B", "Large",  "Low", 1, "B", "Large",  "Medium", 2, "B", "Large", "High", 3,
+  "C", "Small", "Low", 1, "C", "Small", "Medium", 2, "C", "Small", "High", 2,
+  "C", "Medium", "Low", 2, "C", "Medium", "Medium", 3, "C", "Medium", "High", 3,
+  "C", "Large",  "Low", 2, "C", "Large",  "Medium", 4, "C", "Large", "High", 4,
+  "D", "Small", "Low", 2, "D", "Small", "Medium", 3, "D", "Small", "High", 3,
+  "D", "Medium", "Low", 3, "D", "Medium", "Medium", 4, "D", "Medium", "High", 4,
+  "D", "Large",  "Low", 3, "D", "Large",  "Medium", 4, "D", "Large", "High", 4,
+  "E", "Any", "Any", 4
 )
 
-# Medidas de control recomendadas por nivel de riesgo potencial (1-4)
-coshh_tabla_medidas <- tibble::tribble(
-  ~nivel_riesgo, ~condiciones_tipicas, ~medidas_control,
-  "1", "Agentes de peligrosidad A o B en baja cantidad y baja tendencia a pasar al ambiente.",
-       "Ventilacion general. Riesgo leve.",
-  "2", "Peligrosidad media o elevada con cantidad y/o volatilidad moderadas.",
-       "Medidas especificas de prevencion y proteccion, por ejemplo, extraccion localizada.",
-  "3", "Situaciones con agentes mas peligrosos o con mayores cantidades.",
-       "Confinamiento o sistemas cerrados. Mantener el proceso a presion inferior a la atmosferica cuando sea posible.",
-  "4", "Sustancias muy toxicas o cancerigenas o agentes de peligrosidad media en grandes cantidades.",
-       "Cumplir con la legislacion para sustancias CMR de categorias 1 y 2. Evaluacion detallada de la exposicion. Verificar con mayor frecuencia la eficacia de las instalaciones de control."
+# Recommended control measures by potential risk level (1-4)
+coshh_measures_table <- tibble::tribble(
+  ~risk_level, ~typical_conditions, ~control_measures,
+  "1", "Hazard group A or B agents in small quantity and with low tendency to become airborne.",
+       "General ventilation. Low risk.",
+  "2", "Medium or high hazard with moderate quantity and/or volatility.",
+       "Specific prevention and protection measures, e.g. local exhaust ventilation.",
+  "3", "Situations with more hazardous agents or larger quantities.",
+       "Containment or closed systems. Keep the process below atmospheric pressure where possible.",
+  "4", "Highly toxic or carcinogenic substances, or medium-hazard agents in large quantities.",
+       "Comply with legislation for CMR substances categories 1 and 2. Detailed exposure assessment required. Verify control effectiveness more frequently."
 )
 
-# NOTA: la llamada a usethis::use_data() para estas tablas se hace en
-# data-raw/build_sysdata.R, junto con el resto de tablas del paquete, para
-# no sobrescribir R/sysdata.rda cada vez que se genera un modulo nuevo.
+# NOTE: the usethis::use_data() call for these tables is made in
+# data-raw/build_sysdata.R, together with the rest of the package's
+# tables, so as not to overwrite R/sysdata.rda every time a new module
+# is generated.

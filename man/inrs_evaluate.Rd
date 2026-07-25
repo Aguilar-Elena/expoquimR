@@ -2,85 +2,81 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_evaluate}
 \alias{inrs_evaluate}
-\title{Evaluar un producto quimico con el metodo INRS (funcion de alto nivel)}
+\title{Evaluate a chemical product with the INRS method (high-level wrapper)}
 \usage{
 inrs_evaluate(
-  nombre,
-  frases_r = character(0),
-  frases_h = character(0),
-  proceso = NULL,
+  name,
+  r_phrases = character(0),
+  h_phrases = character(0),
+  process = NULL,
   vla = NA_real_,
-  cantidad_valor = NA_real_,
-  cantidad_unidad = c("g", "ml", "kg", "l"),
-  frecuencia_valor = NA_real_,
-  frecuencia_unidad = c("minutos", "horas", "dias", "meses", "no_se_usa"),
-  tipo_sustancia = c("liquida", "solida"),
-  metodo_liquido = c("grafico", "presion"),
-  temperatura_uso = NA_real_,
-  punto_ebullicion = NA_real_,
-  presion_vapor = NA_real_,
-  descripcion_solida = NA_character_,
-  procedimiento,
-  proteccion
+  quantity_value = NA_real_,
+  quantity_unit = c("g", "ml", "kg", "l"),
+  frequency_value = NA_real_,
+  frequency_unit = c("minutes", "hours", "days", "months", "not_used"),
+  substance_type = c("liquid", "solid"),
+  liquid_method = c("graph", "pressure"),
+  use_temperature = NA_real_,
+  boiling_point = NA_real_,
+  vapour_pressure = NA_real_,
+  solid_description = NA_character_,
+  procedure,
+  protection
 )
 }
 \arguments{
-\item{nombre}{Character. Nombre del producto.}
+\item{name}{Character. Name of the product.}
 
-\item{frases_r, frases_h}{Character vectors. Vease
-\code{\link[=inrs_hazard_class]{inrs_hazard_class()}}.}
+\item{r_phrases, h_phrases}{Character vectors. See \code{\link[=inrs_hazard_class]{inrs_hazard_class()}}.}
 
-\item{proceso}{Character. Vease \code{\link[=inrs_hazard_class]{inrs_hazard_class()}}.}
+\item{process}{Character. See \code{\link[=inrs_hazard_class]{inrs_hazard_class()}}.}
 
-\item{vla}{Numeric. VLA en mg/m3.}
+\item{vla}{Numeric. VLA in mg/m3.}
 
-\item{cantidad_valor, cantidad_unidad}{Vease \code{\link[=inrs_quantity_class]{inrs_quantity_class()}}.}
+\item{quantity_value, quantity_unit}{See \code{\link[=inrs_quantity_class]{inrs_quantity_class()}}.}
 
-\item{frecuencia_valor, frecuencia_unidad}{Vease
-\code{\link[=inrs_frequency_class]{inrs_frequency_class()}}.}
+\item{frequency_value, frequency_unit}{See \code{\link[=inrs_frequency_class]{inrs_frequency_class()}}.}
 
-\item{tipo_sustancia}{Character. \code{"liquida"} o \code{"solida"}.}
+\item{substance_type}{Character. \code{"liquid"} or \code{"solid"}.}
 
-\item{metodo_liquido}{Character. \code{"grafico"} o \code{"presion"}. Solo se usa
-si \code{tipo_sustancia = "liquida"}.}
+\item{liquid_method}{Character. \code{"graph"} or \code{"pressure"}. Only used
+if \code{substance_type = "liquid"}.}
 
-\item{temperatura_uso, punto_ebullicion}{Numeric. Solo si
-\code{metodo_liquido = "grafico"}.}
+\item{use_temperature, boiling_point}{Numeric. Only if
+\code{liquid_method = "graph"}.}
 
-\item{presion_vapor}{Numeric. Solo si \code{metodo_liquido = "presion"}.}
+\item{vapour_pressure}{Numeric. Only if \code{liquid_method = "pressure"}.}
 
-\item{descripcion_solida}{Character. Solo si
-\code{tipo_sustancia = "solida"}. Vease \code{\link[=inrs_solid_dustiness]{inrs_solid_dustiness()}}.}
+\item{solid_description}{Character. Only if \code{substance_type = "solid"}.
+See \code{\link[=inrs_solid_dustiness]{inrs_solid_dustiness()}}.}
 
-\item{procedimiento}{Character. Vease \code{\link[=inrs_process_type]{inrs_process_type()}}.}
+\item{procedure}{Character. See \code{\link[=inrs_process_type]{inrs_process_type()}}.}
 
-\item{proteccion}{Character. Vease \code{\link[=inrs_collective_protection]{inrs_collective_protection()}}.}
+\item{protection}{Character. See \code{\link[=inrs_collective_protection]{inrs_collective_protection()}}.}
 }
 \value{
-Un \code{data.frame} de una fila con todas las clases y puntuaciones
-intermedias, la puntuacion final de riesgo por inhalacion y su
-caracterizacion.
+A one-row \code{data.frame} with all the intermediate classes and
+scores, the final inhalation risk score and its characterisation.
 }
 \description{
-Encadena todos los pasos del metodo INRS (clase de peligro, cantidad,
-frecuencia, exposicion potencial, riesgo potencial, volatilidad o
-pulverulencia, procedimiento y proteccion colectiva) a partir de los
-datos brutos de un producto, y devuelve una fila de resultado completa.
-Pensada para usarse directamente desde codigo, sin pasar por la
-aplicacion Shiny.
+Chains all the steps of the INRS method (hazard class, quantity,
+frequency, potential exposure, potential risk, volatility or
+dustiness, process and collective protection) from the raw data of a
+product, and returns a complete result row. Designed to be used
+directly from code, without going through the Shiny application.
 }
 \examples{
 inrs_evaluate(
-  nombre = "Disolvente X",
-  frases_h = "H336",
+  name = "Solvent X",
+  h_phrases = "H336",
   vla = 50,
-  cantidad_valor = 5, cantidad_unidad = "l",
-  frecuencia_valor = 3, frecuencia_unidad = "horas",
-  tipo_sustancia = "liquida",
-  metodo_liquido = "grafico",
-  temperatura_uso = 40, punto_ebullicion = 80,
-  procedimiento = "Abierto",
-  proteccion = "Condiciones moderadas de dispersion"
+  quantity_value = 5, quantity_unit = "l",
+  frequency_value = 3, frequency_unit = "hours",
+  substance_type = "liquid",
+  liquid_method = "graph",
+  use_temperature = 40, boiling_point = 80,
+  procedure = "Open",
+  protection = "Moderate dispersion conditions"
 )
 
 }

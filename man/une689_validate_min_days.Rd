@@ -2,22 +2,22 @@
 % Please edit documentation in R/une689_preliminar.R
 \name{une689_validate_min_days}
 \alias{une689_validate_min_days}
-\title{Comprobar el numero minimo de jornadas para la evaluacion preliminar}
+\title{Check the minimum number of days for the preliminary assessment}
 \usage{
-une689_validate_min_days(n_jornadas, minimo = 3L)
+une689_validate_min_days(n_days, minimum = 3L)
 }
 \arguments{
-\item{n_jornadas}{Integer. Numero de jornadas con datos introducidos.}
+\item{n_days}{Integer. Number of days with data entered.}
 
-\item{minimo}{Integer. Numero minimo exigido (por defecto 3).}
+\item{minimum}{Integer. Minimum number required (default 3).}
 }
 \value{
-Logical: \code{TRUE} si \code{n_jornadas >= minimo}.
+Logical: \code{TRUE} if \code{n_days >= minimum}.
 }
 \description{
-La evaluacion preliminar de UNE-EN 689 exige un minimo de jornadas
-evaluadas (habitualmente 3). Funcion de ayuda para validar esto antes
-de calcular, tanto desde codigo como desde la futura app Shiny.
+The UNE-EN 689 preliminary assessment requires a minimum number of
+evaluated days (usually 3). Helper function to validate this before
+calculating, both from code and from the Shiny app.
 }
 \examples{
 une689_validate_min_days(2)

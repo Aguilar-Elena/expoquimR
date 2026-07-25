@@ -2,19 +2,19 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_risk_characterisation}
 \alias{inrs_risk_characterisation}
-\title{Caracterizacion del riesgo por inhalacion (metodo INRS)}
+\title{Inhalation risk characterisation (INRS method)}
 \usage{
-inrs_risk_characterisation(riesgo_inhalacion)
+inrs_risk_characterisation(inhalation_risk)
 }
 \arguments{
-\item{riesgo_inhalacion}{Numeric. Vease \code{\link[=inrs_inhalation_risk]{inrs_inhalation_risk()}}.}
+\item{inhalation_risk}{Numeric. See \code{\link[=inrs_inhalation_risk]{inrs_inhalation_risk()}}.}
 }
 \value{
-Character escalar describiendo la prioridad de accion, o
-\code{NA_character_} si \code{riesgo_inhalacion} es \code{NA}.
+Character scalar describing the action priority, or
+\code{NA_character_} if \code{inhalation_risk} is \code{NA}.
 }
 \description{
-Caracterizacion del riesgo por inhalacion (metodo INRS)
+Inhalation risk characterisation (INRS method)
 }
 \examples{
 inrs_risk_characterisation(2500)

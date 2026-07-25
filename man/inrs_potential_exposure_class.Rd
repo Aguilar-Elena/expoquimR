@@ -2,22 +2,22 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_potential_exposure_class}
 \alias{inrs_potential_exposure_class}
-\title{Clase de exposicion potencial (metodo INRS)}
+\title{Potential exposure class (INRS method)}
 \usage{
-inrs_potential_exposure_class(clase_cantidad, clase_frecuencia)
+inrs_potential_exposure_class(quantity_class, frequency_class)
 }
 \arguments{
-\item{clase_cantidad}{Character. Vease \code{\link[=inrs_quantity_class]{inrs_quantity_class()}}.}
+\item{quantity_class}{Character. See \code{\link[=inrs_quantity_class]{inrs_quantity_class()}}.}
 
-\item{clase_frecuencia}{Character. Vease \code{\link[=inrs_frequency_class]{inrs_frequency_class()}}.}
+\item{frequency_class}{Character. See \code{\link[=inrs_frequency_class]{inrs_frequency_class()}}.}
 }
 \value{
-Character escalar (\code{"0"} a \code{"5"}), o \code{NA_character_} si la
-combinacion no esta definida.
+Character scalar (\code{"0"} to \code{"5"}), or \code{NA_character_} if the
+combination is not defined.
 }
 \description{
-Consulta la Tabla 4 del metodo INRS (clase de cantidad x clase de
-frecuencia) para obtener la clase de exposicion potencial.
+Consults Table 4 of the INRS method (quantity class x frequency class)
+to obtain the potential exposure class.
 }
 \examples{
 inrs_potential_exposure_class("3", "2")

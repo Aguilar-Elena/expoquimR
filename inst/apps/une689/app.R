@@ -43,11 +43,11 @@ recoger_muestras_bloque <- function(input, ag, prefijo, n_j, offset = 0L) {
     tiem <- vapply(seq_len(MUESTRAS_POR_JORNADA), function(k)
       input[[paste0(prefijo, "_ag", ag, "_j", j, "_t", k)]] %||% NA_real_,
       numeric(1))
-    data.frame(jornada = j + offset,
-               concentracion = conc, tiempo = tiem)
+    data.frame(day = j + offset,
+               concentration = conc, time = tiem)
   })
   datos <- do.call(rbind, filas)
-  datos[!is.na(datos$concentracion) & !is.na(datos$tiempo), ]
+  datos[!is.na(datos$concentration) & !is.na(datos$time), ]
 }
 
 # ---------- UI ---------------------------------------------------------------
@@ -257,7 +257,7 @@ server <- function(input, output, session) {
         showNotification(paste("VLA inv\u00e1lido para", nombre), type = "warning")
         return()
       }
-      if (!une689_validate_min_days(np, minimo = 3L)) {
+      if (!une689_validate_min_days(np, minimum = 3L)) {
         showNotification(paste(nombre, ": m\u00ednimo 3 jornadas preliminares."),
                          type = "warning")
         return()
@@ -273,7 +273,7 @@ server <- function(input, output, session) {
 
       # Si NO DECISION -> desbloquear jornadas adicionales
       na <- n_add()
-      if (!is.na(res$resultado) && res$resultado == "NO DECISION") {
+      if (!is.na(res$result) && res$result == "NO DECISION") {
         if ((na[[as.character(ag)]] %||% 0L) == 0L) {
           na[[as.character(ag)]] <- 3L
           n_add(na)
@@ -293,9 +293,9 @@ server <- function(input, output, session) {
 
       rp <- res_preliminar()
       rp[[as.character(ag)]] <- list(
-        nombre    = nombre, vla = vla,
-        tabla     = res$tabla_jornadas,
-        resultado = res$resultado
+        name  = nombre, vla = vla,
+        table = res$days_table,
+        result = res$result
       )
       res_preliminar(rp)
     }, ignoreNULL = TRUE)
@@ -363,26 +363,26 @@ server <- function(input, output, session) {
     output[[paste0("resultado_pre_ag", ag)]] <- renderUI({
       rp <- res_preliminar()[[as.character(ag)]]
       if (is.null(rp)) return(NULL)
-      color <- switch(rp$resultado %||% "x",
-        "CONFORMIDAD"    = "success",
-        "NO CONFORMIDAD" = "danger",
+      color <- switch(rp$result %||% "x",
+        "CONFORMITY"     = "success",
+        "NON-CONFORMITY" = "danger",
         "NO DECISION"    = "warning",
         "default"
       )
       tagList(
         br(),
-        h5(paste("Resultado preliminar \u2014", rp$nombre)),
+        h5(paste("Resultado preliminar \u2014", rp$name)),
         DT::dataTableOutput(paste0("tbl_pre_", ag)),
         div(class = paste0("alert alert-", color),
             strong("Resultado: "),
-            rp$resultado %||% "Sin datos suficientes"),
+            rp$result %||% "Sin datos suficientes"),
         hr()
       )
     })
     output[[paste0("tbl_pre_", ag)]] <- DT::renderDataTable({
       rp <- res_preliminar()[[as.character(ag)]]
       if (is.null(rp)) return(NULL)
-      DT::datatable(rp$tabla, rownames = FALSE, options = list(dom = "t"))
+      DT::datatable(rp$table, rownames = FALSE, options = list(dom = "t"))
     })
   })
 
@@ -457,15 +457,15 @@ server <- function(input, output, session) {
 
       filas <- lapply(ids_validos, function(ag) {
         r      <- rp[[ag]]
-        ie_med <- mean(r$tabla$IE, na.rm = TRUE)
-        data.frame(Agente = r$nombre,
+        ie_med <- mean(r$table$IE, na.rm = TRUE)
+        data.frame(Agente = r$name,
                    `IE medio` = round(ie_med, 4),
                    check.names = FALSE)
       })
       df       <- do.call(rbind, filas)
       ie_total <- sum(df$`IE medio`, na.rm = TRUE)
       color_res <- if (ie_total < 0.1) "success" else if (ie_total > 1) "danger" else "warning"
-      texto_res <- if (ie_total < 0.1) "CONFORMIDAD" else if (ie_total > 1) "NO CONFORMIDAD" else "NO DECISION"
+      texto_res <- if (ie_total < 0.1) "CONFORMITY" else if (ie_total > 1) "NON-CONFORMITY" else "NO DECISION"
 
       # Guardar df en output independiente para evitar renderTable anidado
       output[[paste0("tbl_aditivo_", g)]] <- renderTable({
@@ -522,7 +522,7 @@ server <- function(input, output, session) {
     datos_add <- if (na > 0L) {
       recoger_muestras_bloque(input, ag, "add", na, offset = np)
     } else {
-      data.frame(jornada = integer(), concentracion = numeric(), tiempo = numeric())
+      data.frame(day = integer(), concentration = numeric(), time = numeric())
     }
     datos <- rbind(datos_pre, datos_add)
 
@@ -531,14 +531,14 @@ server <- function(input, output, session) {
       return()
     }
 
-    jids <- sort(unique(datos$jornada))
+    jids <- sort(unique(datos$day))
     eds  <- vapply(jids, function(j) {
-      sub <- datos[datos$jornada == j, ]
-      une689_daily_exposure(sub$concentracion, sub$tiempo)
+      sub <- datos[datos$day == j, ]
+      une689_daily_exposure(sub$concentration, sub$time)
     }, numeric(1))
     eds <- eds[!is.na(eds) & eds > 0]
 
-    if (!une689_validate_min_days(length(eds), minimo = 6L)) {
+    if (!une689_validate_min_days(length(eds), minimum = 6L)) {
       showNotification(
         paste0("M\u00ednimo 6 jornadas v\u00e1lidas en total (hay ", length(eds), ")."),
         type = "error"
@@ -560,13 +560,13 @@ server <- function(input, output, session) {
     nombre <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
     cat("Agente:", nombre, "\n")
     cat("N\u00ba jornadas totales:", re$n, "\n")
-    cat("Distribuci\u00f3n inferida:", re$tipo, "\n\n")
-    if (re$tipo == "Lognormal") {
+    cat("Distribuci\u00f3n inferida:", re$distribution_type, "\n\n")
+    if (re$distribution_type == "Lognormal") {
       cat("MG =",  round(re$MG,  4), "\n")
       cat("DSG =", round(re$DSG, 4), "\n")
       cat("W (Shapiro-Wilk, log(ED)) =", round(re$W_lognormal,   3), "\n")
       cat("p-valor =",                    round(re$pval_lognormal, 4), "\n")
-    } else if (re$tipo == "Normal") {
+    } else if (re$distribution_type == "Normal") {
       cat("MA =", round(re$MA, 4), "\n")
       cat("DS =", round(re$DS, 4), "\n")
       cat("W (Shapiro-Wilk, ED) =", round(re$W_normal,   3), "\n")
@@ -577,17 +577,17 @@ server <- function(input, output, session) {
     cat("\nUT de referencia:", round(re$ut, 3), "\n")
     if (!is.na(re$lsc)) cat("LSC\u2089\u2085,\u2087\u2080 =", round(re$lsc, 4), "\n")
     if (!is.na(re$ur))  cat("UR =",              round(re$ur,  3), "\n")
-    cat("\nResultado:", if (is.na(re$conformidad)) "No determinado" else re$conformidad, "\n")
+    cat("\nResultado:", if (is.na(re$conformity)) "No determinado" else re$conformity, "\n")
   })
 
   output$grafico_densidad <- renderPlot({
     ag <- as.integer(input$agente_est %||% "1")
     re <- res_estadistica()[[as.character(ag)]]
-    if (is.null(re) || re$tipo == "Ninguna") return(NULL)
+    if (is.null(re) || re$distribution_type == "Neither") return(NULL)
 
     df      <- data.frame(ED = re$eds)
-    centro  <- if (re$tipo == "Lognormal") re$MG else re$MA
-    label_c <- if (re$tipo == "Lognormal") "MG" else "MA"
+    centro  <- if (re$distribution_type == "Lognormal") re$MG else re$MA
+    label_c <- if (re$distribution_type == "Lognormal") "MG" else "MA"
     nombre  <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
 
     ggplot(df, aes(x = ED)) +

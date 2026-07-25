@@ -2,10 +2,10 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_lsc}
 \alias{une689_lsc}
-\title{Limite superior de confianza LSC(95,70) (UNE-EN 689)}
+\title{Upper confidence limit LSC(95,70) (UNE-EN 689)}
 \usage{
 une689_lsc(
-  tipo,
+  distribution_type,
   ut,
   MA = NA_real_,
   DS = NA_real_,
@@ -14,23 +14,25 @@ une689_lsc(
 )
 }
 \arguments{
-\item{tipo}{Character. Distribution type as returned by \code{\link[=une689_distribution_type]{une689_distribution_type()}}.
-Accepts both English (\code{"Lognormal"}, \code{"Normal"}, \code{"Neither"}) and Spanish labels.}
+\item{distribution_type}{Character. Distribution type as returned by
+\code{\link[=une689_distribution_type]{une689_distribution_type()}}. Accepts both English (\code{"Lognormal"},
+\code{"Normal"}, \code{"Neither"}) and Spanish labels.}
 
-\item{ut}{Numeric. Factor UT, vease \code{\link[=une689_ut]{une689_ut()}}.}
+\item{ut}{Numeric. UT factor, see \code{\link[=une689_ut]{une689_ut()}}.}
 
-\item{MA, DS}{Numeric. Media y desviacion aritmeticas (solo se usan si
-needed when \code{tipo = "Normal"}); see \code{\link[=une689_statistics]{une689_statistics()}}.}
+\item{MA, DS}{Numeric. Arithmetic mean and standard deviation (only
+needed when \code{distribution_type = "Normal"}); see \code{\link[=une689_statistics]{une689_statistics()}}.}
 
-\item{MG, DSG}{Numeric. Media y desviacion geometricas (solo se usan
-needed when \code{tipo = "Lognormal"}); see \code{\link[=une689_statistics]{une689_statistics()}}.}
+\item{MG, DSG}{Numeric. Geometric mean and standard deviation (only
+needed when \code{distribution_type = "Lognormal"}); see
+\code{\link[=une689_statistics]{une689_statistics()}}.}
 }
 \value{
-Numeric escalar con el LSC(95,70), o \code{NA_real_} si
-\code{tipo = "Neither"} (or \code{"Ninguna"} in Spanish).
+Numeric scalar with the LSC(95,70), or \code{NA_real_} if
+\code{distribution_type = "Neither"} (or \code{"Ninguna"} in Spanish).
 }
 \description{
-Limite superior de confianza LSC(95,70) (UNE-EN 689)
+Upper confidence limit LSC(95,70) (UNE-EN 689)
 }
 \examples{
 une689_lsc("Normal", ut = 2.005, MA = 7.5, DS = 1.87)

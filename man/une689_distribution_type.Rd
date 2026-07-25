@@ -2,27 +2,28 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_distribution_type}
 \alias{une689_distribution_type}
-\title{Determinar el tipo de distribucion (UNE-EN 689)}
+\title{Determine the distribution type (UNE-EN 689)}
 \usage{
-une689_distribution_type(pval_normal, pval_lognormal, alfa = 0.05)
+une689_distribution_type(pval_normal, pval_lognormal, alpha = 0.05)
 }
 \arguments{
-\item{pval_normal}{Numeric. p-valor del test de normalidad sobre ED.}
+\item{pval_normal}{Numeric. p-value of the normality test on ED.}
 
-\item{pval_lognormal}{Numeric. p-valor del test de normalidad sobre
+\item{pval_lognormal}{Numeric. p-value of the normality test on
 log(ED).}
 
-\item{alfa}{Numeric. Nivel de significacion (por defecto 0,05).}
+\item{alpha}{Numeric. Significance level (default 0.05).}
 }
 \value{
-Character scalar: one of \code{"Lognormal"}, \code{"Normal"} or \code{"Neither"} (in English,
-the default), or the equivalent Spanish labels when \code{expoquimr_lang("es")} is active.
+Character scalar: one of \code{"Lognormal"}, \code{"Normal"} or
+\code{"Neither"} (in English, the default), or the equivalent Spanish
+labels when \code{expoquimr_lang("es")} is active.
 }
 \description{
-Decide si los datos se ajustan mejor a una distribucion lognormal,
-normal, o ninguna de las dos, a partir de los p-valores de
-Shapiro-Wilk. Se da prioridad a la lognormal, siguiendo el criterio
-habitual en higiene industrial (la exposicion suele ser lognormal).
+Decides whether the data best fits a lognormal, normal, or neither
+distribution, from the Shapiro-Wilk p-values. Priority is given to the
+lognormal fit, following common practice in industrial hygiene
+(exposure is usually lognormal).
 }
 \examples{
 une689_distribution_type(pval_normal = 0.03, pval_lognormal = 0.20)

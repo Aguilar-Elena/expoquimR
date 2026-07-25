@@ -1,15 +1,15 @@
 test_that("coshh_classify_volatility classifies correctly in English (default)", {
-  expect_equal(coshh_classify_volatility(t_ebullicion = 111, t_proceso = 20), "Medium")
-  expect_equal(coshh_classify_volatility(t_ebullicion = 56,  t_proceso = 40), "High")
-  expect_equal(coshh_classify_volatility(t_ebullicion = 300, t_proceso = 20), "Low")
+  expect_equal(coshh_classify_volatility(boiling_point = 111, process_temp = 20), "Medium")
+  expect_equal(coshh_classify_volatility(boiling_point = 56,  process_temp = 40), "High")
+  expect_equal(coshh_classify_volatility(boiling_point = 300, process_temp = 20), "Low")
 })
 
 test_that("coshh_classify_volatility classifies correctly in Spanish", {
   expoquimr_lang("es")
   on.exit(expoquimr_lang("en"))
-  expect_equal(coshh_classify_volatility(t_ebullicion = 111, t_proceso = 20), "Media")
-  expect_equal(coshh_classify_volatility(t_ebullicion = 56,  t_proceso = 40), "Alta")
-  expect_equal(coshh_classify_volatility(t_ebullicion = 300, t_proceso = 20), "Baja")
+  expect_equal(coshh_classify_volatility(boiling_point = 111, process_temp = 20), "Media")
+  expect_equal(coshh_classify_volatility(boiling_point = 56,  process_temp = 40), "Alta")
+  expect_equal(coshh_classify_volatility(boiling_point = 300, process_temp = 20), "Baja")
 })
 
 test_that("coshh_classify_volatility requires numeric inputs without NA", {
@@ -59,23 +59,23 @@ test_that("coshh_measures returns NA for NA input", {
 
 test_that("coshh_evaluate chains the full workflow for a liquid", {
   res <- coshh_evaluate(
-    nombre = "Toluene", frases = "H315, H336",
-    cantidad = "Medium", es_liquido = TRUE,
-    t_ebullicion = 111, t_proceso = 20
+    name = "Toluene", phrases = "H315, H336",
+    quantity = "Medium", is_liquid = TRUE,
+    boiling_point = 111, process_temp = 20
   )
-  expect_equal(res$grado,       "A")
-  expect_equal(res$volatilidad, "Medium")
-  expect_equal(res$riesgo,      1L)
-  expect_match(res$medidas,     "ventilation")
+  expect_equal(res$grade,      "A")
+  expect_equal(res$volatility, "Medium")
+  expect_equal(res$risk,       1L)
+  expect_match(res$measures,   "ventilation")
 })
 
 test_that("coshh_evaluate chains the full workflow for a solid", {
   res <- coshh_evaluate(
-    nombre = "Cement dust", frases = "H315",
-    cantidad = "Large", es_liquido = FALSE,
-    pulverulencia = "High"
+    name = "Cement dust", phrases = "H315",
+    quantity = "Large", is_liquid = FALSE,
+    dustiness = "High"
   )
-  expect_equal(res$grado,       "A")
-  expect_equal(res$volatilidad, "High")
-  expect_equal(res$riesgo,      2L)
+  expect_equal(res$grade,      "A")
+  expect_equal(res$volatility, "High")
+  expect_equal(res$risk,       2L)
 })

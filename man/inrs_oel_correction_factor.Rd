@@ -2,18 +2,18 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_oel_correction_factor}
 \alias{inrs_oel_correction_factor}
-\title{Factor de correccion segun el VLA (metodo INRS)}
+\title{VLA correction factor (INRS method)}
 \usage{
 inrs_oel_correction_factor(vla)
 }
 \arguments{
-\item{vla}{Numeric. VLA en mg/m3.}
+\item{vla}{Numeric. VLA in mg/m3.}
 }
 \value{
-Numeric (1, 10, 30 o 100), o \code{NA_real_} si \code{vla} es \code{NA}.
+Numeric (1, 10, 30 or 100), or \code{NA_real_} if \code{vla} is \code{NA}.
 }
 \description{
-Factor de correccion segun el VLA (metodo INRS)
+VLA correction factor (INRS method)
 }
 \examples{
 inrs_oel_correction_factor(0.05)

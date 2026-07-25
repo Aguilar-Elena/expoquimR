@@ -44,29 +44,29 @@ test_that("une689_classify_conformity does NOT declare false conformity with no 
 test_that("une689_validate_min_days enforces the minimum number of days", {
   expect_false(une689_validate_min_days(2))
   expect_true(une689_validate_min_days(3))
-  expect_true(une689_validate_min_days(5, minimo = 3))
+  expect_true(une689_validate_min_days(5, minimum = 3))
 })
 
 test_that("une689_evaluate_preliminary calculates ED/IE per day and classifies the set", {
-  datos <- data.frame(
-    jornada       = c(1, 1, 2, 3, 3),
-    concentracion = c(12, 8, 9, 5, 6),
-    tiempo        = c(4, 4, 8, 3, 5)
+  data <- data.frame(
+    day           = c(1, 1, 2, 3, 3),
+    concentration = c(12, 8, 9, 5, 6),
+    time          = c(4, 4, 8, 3, 5)
   )
-  res <- une689_evaluate_preliminary(datos, vla = 10)
+  res <- une689_evaluate_preliminary(data, vla = 10)
 
-  expect_equal(nrow(res$tabla_jornadas), 3)
-  expect_equal(res$tabla_jornadas$ED, c(10, 9, 45 / 8))
-  expect_equal(res$tabla_jornadas$IE, c(1, 0.9, 45 / 80))
-  expect_equal(res$resultado, .t("une689_no_decision"))
+  expect_equal(nrow(res$days_table), 3)
+  expect_equal(res$days_table$ED, c(10, 9, 45 / 8))
+  expect_equal(res$days_table$IE, c(1, 0.9, 45 / 80))
+  expect_equal(res$result, .t("une689_no_decision"))
 })
 
 test_that("une689_evaluate_preliminary detects NON-CONFORMITY", {
-  datos <- data.frame(
-    jornada       = c(1, 2, 3),
-    concentracion = c(15, 8, 6),
-    tiempo        = c(8, 8, 8)
+  data <- data.frame(
+    day           = c(1, 2, 3),
+    concentration = c(15, 8, 6),
+    time          = c(8, 8, 8)
   )
-  res <- une689_evaluate_preliminary(datos, vla = 10)
-  expect_equal(res$resultado, .t("une689_no_conformity"))
+  res <- une689_evaluate_preliminary(data, vla = 10)
+  expect_equal(res$result, .t("une689_no_conformity"))
 })

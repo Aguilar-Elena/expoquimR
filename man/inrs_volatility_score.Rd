@@ -2,20 +2,20 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_volatility_score}
 \alias{inrs_volatility_score}
-\title{Puntuacion de volatilidad o pulverulencia (metodo INRS)}
+\title{Volatility or dustiness score (INRS method)}
 \usage{
-inrs_volatility_score(clase_volatilidad)
+inrs_volatility_score(volatility_class)
 }
 \arguments{
-\item{clase_volatilidad}{Character. \code{"1"}, \code{"2"} o \code{"3"}, tal como
-devuelven \code{\link[=inrs_liquid_volatility_graph]{inrs_liquid_volatility_graph()}},
-\code{\link[=inrs_liquid_volatility_pressure]{inrs_liquid_volatility_pressure()}} o \code{\link[=inrs_solid_dustiness]{inrs_solid_dustiness()}}.}
+\item{volatility_class}{Character. \code{"1"}, \code{"2"} or \code{"3"}, as returned
+by \code{\link[=inrs_liquid_volatility_graph]{inrs_liquid_volatility_graph()}}, \code{\link[=inrs_liquid_volatility_pressure]{inrs_liquid_volatility_pressure()}}
+or \code{\link[=inrs_solid_dustiness]{inrs_solid_dustiness()}}.}
 }
 \value{
-Numeric (1, 10 o 100), o \code{NA_real_}.
+Numeric (1, 10 or 100), or \code{NA_real_}.
 }
 \description{
-Puntuacion de volatilidad o pulverulencia (metodo INRS)
+Volatility or dustiness score (INRS method)
 }
 \examples{
 inrs_volatility_score("2")

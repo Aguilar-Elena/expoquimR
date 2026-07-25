@@ -2,12 +2,13 @@
 % Please edit documentation in R/run_apps.R
 \name{run_une689}
 \alias{run_une689}
-\title{Lanzar la app Shiny de UNE-EN 689 (preliminar, estadistica y periodicidad)}
+\title{Launch the UNE-EN 689 Shiny application (preliminary, statistical and
+periodic assessment)}
 \usage{
 run_une689(...)
 }
 \arguments{
-\item{...}{Argumentos adicionales pasados a \code{\link[shiny:runApp]{shiny::runApp()}} (p. ej.
+\item{...}{Additional arguments passed to \code{\link[shiny:runApp]{shiny::runApp()}} (e.g.
 \code{launch.browser}, \code{port}).}
 }
 \value{
@@ -15,7 +16,8 @@ No return value, called for side effects. Launches a Shiny
 application in the default browser.
 }
 \description{
-Lanzar la app Shiny de UNE-EN 689 (preliminar, estadistica y periodicidad)
+Launch the UNE-EN 689 Shiny application (preliminary, statistical and
+periodic assessment)
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

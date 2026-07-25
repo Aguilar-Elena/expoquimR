@@ -2,45 +2,45 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_hazard_class}
 \alias{inrs_hazard_class}
-\title{Clase de peligro de una sustancia (metodo INRS)}
+\title{Hazard class of a substance (INRS method)}
 \usage{
 inrs_hazard_class(
-  frases_r = character(0),
-  frases_h = character(0),
-  proceso = NULL,
+  r_phrases = character(0),
+  h_phrases = character(0),
+  process = NULL,
   vla = NA_real_
 )
 }
 \arguments{
-\item{frases_r}{Character vector de frases R (opcional).}
+\item{r_phrases}{Character vector of R phrases (optional).}
 
-\item{frases_h}{Character vector de frases H (opcional).}
+\item{h_phrases}{Character vector of H phrases (optional).}
 
-\item{proceso}{Character escalar con el material/proceso (opcional).
-Se compara como subcadena (insensible a mayusculas) contra el texto
-de la Tabla 1.}
+\item{process}{Character scalar with the material/process (optional).
+Compared as a substring (case-insensitive) against the text of
+Table 1.}
 
-\item{vla}{Numeric. VLA en mg/m3 (opcional).}
+\item{vla}{Numeric. VLA in mg/m3 (optional).}
 }
 \value{
-Character escalar (\code{"1"} a \code{"5"}). Solo devuelve
-\code{NA_character_} si no se proporciono ningun criterio en absoluto
-(\code{frases_r}, \code{frases_h}, \code{proceso} y \code{vla} todos vacios/\code{NA}), en
-cuyo caso no hay informacion suficiente para clasificar.
+Character scalar (\code{"1"} to \code{"5"}). Only returns
+\code{NA_character_} if no criterion at all was supplied (\code{r_phrases},
+\code{h_phrases}, \code{process} and \code{vla} all empty/\code{NA}), in which case there
+is not enough information to classify.
 }
 \description{
-Determina la clase de peligro (1 a 5) de una sustancia a partir de sus
-frases R, sus frases H, su VLA, o el material/proceso al que
-pertenece, consultando la Tabla 1 del metodo INRS. Se explora desde la
-clase mas peligrosa (5) hasta la menos peligrosa (1) y se devuelve la
-primera clase para la que exista coincidencia. Si ninguna frase, VLA o
-proceso coincide con las clases 2 a 5, se asigna la clase 1 por
-defecto (cajon de sastre: "tiene frases pero ninguna de las
-anteriores"), tal como establece la metodologia INRS.
+Determines the hazard class (1 to 5) of a substance from its R phrases,
+its H phrases, its VLA, or the material/process it belongs to, by
+consulting Table 1 of the INRS method. It is explored from the most
+hazardous class (5) down to the least hazardous (1), and the first
+class with a match is returned. If no phrase, VLA or process matches
+classes 2 to 5, class 1 is assigned by default (catch-all: "has
+phrases but none of the above"), as established by the INRS
+methodology.
 }
 \examples{
-inrs_hazard_class(frases_h = "H335")
+inrs_hazard_class(h_phrases = "H335")
 inrs_hazard_class(vla = 0.05)
-inrs_hazard_class(vla = 200) # cae en la clase 1 por defecto
+inrs_hazard_class(vla = 200) # falls into class 1 by default
 
 }

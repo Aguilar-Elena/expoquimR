@@ -2,36 +2,36 @@
 % Please edit documentation in R/from_excel.R
 \name{une689_from_excel}
 \alias{une689_from_excel}
-\title{Evaluar exposicion quimica UNE-EN 689 a partir de un fichero Excel}
+\title{Evaluate UNE-EN 689 chemical exposure from an Excel file}
 \usage{
-une689_from_excel(ruta)
+une689_from_excel(path)
 }
 \arguments{
-\item{ruta}{Character. Ruta al fichero \code{.xlsx}.}
+\item{path}{Character. Path to the \code{.xlsx} file.}
 }
 \value{
-Una lista con los elementos:
+A list with the elements:
 \describe{
-\item{\code{preliminar}}{Lista con un elemento por agente, cada uno
-con \code{nombre}, \code{vla}, \code{tabla_jornadas} y \code{resultado}.}
-\item{\code{aditivo}}{\code{data.frame} con columnas \code{grupo}, \code{agente},
-\code{ie_medio} e \code{ie_combinado}, o \code{NULL} si no hay hoja de
-efectos aditivos.}
+\item{\code{preliminary}}{A list with one element per agent, each with
+\code{name}, \code{vla}, \code{days_table} and \code{result}.}
+\item{\code{additive}}{\code{data.frame} with columns \code{group}, \code{agent},
+\code{mean_ie} and \code{combined_ie}, or \code{NULL} if there is no additive
+effects sheet.}
 }
 }
 \description{
-Lee las tres hojas de la plantilla UNE-EN 689 de expoquimR
-(\code{Agentes}, \code{Mediciones} y opcionalmente \code{Efectos_aditivos}) y
-devuelve una lista con la evaluacion preliminar de cada agente,
-y si procede, el calculo de efectos aditivos por grupo.
+Reads the three sheets of the expoquimR UNE-EN 689 template
+(\code{Agents}, \code{Measurements} and optionally \code{Additive_effects}) and
+returns a list with the preliminary assessment of each agent, and if
+applicable, the additive effects calculation by group.
 }
 \examples{
 \dontrun{
-ruta <- system.file("plantillas", "plantilla_une689.xlsx",
+path <- system.file("plantillas", "plantilla_une689.xlsx",
                     package = "expoquimR")
-res <- une689_from_excel(ruta)
-res$preliminar
-res$aditivo
+res <- une689_from_excel(path)
+res$preliminary
+res$additive
 }
 
 }

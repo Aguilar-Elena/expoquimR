@@ -1,132 +1,131 @@
-#' Clase de cantidad diaria manipulada (metodo INRS)
+#' Daily handled quantity class (INRS method)
 #'
-#' Clasifica la cantidad diaria de sustancia manipulada en una de las 5
-#' clases del metodo INRS, segun su unidad.
+#' Classifies the daily quantity of substance handled into one of the 5
+#' classes of the INRS method, according to its unit.
 #'
-#' @param valor Numeric. Cantidad diaria manipulada.
-#' @param unidad Character. Una de `"g"`, `"ml"`, `"kg"`, `"l"`.
+#' @param value Numeric. Daily quantity handled.
+#' @param unit Character. One of `"g"`, `"ml"`, `"kg"`, `"l"`.
 #'
-#' @return Character escalar (`"1"` a `"5"`), o `NA_character_` si
-#'   `valor` es `NA`.
+#' @return Character scalar (`"1"` to `"5"`), or `NA_character_` if
+#'   `value` is `NA`.
 #'
 #' @examples
 #' inrs_quantity_class(50, "g")
 #' inrs_quantity_class(500, "kg")
 #'
 #' @export
-inrs_quantity_class <- function(valor, unidad = c("g", "ml", "kg", "l")) {
-  unidad <- match.arg(unidad)
-  if (is.na(valor)) return(NA_character_)
+inrs_quantity_class <- function(value, unit = c("g", "ml", "kg", "l")) {
+  unit <- match.arg(unit)
+  if (is.na(value)) return(NA_character_)
 
-  if (unidad %in% c("g", "ml")) {
-    if (valor < 100) "1" else if (valor < 10000) "2" else "3"
+  if (unit %in% c("g", "ml")) {
+    if (value < 100) "1" else if (value < 10000) "2" else "3"
   } else {
-    if (valor < 10) "2" else if (valor < 100) "3" else if (valor < 1000) "4" else "5"
+    if (value < 10) "2" else if (value < 100) "3" else if (value < 1000) "4" else "5"
   }
 }
 
-#' Clase de frecuencia de uso (metodo INRS)
+#' Frequency of use class (INRS method)
 #'
-#' Convierte la frecuencia de uso indicada a las unidades de referencia de
-#' la Tabla 3 del metodo INRS (horas/dia o dias/mes o dias/año, segun la
-#' unidad de entrada) y devuelve la clase correspondiente (0 a 4).
+#' Converts the given frequency of use to the reference units of Table 3
+#' of the INRS method (hours/day or days/month or days/year, depending on
+#' the input unit) and returns the corresponding class (0 to 4).
 #'
-#' @param valor Numeric. Valor de frecuencia. Ignorado si
-#'   `unidad = "no_se_usa"`.
-#' @param unidad Character. Una de `"minutos"`, `"horas"`, `"dias"`,
-#'   `"meses"`, `"no_se_usa"` (esta ultima para sustancias que no se usan
-#'   con una frecuencia periodica, y siempre devuelve clase `"0"`).
+#' @param value Numeric. Frequency value. Ignored if `unit = "not_used"`.
+#' @param unit Character. One of `"minutes"`, `"hours"`, `"days"`,
+#'   `"months"`, `"not_used"` (the latter for substances that are not used
+#'   with a periodic frequency, and always returns class `"0"`).
 #'
-#' @return Character escalar (`"0"` a `"4"`), o `NA_character_` si no hay
-#'   coincidencia en la tabla de referencia.
+#' @return Character scalar (`"0"` to `"4"`), or `NA_character_` if there
+#'   is no match in the reference table.
 #'
 #' @examples
-#' inrs_frequency_class(3, "horas")
-#' inrs_frequency_class(unidad = "no_se_usa")
+#' inrs_frequency_class(3, "hours")
+#' inrs_frequency_class(unit = "not_used")
 #'
 #' @export
-inrs_frequency_class <- function(valor = NA_real_,
-                                   unidad = c("minutos", "horas", "dias", "meses", "no_se_usa")) {
-  unidad <- match.arg(unidad)
-  if (unidad == "no_se_usa") return("0")
-  if (is.na(valor)) return(NA_character_)
+inrs_frequency_class <- function(value = NA_real_,
+                                   unit = c("minutes", "hours", "days", "months", "not_used")) {
+  unit <- match.arg(unit)
+  if (unit == "not_used") return("0")
+  if (is.na(value)) return(NA_character_)
 
-  conv <- switch(unidad,
-    minutos = list(valor = valor / 60, unidad_cmp = "horas", periodo = "Dia"),
-    horas   = list(valor = valor,      unidad_cmp = "horas", periodo = "Dia"),
-    dias    = list(valor = valor,      unidad_cmp = "dias",  periodo = "Mes"),
-    meses   = list(valor = valor * 30, unidad_cmp = "dias",  periodo = "Anio")
+  conv <- switch(unit,
+    minutes = list(value = value / 60, unit_cmp = "hours", period = "Day"),
+    hours   = list(value = value,      unit_cmp = "hours", period = "Day"),
+    days    = list(value = value,      unit_cmp = "days",  period = "Month"),
+    months  = list(value = value * 30, unit_cmp = "days",  period = "Year")
   )
 
-  tabla <- inrs_tabla_frecuencia
-  fila <- tabla[
-    tabla$unidad == conv$unidad_cmp &
-      tabla$periodo == conv$periodo &
-      conv$valor >= tabla$desde &
-      conv$valor <= tabla$hasta,
-    "clase",
+  table <- inrs_frequency_table
+  row <- table[
+    table$unit == conv$unit_cmp &
+      table$period == conv$period &
+      conv$value >= table$from &
+      conv$value <= table$to,
+    "class",
     drop = TRUE
   ]
 
-  if (length(fila) == 0) NA_character_ else fila[1]
+  if (length(row) == 0) NA_character_ else row[1]
 }
 
-#' Clase de peligro de una sustancia (metodo INRS)
+#' Hazard class of a substance (INRS method)
 #'
-#' Determina la clase de peligro (1 a 5) de una sustancia a partir de sus
-#' frases R, sus frases H, su VLA, o el material/proceso al que
-#' pertenece, consultando la Tabla 1 del metodo INRS. Se explora desde la
-#' clase mas peligrosa (5) hasta la menos peligrosa (1) y se devuelve la
-#' primera clase para la que exista coincidencia. Si ninguna frase, VLA o
-#' proceso coincide con las clases 2 a 5, se asigna la clase 1 por
-#' defecto (cajon de sastre: "tiene frases pero ninguna de las
-#' anteriores"), tal como establece la metodologia INRS.
+#' Determines the hazard class (1 to 5) of a substance from its R phrases,
+#' its H phrases, its VLA, or the material/process it belongs to, by
+#' consulting Table 1 of the INRS method. It is explored from the most
+#' hazardous class (5) down to the least hazardous (1), and the first
+#' class with a match is returned. If no phrase, VLA or process matches
+#' classes 2 to 5, class 1 is assigned by default (catch-all: "has
+#' phrases but none of the above"), as established by the INRS
+#' methodology.
 #'
-#' @param frases_r Character vector de frases R (opcional).
-#' @param frases_h Character vector de frases H (opcional).
-#' @param proceso Character escalar con el material/proceso (opcional).
-#'   Se compara como subcadena (insensible a mayusculas) contra el texto
-#'   de la Tabla 1.
-#' @param vla Numeric. VLA en mg/m3 (opcional).
+#' @param r_phrases Character vector of R phrases (optional).
+#' @param h_phrases Character vector of H phrases (optional).
+#' @param process Character scalar with the material/process (optional).
+#'   Compared as a substring (case-insensitive) against the text of
+#'   Table 1.
+#' @param vla Numeric. VLA in mg/m3 (optional).
 #'
-#' @return Character escalar (`"1"` a `"5"`). Solo devuelve
-#'   `NA_character_` si no se proporciono ningun criterio en absoluto
-#'   (`frases_r`, `frases_h`, `proceso` y `vla` todos vacios/`NA`), en
-#'   cuyo caso no hay informacion suficiente para clasificar.
+#' @return Character scalar (`"1"` to `"5"`). Only returns
+#'   `NA_character_` if no criterion at all was supplied (`r_phrases`,
+#'   `h_phrases`, `process` and `vla` all empty/`NA`), in which case there
+#'   is not enough information to classify.
 #'
 #' @examples
-#' inrs_hazard_class(frases_h = "H335")
+#' inrs_hazard_class(h_phrases = "H335")
 #' inrs_hazard_class(vla = 0.05)
-#' inrs_hazard_class(vla = 200) # cae en la clase 1 por defecto
+#' inrs_hazard_class(vla = 200) # falls into class 1 by default
 #'
 #' @export
-inrs_hazard_class <- function(frases_r = character(0),
-                                frases_h = character(0),
-                                proceso = NULL,
+inrs_hazard_class <- function(r_phrases = character(0),
+                                h_phrases = character(0),
+                                process = NULL,
                                 vla = NA_real_) {
-  frases_r <- toupper(trimws(frases_r))
-  frases_h <- toupper(trimws(frases_h))
-  proceso_norm <- if (!is.null(proceso) && nzchar(trimws(proceso))) {
-    tolower(trimws(proceso))
+  r_phrases <- toupper(trimws(r_phrases))
+  h_phrases <- toupper(trimws(h_phrases))
+  process_norm <- if (!is.null(process) && nzchar(trimws(process))) {
+    tolower(trimws(process))
   } else {
     NULL
   }
 
-  sin_criterios <- length(frases_r) == 0 && length(frases_h) == 0 &&
-    is.null(proceso_norm) && is.na(vla)
-  if (sin_criterios) return(NA_character_)
+  no_criteria <- length(r_phrases) == 0 && length(h_phrases) == 0 &&
+    is.null(process_norm) && is.na(vla)
+  if (no_criteria) return(NA_character_)
 
-  tabla <- inrs_tabla_1
+  table <- inrs_hazard_table
 
   for (j in 5:2) {
-    fila <- tabla[tabla$clase_peligro == as.character(j), ]
-    lista_r <- toupper(trimws(strsplit(fila$frases_r, ",")[[1]]))
-    lista_h <- toupper(trimws(strsplit(fila$frases_h, ",")[[1]]))
-    proceso_clase <- tolower(fila$materiales_procesos)
+    row <- table[table$hazard_class == as.character(j), ]
+    r_list <- toupper(trimws(strsplit(row$r_phrases, ",")[[1]]))
+    h_list <- toupper(trimws(strsplit(row$h_phrases, ",")[[1]]))
+    process_class <- tolower(row$process_materials)
 
-    match_r <- length(frases_r) > 0 && any(frases_r %in% lista_r)
-    match_h <- length(frases_h) > 0 && any(frases_h %in% lista_h)
-    match_proc <- !is.null(proceso_norm) && grepl(proceso_norm, proceso_clase, fixed = TRUE)
+    match_r <- length(r_phrases) > 0 && any(r_phrases %in% r_list)
+    match_h <- length(h_phrases) > 0 && any(h_phrases %in% h_list)
+    match_process <- !is.null(process_norm) && grepl(process_norm, process_class, fixed = TRUE)
     match_vla <- if (!is.na(vla)) {
       switch(as.character(j),
         "5" = vla <= 0.1,
@@ -138,241 +137,238 @@ inrs_hazard_class <- function(frases_r = character(0),
       FALSE
     }
 
-    if (match_r || match_h || match_proc || match_vla) {
+    if (match_r || match_h || match_process || match_vla) {
       return(as.character(j))
     }
   }
 
-  # Ninguna coincidencia en clases 2-5: clase 1 por defecto (cajon de sastre)
+  # No match in classes 2-5: class 1 by default (catch-all)
   "1"
 }
 
-#' Clase de exposicion potencial (metodo INRS)
+#' Potential exposure class (INRS method)
 #'
-#' Consulta la Tabla 4 del metodo INRS (clase de cantidad x clase de
-#' frecuencia) para obtener la clase de exposicion potencial.
+#' Consults Table 4 of the INRS method (quantity class x frequency class)
+#' to obtain the potential exposure class.
 #'
-#' @param clase_cantidad Character. Vease [inrs_quantity_class()].
-#' @param clase_frecuencia Character. Vease [inrs_frequency_class()].
+#' @param quantity_class Character. See [inrs_quantity_class()].
+#' @param frequency_class Character. See [inrs_frequency_class()].
 #'
-#' @return Character escalar (`"0"` a `"5"`), o `NA_character_` si la
-#'   combinacion no esta definida.
+#' @return Character scalar (`"0"` to `"5"`), or `NA_character_` if the
+#'   combination is not defined.
 #'
 #' @examples
 #' inrs_potential_exposure_class("3", "2")
 #'
 #' @export
-inrs_potential_exposure_class <- function(clase_cantidad, clase_frecuencia) {
-  if (is.na(clase_cantidad) || is.na(clase_frecuencia)) return(NA_character_)
+inrs_potential_exposure_class <- function(quantity_class, frequency_class) {
+  if (is.na(quantity_class) || is.na(frequency_class)) return(NA_character_)
 
-  tabla <- inrs_tabla_exposicion_potencial
-  fila <- tabla[
-    tabla$clase_cantidad == clase_cantidad & tabla$clase_frecuencia == clase_frecuencia,
-    "clase_exposicion",
+  table <- inrs_potential_exposure_table
+  row <- table[
+    table$quantity_class == quantity_class & table$frequency_class == frequency_class,
+    "exposure_class",
     drop = TRUE
   ]
 
-  if (length(fila) == 0) NA_character_ else fila[1]
+  if (length(row) == 0) NA_character_ else row[1]
 }
 
-#' Clase de riesgo potencial (metodo INRS)
+#' Potential risk class (INRS method)
 #'
-#' Consulta la Tabla 5 del metodo INRS (clase de exposicion potencial x
-#' clase de peligro) para obtener la clase de riesgo potencial.
+#' Consults Table 5 of the INRS method (potential exposure class x hazard
+#' class) to obtain the potential risk class.
 #'
-#' @param clase_exposicion_potencial Character. Vease
+#' @param potential_exposure_class Character. See
 #'   [inrs_potential_exposure_class()].
-#' @param clase_peligro Character. Vease [inrs_hazard_class()].
+#' @param hazard_class Character. See [inrs_hazard_class()].
 #'
-#' @return Character escalar (`"1"` a `"5"`), o `NA_character_` si la
-#'   combinacion no esta definida.
+#' @return Character scalar (`"1"` to `"5"`), or `NA_character_` if the
+#'   combination is not defined.
 #'
 #' @examples
 #' inrs_potential_risk_class("4", "3")
 #'
 #' @export
-inrs_potential_risk_class <- function(clase_exposicion_potencial, clase_peligro) {
-  if (is.na(clase_exposicion_potencial) || is.na(clase_peligro)) return(NA_character_)
+inrs_potential_risk_class <- function(potential_exposure_class, hazard_class) {
+  if (is.na(potential_exposure_class) || is.na(hazard_class)) return(NA_character_)
 
-  tabla <- inrs_tabla_riesgo_potencial
-  fila <- tabla[
-    tabla$clase_exposicion == clase_exposicion_potencial & tabla$clase_peligro == clase_peligro,
-    "clase_riesgo",
+  table <- inrs_potential_risk_table
+  row <- table[
+    table$exposure_class == potential_exposure_class & table$hazard_class == hazard_class,
+    "risk_class",
     drop = TRUE
   ]
 
-  if (length(fila) == 0) NA_character_ else fila[1]
+  if (length(row) == 0) NA_character_ else row[1]
 }
 
-#' Puntuacion de riesgo potencial (metodo INRS)
+#' Potential risk score (INRS method)
 #'
-#' @param clase_riesgo_potencial Character. Vease
-#'   [inrs_potential_risk_class()].
+#' @param potential_risk_class Character. See [inrs_potential_risk_class()].
 #'
-#' @return Numeric (1, 10, 100, 1000 o 10000), o `NA_real_`.
+#' @return Numeric (1, 10, 100, 1000 or 10000), or `NA_real_`.
 #'
 #' @examples
 #' inrs_potential_risk_score("3")
 #'
 #' @export
-inrs_potential_risk_score <- function(clase_riesgo_potencial) {
-  if (is.na(clase_riesgo_potencial)) return(NA_real_)
+inrs_potential_risk_score <- function(potential_risk_class) {
+  if (is.na(potential_risk_class)) return(NA_real_)
 
-  tabla <- inrs_tabla_puntuacion_riesgo
-  fila <- tabla[tabla$clase_riesgo == clase_riesgo_potencial, "puntuacion", drop = TRUE]
+  table <- inrs_risk_score_table
+  row <- table[table$risk_class == potential_risk_class, "score", drop = TRUE]
 
-  if (length(fila) == 0) NA_real_ else as.numeric(fila[1])
+  if (length(row) == 0) NA_real_ else as.numeric(row[1])
 }
 
-#' Clase de volatilidad de un liquido a partir de temperatura y punto de ebullicion
+#' Volatility class of a liquid from use temperature and boiling point
 #'
-#' Clasifica la volatilidad de un liquido comparando su punto de
-#' ebullicion con las dos rectas de separacion de clases del grafico del
-#' metodo INRS (Figura 2, temperatura de utilizacion en el eje X, punto
-#' de ebullicion en el eje Y).
+#' Classifies the volatility of a liquid by comparing its boiling point
+#' with the two class-separating lines of the INRS method graph
+#' (Figure 2, use temperature on the X axis, boiling point on the Y
+#' axis).
 #'
-#' @param temperatura_uso Numeric. Temperatura de uso (proceso), en
-#'   grados Celsius. Corresponde al eje X del grafico.
-#' @param punto_ebullicion Numeric. Punto de ebullicion, en grados
-#'   Celsius. Corresponde al eje Y del grafico.
+#' @param use_temperature Numeric. Use (process) temperature, in degrees
+#'   Celsius. Corresponds to the X axis of the graph.
+#' @param boiling_point Numeric. Boiling point, in degrees Celsius.
+#'   Corresponds to the Y axis of the graph.
 #'
-#' @return Character escalar (`"1"` baja, `"2"` media, `"3"` alta).
+#' @return Character scalar (`"1"` low, `"2"` medium, `"3"` high).
 #'
 #' @examples
-#' inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 200)
-#' inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 80)
+#' inrs_liquid_volatility_graph(use_temperature = 20, boiling_point = 200)
+#' inrs_liquid_volatility_graph(use_temperature = 20, boiling_point = 80)
 #'
 #' @export
-inrs_liquid_volatility_graph <- function(temperatura_uso, punto_ebullicion) {
-  if (is.na(temperatura_uso) || is.na(punto_ebullicion)) {
+inrs_liquid_volatility_graph <- function(use_temperature, boiling_point) {
+  if (is.na(use_temperature) || is.na(boiling_point)) {
     return(NA_character_)
   }
-  # Rectas de separacion de clases del grafico oficial INRS (Figura 2):
-  # linea1 separa clase 1 (baja) de clase 2 (media): pasa por (0,70) y (150,240)
-  # linea2 separa clase 2 (media) de clase 3 (alta): pasa por (0,135) y (125,300)
-  linea1 <- 70 + (240 - 70) / 150 * temperatura_uso
-  linea2 <- 135 + (300 - 135) / 125 * temperatura_uso
+  # Class-separating lines of the official INRS graph (Figure 2):
+  # line1 separates class 1 (low) from class 2 (medium): through (0,70) and (150,240)
+  # line2 separates class 2 (medium) from class 3 (high): through (0,135) and (125,300)
+  line1 <- 70 + (240 - 70) / 150 * use_temperature
+  line2 <- 135 + (300 - 135) / 125 * use_temperature
 
-  if (punto_ebullicion > linea2) {
+  if (boiling_point > line2) {
     "1"
-  } else if (punto_ebullicion > linea1) {
+  } else if (boiling_point > line1) {
     "2"
   } else {
     "3"
   }
 }
 
-#' Clase de volatilidad de un liquido a partir de la presion de vapor
+#' Volatility class of a liquid from vapour pressure
 #'
-#' Clasifica la volatilidad de un liquido segun los umbrales oficiales de
-#' la Tabla 8 del metodo INRS.
+#' Classifies the volatility of a liquid according to the official
+#' thresholds of Table 8 of the INRS method.
 #'
-#' @param presion_vapor Numeric. Presion de vapor a la temperatura de
-#'   trabajo, en kPa.
+#' @param vapour_pressure Numeric. Vapour pressure at working
+#'   temperature, in kPa.
 #'
-#' @return Character escalar (`"1"` si Pv < 0,5 kPa, `"2"` si
-#'   0,5 <= Pv < 25 kPa, `"3"` si Pv >= 25 kPa).
+#' @return Character scalar (`"1"` if Pv < 0.5 kPa, `"2"` if
+#'   0.5 <= Pv < 25 kPa, `"3"` if Pv >= 25 kPa).
 #'
 #' @examples
 #' inrs_liquid_volatility_pressure(15)
 #'
 #' @export
-inrs_liquid_volatility_pressure <- function(presion_vapor) {
-  if (is.na(presion_vapor)) return(NA_character_)
-  if (presion_vapor < 0.5) "1" else if (presion_vapor < 25) "2" else "3"
+inrs_liquid_volatility_pressure <- function(vapour_pressure) {
+  if (is.na(vapour_pressure)) return(NA_character_)
+  if (vapour_pressure < 0.5) "1" else if (vapour_pressure < 25) "2" else "3"
 }
 
-#' Clase de pulverulencia de un solido (metodo INRS)
+#' Dustiness class of a solid (INRS method)
 #'
-#' @param descripcion Character. Una de `"Polvo que genera mucha
-#'   dispersion visible en el aire"`, `"Polvo fino con poca dispersion
-#'   visible"` o `"Solido compacto sin polvo visible"`.
+#' @param description Character. One of `"Dust that generates a lot of
+#'   visible dispersion in the air"`, `"Fine dust with little visible
+#'   dispersion"` or `"Compact solid with no visible dust"`.
 #'
-#' @return Character escalar (`"1"` a `"3"`), o `NA_character_` si la
-#'   descripcion no coincide con ninguna opcion valida.
+#' @return Character scalar (`"1"` to `"3"`), or `NA_character_` if
+#'   `description` does not match any valid option.
 #'
 #' @examples
-#' inrs_solid_dustiness("Polvo fino con poca dispersion visible")
+#' inrs_solid_dustiness("Fine dust with little visible dispersion")
 #'
 #' @export
-inrs_solid_dustiness <- function(descripcion) {
-  switch(descripcion,
-    "Polvo que genera mucha dispersion visible en el aire" = "3",
-    "Polvo fino con poca dispersion visible" = "2",
-    "Solido compacto sin polvo visible" = "1",
+inrs_solid_dustiness <- function(description) {
+  switch(description,
+    "Dust that generates a lot of visible dispersion in the air" = "3",
+    "Fine dust with little visible dispersion" = "2",
+    "Compact solid with no visible dust" = "1",
     NA_character_
   )
 }
 
-#' Puntuacion de volatilidad o pulverulencia (metodo INRS)
+#' Volatility or dustiness score (INRS method)
 #'
-#' @param clase_volatilidad Character. `"1"`, `"2"` o `"3"`, tal como
-#'   devuelven [inrs_liquid_volatility_graph()],
-#'   [inrs_liquid_volatility_pressure()] o [inrs_solid_dustiness()].
+#' @param volatility_class Character. `"1"`, `"2"` or `"3"`, as returned
+#'   by [inrs_liquid_volatility_graph()], [inrs_liquid_volatility_pressure()]
+#'   or [inrs_solid_dustiness()].
 #'
-#' @return Numeric (1, 10 o 100), o `NA_real_`.
+#' @return Numeric (1, 10 or 100), or `NA_real_`.
 #'
 #' @examples
 #' inrs_volatility_score("2")
 #'
 #' @export
-inrs_volatility_score <- function(clase_volatilidad) {
-  if (is.na(clase_volatilidad)) return(NA_real_)
-  switch(clase_volatilidad,
+inrs_volatility_score <- function(volatility_class) {
+  if (is.na(volatility_class)) return(NA_real_)
+  switch(volatility_class,
     "1" = 1, "2" = 10, "3" = 100,
     NA_real_
   )
 }
 
-#' Clase y puntuacion de procedimiento (metodo INRS)
+#' Process class and score (INRS method)
 #'
-#' @param tipo Character. Uno de `"Dispersivo"`, `"Abierto"`,
-#'   `"Cerrado/abierto regularmente"`, `"Cerrado permanente"`.
+#' @param type Character. One of `"Dispersive"`, `"Open"`,
+#'   `"Closed/opened regularly"`, `"Permanently closed"`.
 #'
-#' @return Un `data.frame` de una fila con columnas `clase` y
-#'   `puntuacion`.
+#' @return A one-row `data.frame` with columns `class` and `score`.
 #'
 #' @examples
-#' inrs_process_type("Abierto")
+#' inrs_process_type("Open")
 #'
 #' @export
-inrs_process_type <- function(tipo) {
-  tabla <- inrs_tabla_procedimiento
-  fila <- tabla[tabla$tipo == tipo, c("clase", "puntuacion")]
-  if (nrow(fila) == 0) {
-    data.frame(clase = NA_character_, puntuacion = NA_real_)
+inrs_process_type <- function(type) {
+  table <- inrs_process_table
+  row <- table[table$type == type, c("class", "score")]
+  if (nrow(row) == 0) {
+    data.frame(class = NA_character_, score = NA_real_)
   } else {
-    fila[1, ]
+    row[1, ]
   }
 }
 
-#' Clase y puntuacion de proteccion colectiva (metodo INRS)
+#' Collective protection class and score (INRS method)
 #'
-#' @param situacion Character. Una de las situaciones de la Figura 4
-#'   INRS, p. ej. `"Captacion envolvente"`.
+#' @param situation Character. One of the situations of INRS Figure 4,
+#'   e.g. `"Enclosing hood / full enclosure"`.
 #'
-#' @return Un `data.frame` de una fila con columnas `clase` y
-#'   `puntuacion`.
+#' @return A one-row `data.frame` with columns `class` and `score`.
 #'
 #' @examples
-#' inrs_collective_protection("Captacion envolvente")
+#' inrs_collective_protection("Enclosing hood / full enclosure")
 #'
 #' @export
-inrs_collective_protection <- function(situacion) {
-  tabla <- inrs_tabla_proteccion
-  fila <- tabla[tabla$situacion == situacion, c("clase", "puntuacion")]
-  if (nrow(fila) == 0) {
-    data.frame(clase = NA_character_, puntuacion = NA_real_)
+inrs_collective_protection <- function(situation) {
+  table <- inrs_protection_table
+  row <- table[table$situation == situation, c("class", "score")]
+  if (nrow(row) == 0) {
+    data.frame(class = NA_character_, score = NA_real_)
   } else {
-    fila[1, ]
+    row[1, ]
   }
 }
 
-#' Factor de correccion segun el VLA (metodo INRS)
+#' VLA correction factor (INRS method)
 #'
-#' @param vla Numeric. VLA en mg/m3.
+#' @param vla Numeric. VLA in mg/m3.
 #'
-#' @return Numeric (1, 10, 30 o 100), o `NA_real_` si `vla` es `NA`.
+#' @return Numeric (1, 10, 30 or 100), or `NA_real_` if `vla` is `NA`.
 #'
 #' @examples
 #' inrs_oel_correction_factor(0.05)
@@ -386,172 +382,166 @@ inrs_oel_correction_factor <- function(vla) {
   else 100
 }
 
-#' Puntuacion final de riesgo por inhalacion (metodo INRS)
+#' Final inhalation risk score (INRS method)
 #'
-#' Producto de las cinco puntuaciones parciales del metodo INRS.
+#' Product of the five partial scores of the INRS method.
 #'
-#' @param puntuacion_riesgo_potencial Numeric. Vease
-#'   [inrs_potential_risk_score()].
-#' @param puntuacion_volatilidad Numeric. Vease
-#'   [inrs_volatility_score()].
-#' @param puntuacion_procedimiento Numeric. Vease [inrs_process_type()].
-#' @param puntuacion_proteccion Numeric. Vease [inrs_collective_protection()].
-#' @param fc_vla Numeric. Vease [inrs_oel_correction_factor()].
+#' @param potential_risk_score Numeric. See [inrs_potential_risk_score()].
+#' @param volatility_score Numeric. See [inrs_volatility_score()].
+#' @param procedure_score Numeric. See [inrs_process_type()].
+#' @param protection_score Numeric. See [inrs_collective_protection()].
+#' @param vla_correction_factor Numeric. See [inrs_oel_correction_factor()].
 #'
-#' @return Numeric, o `NA_real_` si falta algun componente.
+#' @return Numeric, or `NA_real_` if any component is missing.
 #'
 #' @examples
 #' inrs_inhalation_risk(100, 10, 0.5, 0.7, 10)
 #'
 #' @export
-inrs_inhalation_risk <- function(puntuacion_riesgo_potencial,
-                                    puntuacion_volatilidad,
-                                    puntuacion_procedimiento,
-                                    puntuacion_proteccion,
-                                    fc_vla) {
-  componentes <- c(
-    puntuacion_riesgo_potencial, puntuacion_volatilidad,
-    puntuacion_procedimiento, puntuacion_proteccion, fc_vla
+inrs_inhalation_risk <- function(potential_risk_score,
+                                    volatility_score,
+                                    procedure_score,
+                                    protection_score,
+                                    vla_correction_factor) {
+  components <- c(
+    potential_risk_score, volatility_score,
+    procedure_score, protection_score, vla_correction_factor
   )
-  if (anyNA(componentes)) return(NA_real_)
-  Reduce(`*`, componentes)
+  if (anyNA(components)) return(NA_real_)
+  Reduce(`*`, components)
 }
 
-#' Caracterizacion del riesgo por inhalacion (metodo INRS)
+#' Inhalation risk characterisation (INRS method)
 #'
-#' @param riesgo_inhalacion Numeric. Vease [inrs_inhalation_risk()].
+#' @param inhalation_risk Numeric. See [inrs_inhalation_risk()].
 #'
-#' @return Character escalar describiendo la prioridad de accion, o
-#'   `NA_character_` si `riesgo_inhalacion` es `NA`.
+#' @return Character scalar describing the action priority, or
+#'   `NA_character_` if `inhalation_risk` is `NA`.
 #'
 #' @examples
 #' inrs_risk_characterisation(2500)
 #'
 #' @export
-inrs_risk_characterisation <- function(riesgo_inhalacion) {
-  if (is.na(riesgo_inhalacion)) return(NA_character_)
-  if (riesgo_inhalacion > 1000) {
+inrs_risk_characterisation <- function(inhalation_risk) {
+  if (is.na(inhalation_risk)) return(NA_character_)
+  if (inhalation_risk > 1000) {
     .t("inrs_char_3")
-  } else if (riesgo_inhalacion > 100) {
+  } else if (inhalation_risk > 100) {
     .t("inrs_char_2")
   } else {
     .t("inrs_char_1")
   }
 }
 
-#' Evaluar un producto quimico con el metodo INRS (funcion de alto nivel)
+#' Evaluate a chemical product with the INRS method (high-level wrapper)
 #'
-#' Encadena todos los pasos del metodo INRS (clase de peligro, cantidad,
-#' frecuencia, exposicion potencial, riesgo potencial, volatilidad o
-#' pulverulencia, procedimiento y proteccion colectiva) a partir de los
-#' datos brutos de un producto, y devuelve una fila de resultado completa.
-#' Pensada para usarse directamente desde codigo, sin pasar por la
-#' aplicacion Shiny.
+#' Chains all the steps of the INRS method (hazard class, quantity,
+#' frequency, potential exposure, potential risk, volatility or
+#' dustiness, process and collective protection) from the raw data of a
+#' product, and returns a complete result row. Designed to be used
+#' directly from code, without going through the Shiny application.
 #'
-#' @param nombre Character. Nombre del producto.
-#' @param frases_r,frases_h Character vectors. Vease
-#'   [inrs_hazard_class()].
-#' @param proceso Character. Vease [inrs_hazard_class()].
-#' @param vla Numeric. VLA en mg/m3.
-#' @param cantidad_valor,cantidad_unidad Vease [inrs_quantity_class()].
-#' @param frecuencia_valor,frecuencia_unidad Vease
-#'   [inrs_frequency_class()].
-#' @param tipo_sustancia Character. `"liquida"` o `"solida"`.
-#' @param metodo_liquido Character. `"grafico"` o `"presion"`. Solo se usa
-#'   si `tipo_sustancia = "liquida"`.
-#' @param temperatura_uso,punto_ebullicion Numeric. Solo si
-#'   `metodo_liquido = "grafico"`.
-#' @param presion_vapor Numeric. Solo si `metodo_liquido = "presion"`.
-#' @param descripcion_solida Character. Solo si
-#'   `tipo_sustancia = "solida"`. Vease [inrs_solid_dustiness()].
-#' @param procedimiento Character. Vease [inrs_process_type()].
-#' @param proteccion Character. Vease [inrs_collective_protection()].
+#' @param name Character. Name of the product.
+#' @param r_phrases,h_phrases Character vectors. See [inrs_hazard_class()].
+#' @param process Character. See [inrs_hazard_class()].
+#' @param vla Numeric. VLA in mg/m3.
+#' @param quantity_value,quantity_unit See [inrs_quantity_class()].
+#' @param frequency_value,frequency_unit See [inrs_frequency_class()].
+#' @param substance_type Character. `"liquid"` or `"solid"`.
+#' @param liquid_method Character. `"graph"` or `"pressure"`. Only used
+#'   if `substance_type = "liquid"`.
+#' @param use_temperature,boiling_point Numeric. Only if
+#'   `liquid_method = "graph"`.
+#' @param vapour_pressure Numeric. Only if `liquid_method = "pressure"`.
+#' @param solid_description Character. Only if `substance_type = "solid"`.
+#'   See [inrs_solid_dustiness()].
+#' @param procedure Character. See [inrs_process_type()].
+#' @param protection Character. See [inrs_collective_protection()].
 #'
-#' @return Un `data.frame` de una fila con todas las clases y puntuaciones
-#'   intermedias, la puntuacion final de riesgo por inhalacion y su
-#'   caracterizacion.
+#' @return A one-row `data.frame` with all the intermediate classes and
+#'   scores, the final inhalation risk score and its characterisation.
 #'
 #' @examples
 #' inrs_evaluate(
-#'   nombre = "Disolvente X",
-#'   frases_h = "H336",
+#'   name = "Solvent X",
+#'   h_phrases = "H336",
 #'   vla = 50,
-#'   cantidad_valor = 5, cantidad_unidad = "l",
-#'   frecuencia_valor = 3, frecuencia_unidad = "horas",
-#'   tipo_sustancia = "liquida",
-#'   metodo_liquido = "grafico",
-#'   temperatura_uso = 40, punto_ebullicion = 80,
-#'   procedimiento = "Abierto",
-#'   proteccion = "Condiciones moderadas de dispersion"
+#'   quantity_value = 5, quantity_unit = "l",
+#'   frequency_value = 3, frequency_unit = "hours",
+#'   substance_type = "liquid",
+#'   liquid_method = "graph",
+#'   use_temperature = 40, boiling_point = 80,
+#'   procedure = "Open",
+#'   protection = "Moderate dispersion conditions"
 #' )
 #'
 #' @export
-inrs_evaluate <- function(nombre,
-                          frases_r = character(0),
-                          frases_h = character(0),
-                          proceso = NULL,
+inrs_evaluate <- function(name,
+                          r_phrases = character(0),
+                          h_phrases = character(0),
+                          process = NULL,
                           vla = NA_real_,
-                          cantidad_valor = NA_real_,
-                          cantidad_unidad = c("g", "ml", "kg", "l"),
-                          frecuencia_valor = NA_real_,
-                          frecuencia_unidad = c("minutos", "horas", "dias", "meses", "no_se_usa"),
-                          tipo_sustancia = c("liquida", "solida"),
-                          metodo_liquido = c("grafico", "presion"),
-                          temperatura_uso = NA_real_,
-                          punto_ebullicion = NA_real_,
-                          presion_vapor = NA_real_,
-                          descripcion_solida = NA_character_,
-                          procedimiento,
-                          proteccion) {
-  cantidad_unidad <- match.arg(cantidad_unidad)
-  frecuencia_unidad <- match.arg(frecuencia_unidad)
-  tipo_sustancia <- match.arg(tipo_sustancia)
-  metodo_liquido <- match.arg(metodo_liquido)
+                          quantity_value = NA_real_,
+                          quantity_unit = c("g", "ml", "kg", "l"),
+                          frequency_value = NA_real_,
+                          frequency_unit = c("minutes", "hours", "days", "months", "not_used"),
+                          substance_type = c("liquid", "solid"),
+                          liquid_method = c("graph", "pressure"),
+                          use_temperature = NA_real_,
+                          boiling_point = NA_real_,
+                          vapour_pressure = NA_real_,
+                          solid_description = NA_character_,
+                          procedure,
+                          protection) {
+  quantity_unit <- match.arg(quantity_unit)
+  frequency_unit <- match.arg(frequency_unit)
+  substance_type <- match.arg(substance_type)
+  liquid_method <- match.arg(liquid_method)
 
-  clase_peligro <- inrs_hazard_class(frases_r, frases_h, proceso, vla)
-  clase_cantidad <- inrs_quantity_class(cantidad_valor, cantidad_unidad)
-  clase_frecuencia <- inrs_frequency_class(frecuencia_valor, frecuencia_unidad)
-  clase_expo_pot <- inrs_potential_exposure_class(clase_cantidad, clase_frecuencia)
-  clase_riesgo_pot <- inrs_potential_risk_class(clase_expo_pot, clase_peligro)
-  punt_riesgo_pot <- inrs_potential_risk_score(clase_riesgo_pot)
+  hazard_class <- inrs_hazard_class(r_phrases, h_phrases, process, vla)
+  quantity_class <- inrs_quantity_class(quantity_value, quantity_unit)
+  frequency_class <- inrs_frequency_class(frequency_value, frequency_unit)
+  potential_exposure_class <- inrs_potential_exposure_class(quantity_class, frequency_class)
+  potential_risk_class <- inrs_potential_risk_class(potential_exposure_class, hazard_class)
+  potential_risk_score <- inrs_potential_risk_score(potential_risk_class)
 
-  clase_volatilidad <- if (tipo_sustancia == "liquida") {
-    if (metodo_liquido == "grafico") {
-      inrs_liquid_volatility_graph(temperatura_uso, punto_ebullicion)
+  volatility_class <- if (substance_type == "liquid") {
+    if (liquid_method == "graph") {
+      inrs_liquid_volatility_graph(use_temperature, boiling_point)
     } else {
-      inrs_liquid_volatility_pressure(presion_vapor)
+      inrs_liquid_volatility_pressure(vapour_pressure)
     }
   } else {
-    inrs_solid_dustiness(descripcion_solida)
+    inrs_solid_dustiness(solid_description)
   }
-  punt_volatilidad <- inrs_volatility_score(clase_volatilidad)
+  volatility_score <- inrs_volatility_score(volatility_class)
 
-  proc <- inrs_process_type(procedimiento)
-  prot <- inrs_collective_protection(proteccion)
-  fc_vla <- inrs_oel_correction_factor(vla)
+  proc <- inrs_process_type(procedure)
+  prot <- inrs_collective_protection(protection)
+  vla_correction_factor <- inrs_oel_correction_factor(vla)
 
-  riesgo <- inrs_inhalation_risk(
-    punt_riesgo_pot, punt_volatilidad, proc$puntuacion, prot$puntuacion, fc_vla
+  risk <- inrs_inhalation_risk(
+    potential_risk_score, volatility_score, proc$score, prot$score, vla_correction_factor
   )
-  caracterizacion <- inrs_risk_characterisation(riesgo)
+  characterisation <- inrs_risk_characterisation(risk)
 
   data.frame(
-    producto = nombre,
-    clase_peligro = clase_peligro,
-    clase_cantidad = clase_cantidad,
-    clase_frecuencia = clase_frecuencia,
-    clase_exposicion_potencial = clase_expo_pot,
-    clase_riesgo_potencial = clase_riesgo_pot,
-    puntuacion_riesgo_potencial = punt_riesgo_pot,
-    clase_volatilidad_pulverulencia = clase_volatilidad,
-    puntuacion_volatilidad_pulverulencia = punt_volatilidad,
-    clase_procedimiento = proc$clase,
-    puntuacion_procedimiento = proc$puntuacion,
-    clase_proteccion = prot$clase,
-    puntuacion_proteccion = prot$puntuacion,
-    fc_vla = fc_vla,
-    riesgo_inhalacion = riesgo,
-    caracterizacion_riesgo = caracterizacion,
+    product = name,
+    hazard_class = hazard_class,
+    quantity_class = quantity_class,
+    frequency_class = frequency_class,
+    potential_exposure_class = potential_exposure_class,
+    potential_risk_class = potential_risk_class,
+    potential_risk_score = potential_risk_score,
+    volatility_dustiness_class = volatility_class,
+    volatility_dustiness_score = volatility_score,
+    procedure_class = proc$class,
+    procedure_score = proc$score,
+    protection_class = prot$class,
+    protection_score = prot$score,
+    vla_correction_factor = vla_correction_factor,
+    inhalation_risk = risk,
+    risk_characterisation = characterisation,
     stringsAsFactors = FALSE
   )
 }

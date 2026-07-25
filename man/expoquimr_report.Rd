@@ -23,8 +23,8 @@ expoquimr_report(
 \code{\link[=inrs_from_excel]{inrs_from_excel()}}. If \code{NULL} (default), the INRS section is omitted.}
 
 \item{une689}{A list returned by \code{\link[=une689_from_excel]{une689_from_excel()}} or constructed
-manually with elements \verb{$preliminar} and optionally \verb{$aditivo}. If \code{NULL}
-(default), the UNE-EN 689 section is omitted.}
+manually with elements \verb{$preliminary} and optionally \verb{$additive}. If
+\code{NULL} (default), the UNE-EN 689 section is omitted.}
 
 \item{evaluator}{Character. Name of the person responsible for the
 assessment. Displayed in the report header. Default \code{""}.}
@@ -55,9 +55,9 @@ effect groups, and a citation block for the package.
 \dontrun{
 # COSHH only
 res <- coshh_evaluate(
-  nombre = "Toluene", frases = "H315, H336",
-  cantidad = "Medium", es_liquido = TRUE,
-  t_ebullicion = 111, t_proceso = 20
+  name = "Toluene", phrases = "H315, H336",
+  quantity = "Medium", is_liquid = TRUE,
+  boiling_point = 111, process_temp = 20
 )
 expoquimr_report(
   coshh     = res,

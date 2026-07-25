@@ -2,31 +2,30 @@
 % Please edit documentation in R/une689_preliminar.R
 \name{une689_daily_exposure}
 \alias{une689_daily_exposure}
-\title{Exposicion diaria (ED) de una jornada, segun UNE-EN 689}
+\title{Daily exposure (ED) for a measurement day, per UNE-EN 689}
 \usage{
-une689_daily_exposure(concentracion, tiempo)
+une689_daily_exposure(concentration, time)
 }
 \arguments{
-\item{concentracion}{Numeric vector. Concentraciones medidas (mg/m3),
-una por muestra.}
+\item{concentration}{Numeric vector. Measured concentrations (mg/m3),
+one per sample.}
 
-\item{tiempo}{Numeric vector. Tiempo de cada muestra (horas), del
-mismo largo que \code{concentracion}.}
+\item{time}{Numeric vector. Time of each sample (hours), same length
+as \code{concentration}.}
 }
 \value{
-Numeric escalar con la ED, o \code{NA_real_} si no hay ninguna
-pareja (concentracion, tiempo) valida.
+Numeric scalar with the ED, or \code{NA_real_} if there is no valid
+(concentration, time) pair.
 }
 \description{
-Calcula la exposicion diaria a partir de las concentraciones y tiempos
-de las muestras validas de una jornada. Si hay una unica muestra
-valida tomada durante las 8 horas completas de jornada, la ED es
-directamente esa concentracion. En caso contrario, se calcula como el
-promedio ponderado por tiempo sobre una jornada de 8 horas
-(\code{sum(concentracion * tiempo) / 8}).
+Calculates the daily exposure from the concentrations and times of the
+valid samples of a measurement day. If there is a single valid sample
+taken over the complete 8-hour working day, the ED is directly that
+concentration. Otherwise, it is calculated as the time-weighted
+average over an 8-hour day (\code{sum(concentration * time) / 8}).
 }
 \examples{
-une689_daily_exposure(concentracion = c(12, 8), tiempo = c(4, 4))
-une689_daily_exposure(concentracion = 9, tiempo = 8)
+une689_daily_exposure(concentration = c(12, 8), time = c(4, 4))
+une689_daily_exposure(concentration = 9, time = 8)
 
 }

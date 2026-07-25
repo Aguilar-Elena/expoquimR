@@ -4,15 +4,15 @@
 \alias{coshh_grade}
 \title{Determine the COSHH hazard group from R/H phrases}
 \usage{
-coshh_grade(frases)
+coshh_grade(phrases)
 }
 \arguments{
-\item{frases}{Character scalar containing one or more phrases separated by
-commas, e.g. \code{"H315, H319"} or \code{"R20/21/22"}.}
+\item{phrases}{Character scalar containing one or more phrases separated
+by commas, e.g. \code{"H315, H319"} or \code{"R20/21/22"}.}
 }
 \value{
 Character scalar with the group (\code{"A"} to \code{"E"}), or
-\code{NA_character_} if \code{frases} is empty or \code{NA}.
+\code{NA_character_} if \code{phrases} is empty or \code{NA}.
 }
 \description{
 Looks up each risk phrase (R) or hazard phrase (H) in the COSHH Essentials

@@ -61,7 +61,7 @@ guide.
 
 ```{r volatility}
 # Toluene: boiling point 111 °C, process temperature 20 °C
-coshh_classify_volatility(t_ebullicion = 111, t_proceso = 20)
+coshh_classify_volatility(boiling_point = 111, process_temp = 20)
 ```
 
 ### 2. Assign the hazard group
@@ -74,7 +74,7 @@ coshh_grade("H315, H336")
 ### 3. Obtain the risk level
 
 ```{r risk}
-coshh_risk(grado = "A", cantidad = "Medium", volatilidad = "Medium")
+coshh_risk(grade = "A", quantity = "Medium", volatility = "Medium")
 ```
 
 ### 4. Get the recommended control measures
@@ -89,12 +89,12 @@ The high-level wrapper `coshh_evaluate()` chains all four steps:
 
 ```{r full}
 coshh_evaluate(
-  nombre       = "Toluene",
-  frases       = "H315, H336",
-  cantidad     = "Medium",
-  es_liquido   = TRUE,
-  t_ebullicion = 111,
-  t_proceso    = 20
+  name          = "Toluene",
+  phrases       = "H315, H336",
+  quantity      = "Medium",
+  is_liquid     = TRUE,
+  boiling_point = 111,
+  process_temp  = 20
 )
 ```
 
@@ -104,20 +104,20 @@ coshh_evaluate(
 for batch evaluation:
 
 ```{r batch}
-sustancias <- list(
-  list(nombre = "Toluene",  frases = "H315, H336", cantidad = "Medium",
-       es_liquido = TRUE,  t_ebullicion = 111, t_proceso = 20),
-  list(nombre = "Xylene",   frases = "H315, H336", cantidad = "Large",
-       es_liquido = TRUE,  t_ebullicion = 139, t_proceso = 20),
-  list(nombre = "Cement",   frases = "H315",        cantidad = "Large",
-       es_liquido = FALSE, pulverulencia = "High")
+substances <- list(
+  list(name = "Toluene",  phrases = "H315, H336", quantity = "Medium",
+       is_liquid = TRUE,  boiling_point = 111, process_temp = 20),
+  list(name = "Xylene",   phrases = "H315, H336", quantity = "Large",
+       is_liquid = TRUE,  boiling_point = 139, process_temp = 20),
+  list(name = "Cement",   phrases = "H315",        quantity = "Large",
+       is_liquid = FALSE, dustiness = "High")
 )
 
-resultados <- do.call(rbind, lapply(sustancias, function(s) {
+results <- do.call(rbind, lapply(substances, function(s) {
   do.call(coshh_evaluate, s)
 }))
 
-resultados
+results
 ```
 
 ## From Excel (no coding required)
@@ -145,12 +145,12 @@ All output labels are available in English (default) and Spanish:
 expoquimr_lang("es")
 
 coshh_evaluate(
-  nombre       = "Tolueno",
-  frases       = "H315, H336",
-  cantidad     = "Mediana",
-  es_liquido   = TRUE,
-  t_ebullicion = 111,
-  t_proceso    = 20
+  name          = "Tolueno",
+  phrases       = "H315, H336",
+  quantity      = "Mediana",
+  is_liquid     = TRUE,
+  boiling_point = 111,
+  process_temp  = 20
 )
 
 expoquimr_lang("en")  # reset to English

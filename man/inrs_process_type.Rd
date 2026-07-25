@@ -2,22 +2,21 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_process_type}
 \alias{inrs_process_type}
-\title{Clase y puntuacion de procedimiento (metodo INRS)}
+\title{Process class and score (INRS method)}
 \usage{
-inrs_process_type(tipo)
+inrs_process_type(type)
 }
 \arguments{
-\item{tipo}{Character. Uno de \code{"Dispersivo"}, \code{"Abierto"},
-\code{"Cerrado/abierto regularmente"}, \code{"Cerrado permanente"}.}
+\item{type}{Character. One of \code{"Dispersive"}, \code{"Open"},
+\code{"Closed/opened regularly"}, \code{"Permanently closed"}.}
 }
 \value{
-Un \code{data.frame} de una fila con columnas \code{clase} y
-\code{puntuacion}.
+A one-row \code{data.frame} with columns \code{class} and \code{score}.
 }
 \description{
-Clase y puntuacion de procedimiento (metodo INRS)
+Process class and score (INRS method)
 }
 \examples{
-inrs_process_type("Abierto")
+inrs_process_type("Open")
 
 }

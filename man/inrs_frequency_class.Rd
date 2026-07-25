@@ -2,32 +2,31 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_frequency_class}
 \alias{inrs_frequency_class}
-\title{Clase de frecuencia de uso (metodo INRS)}
+\title{Frequency of use class (INRS method)}
 \usage{
 inrs_frequency_class(
-  valor = NA_real_,
-  unidad = c("minutos", "horas", "dias", "meses", "no_se_usa")
+  value = NA_real_,
+  unit = c("minutes", "hours", "days", "months", "not_used")
 )
 }
 \arguments{
-\item{valor}{Numeric. Valor de frecuencia. Ignorado si
-\code{unidad = "no_se_usa"}.}
+\item{value}{Numeric. Frequency value. Ignored if \code{unit = "not_used"}.}
 
-\item{unidad}{Character. Una de \code{"minutos"}, \code{"horas"}, \code{"dias"},
-\code{"meses"}, \code{"no_se_usa"} (esta ultima para sustancias que no se usan
-con una frecuencia periodica, y siempre devuelve clase \code{"0"}).}
+\item{unit}{Character. One of \code{"minutes"}, \code{"hours"}, \code{"days"},
+\code{"months"}, \code{"not_used"} (the latter for substances that are not used
+with a periodic frequency, and always returns class \code{"0"}).}
 }
 \value{
-Character escalar (\code{"0"} a \code{"4"}), o \code{NA_character_} si no hay
-coincidencia en la tabla de referencia.
+Character scalar (\code{"0"} to \code{"4"}), or \code{NA_character_} if there
+is no match in the reference table.
 }
 \description{
-Convierte la frecuencia de uso indicada a las unidades de referencia de
-la Tabla 3 del metodo INRS (horas/dia o dias/mes o dias/año, segun la
-unidad de entrada) y devuelve la clase correspondiente (0 a 4).
+Converts the given frequency of use to the reference units of Table 3
+of the INRS method (hours/day or days/month or days/year, depending on
+the input unit) and returns the corresponding class (0 to 4).
 }
 \examples{
-inrs_frequency_class(3, "horas")
-inrs_frequency_class(unidad = "no_se_usa")
+inrs_frequency_class(3, "hours")
+inrs_frequency_class(unit = "not_used")
 
 }

@@ -2,12 +2,12 @@
 % Please edit documentation in R/run_apps.R
 \name{run_coshh}
 \alias{run_coshh}
-\title{Lanzar la app Shiny del metodo COSHH Essentials}
+\title{Launch the COSHH Essentials Shiny application}
 \usage{
 run_coshh(...)
 }
 \arguments{
-\item{...}{Argumentos adicionales pasados a \code{\link[shiny:runApp]{shiny::runApp()}} (p. ej.
+\item{...}{Additional arguments passed to \code{\link[shiny:runApp]{shiny::runApp()}} (e.g.
 \code{launch.browser}, \code{port}).}
 }
 \value{
@@ -15,7 +15,7 @@ No return value, called for side effects. Launches a Shiny
 application in the default browser.
 }
 \description{
-Lanzar la app Shiny del metodo COSHH Essentials
+Launch the COSHH Essentials Shiny application
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

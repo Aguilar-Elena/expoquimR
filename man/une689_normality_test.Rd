@@ -2,23 +2,23 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_normality_test}
 \alias{une689_normality_test}
-\title{Contrastes de normalidad y lognormalidad (UNE-EN 689)}
+\title{Normality and lognormality tests (UNE-EN 689)}
 \usage{
 une689_normality_test(ed)
 }
 \arguments{
-\item{ed}{Numeric vector. Valores de exposicion diaria (ED), todos
-estrictamente positivos. Se requieren al menos 3 valores (minimo
-exigido por \code{\link[stats:shapiro.test]{stats::shapiro.test()}}); UNE-EN 689 exige ademas un
-minimo de 6 para la evaluacion estadistica completa.}
+\item{ed}{Numeric vector. Daily exposure (ED) values, all strictly
+positive. At least 3 values are required (minimum required by
+\code{\link[stats:shapiro.test]{stats::shapiro.test()}}); UNE-EN 689 additionally requires a minimum
+of 6 for the full statistical assessment.}
 }
 \value{
-Una lista con los elementos \code{W_normal}, \code{pval_normal},
-\code{W_lognormal}, \code{pval_lognormal}.
+A list with elements \code{W_normal}, \code{pval_normal}, \code{W_lognormal},
+\code{pval_lognormal}.
 }
 \description{
-Aplica el test de Shapiro-Wilk a los valores de ED (para contrastar
-normalidad) y a su logaritmo (para contrastar lognormalidad).
+Applies the Shapiro-Wilk test to the ED values (to test normality) and
+to their logarithm (to test lognormality).
 }
 \examples{
 une689_normality_test(c(5, 6, 7, 8, 9, 10))

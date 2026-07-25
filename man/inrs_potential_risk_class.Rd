@@ -2,23 +2,23 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_potential_risk_class}
 \alias{inrs_potential_risk_class}
-\title{Clase de riesgo potencial (metodo INRS)}
+\title{Potential risk class (INRS method)}
 \usage{
-inrs_potential_risk_class(clase_exposicion_potencial, clase_peligro)
+inrs_potential_risk_class(potential_exposure_class, hazard_class)
 }
 \arguments{
-\item{clase_exposicion_potencial}{Character. Vease
+\item{potential_exposure_class}{Character. See
 \code{\link[=inrs_potential_exposure_class]{inrs_potential_exposure_class()}}.}
 
-\item{clase_peligro}{Character. Vease \code{\link[=inrs_hazard_class]{inrs_hazard_class()}}.}
+\item{hazard_class}{Character. See \code{\link[=inrs_hazard_class]{inrs_hazard_class()}}.}
 }
 \value{
-Character escalar (\code{"1"} a \code{"5"}), o \code{NA_character_} si la
-combinacion no esta definida.
+Character scalar (\code{"1"} to \code{"5"}), or \code{NA_character_} if the
+combination is not defined.
 }
 \description{
-Consulta la Tabla 5 del metodo INRS (clase de exposicion potencial x
-clase de peligro) para obtener la clase de riesgo potencial.
+Consults Table 5 of the INRS method (potential exposure class x hazard
+class) to obtain the potential risk class.
 }
 \examples{
 inrs_potential_risk_class("4", "3")

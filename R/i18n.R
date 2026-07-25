@@ -64,14 +64,14 @@
     une689_additive_na    = "INSUFFICIENT DATA (one or more agents in this group have no valid IE)",
 
     # ---- desde_excel --------------------------------------------------------
-    excel_no_sheet_agents = "Sheet 'Agentes' / 'Agents' not found in the file.",
-    excel_no_sheet_meas   = "Sheet 'Mediciones' / 'Measurements' not found in the file.",
-    excel_agent_col       = "agente",
+    excel_no_sheet_agents = "Sheet 'Agents' not found in the file.",
+    excel_no_sheet_meas   = "Sheet 'Measurements' not found in the file.",
+    excel_agent_col       = "agent",
     excel_vla_col         = "vla_mg_m3",
-    excel_type_col        = "tipo",
-    excel_jornada_col     = "jornada",
-    excel_conc_col        = "concentracion_mg_m3",
-    excel_time_col        = "tiempo_h"
+    excel_type_col        = "type",
+    excel_jornada_col     = "day",
+    excel_conc_col        = "concentration_mg_m3",
+    excel_time_col        = "time_h"
   ),
 
   es = list(
@@ -129,14 +129,14 @@
     une689_additive_na    = "DATOS INSUFICIENTES (uno o m\u00e1s agentes del grupo no tienen IE v\u00e1lido)",
 
     # ---- desde_excel --------------------------------------------------------
-    excel_no_sheet_agents = "No se encontr\u00f3 la hoja 'Agentes' en el fichero.",
-    excel_no_sheet_meas   = "No se encontr\u00f3 la hoja 'Mediciones' en el fichero.",
-    excel_agent_col       = "agente",
+    excel_no_sheet_agents = "No se encontr\u00f3 la hoja 'Agents' en el fichero.",
+    excel_no_sheet_meas   = "No se encontr\u00f3 la hoja 'Measurements' en el fichero.",
+    excel_agent_col       = "agent",
     excel_vla_col         = "vla_mg_m3",
-    excel_type_col        = "tipo",
-    excel_jornada_col     = "jornada",
-    excel_conc_col        = "concentracion_mg_m3",
-    excel_time_col        = "tiempo_h"
+    excel_type_col        = "type",
+    excel_jornada_col     = "day",
+    excel_conc_col        = "concentration_mg_m3",
+    excel_time_col        = "time_h"
   )
 )
 

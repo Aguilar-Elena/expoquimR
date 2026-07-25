@@ -2,12 +2,12 @@
 % Please edit documentation in R/run_apps.R
 \name{run_inrs}
 \alias{run_inrs}
-\title{Lanzar la app Shiny del metodo INRS}
+\title{Launch the INRS method Shiny application}
 \usage{
 run_inrs(...)
 }
 \arguments{
-\item{...}{Argumentos adicionales pasados a \code{\link[shiny:runApp]{shiny::runApp()}} (p. ej.
+\item{...}{Additional arguments passed to \code{\link[shiny:runApp]{shiny::runApp()}} (e.g.
 \code{launch.browser}, \code{port}).}
 }
 \value{
@@ -15,7 +15,7 @@ No return value, called for side effects. Launches a Shiny
 application in the default browser.
 }
 \description{
-Lanzar la app Shiny del metodo INRS
+Launch the INRS method Shiny application
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

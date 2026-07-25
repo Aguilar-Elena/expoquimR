@@ -2,40 +2,39 @@
 % Please edit documentation in R/une689_preliminar.R
 \name{une689_classify_conformity}
 \alias{une689_classify_conformity}
-\title{Clasificar la conformidad de la evaluacion preliminar UNE-EN 689}
+\title{Classify the conformity of the UNE-EN 689 preliminary assessment}
 \usage{
 une689_classify_conformity(ie)
 }
 \arguments{
-\item{ie}{Numeric vector. Indices de exposicion, uno por jornada
-(vease \code{\link[=une689_exposure_index]{une689_exposure_index()}}). Los valores \code{NA} (jornadas sin datos
-suficientes) se ignoran.}
+\item{ie}{Numeric vector. Exposure indices, one per day (see
+\code{\link[=une689_exposure_index]{une689_exposure_index()}}). \code{NA} values (days without enough data)
+are ignored.}
 }
 \value{
-Character escalar: \code{.t("une689_conformity")} si todos los IE son
-menores que 0,1; \code{.t("une689_no_conformity")} si algun IE es mayor que 1;
-\code{.t("une689_no_decision")} si algun IE esta entre 0,1 y 1 (ambos inclusive) y
-ninguno supera 1. Devuelve \code{NA_character_} si no hay ningun IE valido
-(no hay datos suficientes para clasificar).
+Character scalar: \code{.t("une689_conformity")} if all IE values
+are below 0.1; \code{.t("une689_no_conformity")} if any IE is above 1;
+\code{.t("une689_no_decision")} if any IE is between 0.1 and 1 (both
+inclusive) and none exceeds 1. Returns \code{NA_character_} if there is
+no valid IE at all (not enough data to classify).
 }
 \description{
-A partir de los indices de exposicion (IE) de todas las jornadas
-evaluadas, determina si la exposicion es conforme, no conforme, o si
-no permite tomar una decision sin mediciones adicionales, segun los
-criterios de la evaluacion preliminar de UNE-EN 689.
+From the exposure indices (IE) of all the days evaluated, determines
+whether exposure is conforming, non-conforming, or whether no decision
+can be made without further measurements, following the criteria of
+the UNE-EN 689 preliminary assessment.
 }
-\section{Correccion respecto a la app original}{
+\section{Correction relative to the original app}{
 
-En la app Shiny original, si todas las jornadas tenian IE = \code{NA} (por
-falta de datos), la comprobacion \code{all(IEs < 0.1, na.rm = TRUE)}
-devolvia \code{TRUE} (porque \code{all()} sobre un vector vacio es \code{TRUE} en R),
-y el resultado se informaba incorrectamente como
-\strong{.t("une689_conformity")} sin haber datos reales. Esta funcion corrige ese caso
-devolviendo \code{NA_character_} (sin datos suficientes) en lugar de una
-falsa conformidad. Te aviso de este cambio porque, a diferencia de los
-puntos de INRS, no te pregunte antes de aplicarlo: informar
-"conformidad" sin datos es un fallo de seguridad, no una decision de
-criterio metodologico.
+In the original Shiny app, if all days had IE = \code{NA} (due to missing
+data), the check \code{all(IEs < 0.1, na.rm = TRUE)} returned \code{TRUE}
+(because \code{all()} over an empty vector is \code{TRUE} in R), and the result
+was incorrectly reported as \strong{.t("une689_conformity")} with no actual
+data. This function fixes that case by returning \code{NA_character_} (not
+enough data) instead of a false conformity. This change is flagged
+here because, unlike the INRS points, it was applied without prior
+confirmation: reporting "conformity" with no data is a safety flaw,
+not a methodological judgement call.
 }
 
 \examples{

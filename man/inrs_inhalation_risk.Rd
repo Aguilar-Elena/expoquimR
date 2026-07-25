@@ -2,34 +2,32 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_inhalation_risk}
 \alias{inrs_inhalation_risk}
-\title{Puntuacion final de riesgo por inhalacion (metodo INRS)}
+\title{Final inhalation risk score (INRS method)}
 \usage{
 inrs_inhalation_risk(
-  puntuacion_riesgo_potencial,
-  puntuacion_volatilidad,
-  puntuacion_procedimiento,
-  puntuacion_proteccion,
-  fc_vla
+  potential_risk_score,
+  volatility_score,
+  procedure_score,
+  protection_score,
+  vla_correction_factor
 )
 }
 \arguments{
-\item{puntuacion_riesgo_potencial}{Numeric. Vease
-\code{\link[=inrs_potential_risk_score]{inrs_potential_risk_score()}}.}
+\item{potential_risk_score}{Numeric. See \code{\link[=inrs_potential_risk_score]{inrs_potential_risk_score()}}.}
 
-\item{puntuacion_volatilidad}{Numeric. Vease
-\code{\link[=inrs_volatility_score]{inrs_volatility_score()}}.}
+\item{volatility_score}{Numeric. See \code{\link[=inrs_volatility_score]{inrs_volatility_score()}}.}
 
-\item{puntuacion_procedimiento}{Numeric. Vease \code{\link[=inrs_process_type]{inrs_process_type()}}.}
+\item{procedure_score}{Numeric. See \code{\link[=inrs_process_type]{inrs_process_type()}}.}
 
-\item{puntuacion_proteccion}{Numeric. Vease \code{\link[=inrs_collective_protection]{inrs_collective_protection()}}.}
+\item{protection_score}{Numeric. See \code{\link[=inrs_collective_protection]{inrs_collective_protection()}}.}
 
-\item{fc_vla}{Numeric. Vease \code{\link[=inrs_oel_correction_factor]{inrs_oel_correction_factor()}}.}
+\item{vla_correction_factor}{Numeric. See \code{\link[=inrs_oel_correction_factor]{inrs_oel_correction_factor()}}.}
 }
 \value{
-Numeric, o \code{NA_real_} si falta algun componente.
+Numeric, or \code{NA_real_} if any component is missing.
 }
 \description{
-Producto de las cinco puntuaciones parciales del metodo INRS.
+Product of the five partial scores of the INRS method.
 }
 \examples{
 inrs_inhalation_risk(100, 10, 0.5, 0.7, 10)

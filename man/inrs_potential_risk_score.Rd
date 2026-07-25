@@ -2,19 +2,18 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_potential_risk_score}
 \alias{inrs_potential_risk_score}
-\title{Puntuacion de riesgo potencial (metodo INRS)}
+\title{Potential risk score (INRS method)}
 \usage{
-inrs_potential_risk_score(clase_riesgo_potencial)
+inrs_potential_risk_score(potential_risk_class)
 }
 \arguments{
-\item{clase_riesgo_potencial}{Character. Vease
-\code{\link[=inrs_potential_risk_class]{inrs_potential_risk_class()}}.}
+\item{potential_risk_class}{Character. See \code{\link[=inrs_potential_risk_class]{inrs_potential_risk_class()}}.}
 }
 \value{
-Numeric (1, 10, 100, 1000 o 10000), o \code{NA_real_}.
+Numeric (1, 10, 100, 1000 or 10000), or \code{NA_real_}.
 }
 \description{
-Puntuacion de riesgo potencial (metodo INRS)
+Potential risk score (INRS method)
 }
 \examples{
 inrs_potential_risk_score("3")

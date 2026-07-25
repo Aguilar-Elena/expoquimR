@@ -4,14 +4,14 @@
 \alias{coshh_classify_volatility}
 \title{Classify the volatility of a liquid using the COSHH Essentials method}
 \usage{
-coshh_classify_volatility(t_ebullicion, t_proceso)
+coshh_classify_volatility(boiling_point, process_temp)
 }
 \arguments{
-\item{t_ebullicion}{Numeric. Boiling point of the substance, in degrees
+\item{boiling_point}{Numeric. Boiling point of the substance, in degrees
 Celsius.}
 
-\item{t_proceso}{Numeric. Temperature at which the substance is handled,
-in degrees Celsius.}
+\item{process_temp}{Numeric. Temperature at which the substance is
+handled, in degrees Celsius.}
 }
 \value{
 Character scalar: volatility class in the active language.
@@ -26,9 +26,9 @@ the COSHH Essentials method.
 The active language is controlled by \code{\link[=expoquimr_lang]{expoquimr_lang()}}.
 }
 \examples{
-coshh_classify_volatility(t_ebullicion = 111, t_proceso = 20)
+coshh_classify_volatility(boiling_point = 111, process_temp = 20)
 expoquimr_lang("es")
-coshh_classify_volatility(t_ebullicion = 111, t_proceso = 20)
+coshh_classify_volatility(boiling_point = 111, process_temp = 20)
 expoquimr_lang("en")
 
 }

@@ -2,21 +2,21 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_liquid_volatility_pressure}
 \alias{inrs_liquid_volatility_pressure}
-\title{Clase de volatilidad de un liquido a partir de la presion de vapor}
+\title{Volatility class of a liquid from vapour pressure}
 \usage{
-inrs_liquid_volatility_pressure(presion_vapor)
+inrs_liquid_volatility_pressure(vapour_pressure)
 }
 \arguments{
-\item{presion_vapor}{Numeric. Presion de vapor a la temperatura de
-trabajo, en kPa.}
+\item{vapour_pressure}{Numeric. Vapour pressure at working
+temperature, in kPa.}
 }
 \value{
-Character escalar (\code{"1"} si Pv < 0,5 kPa, \code{"2"} si
-0,5 <= Pv < 25 kPa, \code{"3"} si Pv >= 25 kPa).
+Character scalar (\code{"1"} if Pv < 0.5 kPa, \code{"2"} if
+0.5 <= Pv < 25 kPa, \code{"3"} if Pv >= 25 kPa).
 }
 \description{
-Clasifica la volatilidad de un liquido segun los umbrales oficiales de
-la Tabla 8 del metodo INRS.
+Classifies the volatility of a liquid according to the official
+thresholds of Table 8 of the INRS method.
 }
 \examples{
 inrs_liquid_volatility_pressure(15)

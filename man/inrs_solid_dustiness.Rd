@@ -2,21 +2,21 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_solid_dustiness}
 \alias{inrs_solid_dustiness}
-\title{Clase de pulverulencia de un solido (metodo INRS)}
+\title{Dustiness class of a solid (INRS method)}
 \usage{
-inrs_solid_dustiness(descripcion)
+inrs_solid_dustiness(description)
 }
 \arguments{
-\item{descripcion}{Character. Una de \code{"Polvo que genera mucha dispersion visible en el aire"}, \code{"Polvo fino con poca dispersion visible"} o \code{"Solido compacto sin polvo visible"}.}
+\item{description}{Character. One of \code{"Dust that generates a lot of visible dispersion in the air"}, \code{"Fine dust with little visible dispersion"} or \code{"Compact solid with no visible dust"}.}
 }
 \value{
-Character escalar (\code{"1"} a \code{"3"}), o \code{NA_character_} si la
-descripcion no coincide con ninguna opcion valida.
+Character scalar (\code{"1"} to \code{"3"}), or \code{NA_character_} if
+\code{description} does not match any valid option.
 }
 \description{
-Clase de pulverulencia de un solido (metodo INRS)
+Dustiness class of a solid (INRS method)
 }
 \examples{
-inrs_solid_dustiness("Polvo fino con poca dispersion visible")
+inrs_solid_dustiness("Fine dust with little visible dispersion")
 
 }

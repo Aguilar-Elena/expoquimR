@@ -5,35 +5,35 @@
 \title{Evaluate a substance using the COSHH Essentials method (high-level wrapper)}
 \usage{
 coshh_evaluate(
-  nombre,
-  frases,
-  cantidad,
-  es_liquido,
-  t_ebullicion = NA_real_,
-  t_proceso = NA_real_,
-  pulverulencia = NA_character_
+  name,
+  phrases,
+  quantity,
+  is_liquid,
+  boiling_point = NA_real_,
+  process_temp = NA_real_,
+  dustiness = NA_character_
 )
 }
 \arguments{
-\item{nombre}{Character. Identifying name of the substance.}
+\item{name}{Character. Identifying name of the substance.}
 
-\item{frases}{Character. H/R phrases; see \code{\link[=coshh_grade]{coshh_grade()}}.}
+\item{phrases}{Character. H/R phrases; see \code{\link[=coshh_grade]{coshh_grade()}}.}
 
-\item{cantidad}{Character. Quantity class in the active language.}
+\item{quantity}{Character. Quantity class in the active language.}
 
-\item{es_liquido}{Logical. \code{TRUE} if the substance is liquid (volatility
-will be calculated from \code{t_ebullicion} / \code{t_proceso}); \code{FALSE} if solid
-(\code{pulverulencia} will be used directly).}
+\item{is_liquid}{Logical. \code{TRUE} if the substance is liquid (volatility
+will be calculated from \code{boiling_point} / \code{process_temp}); \code{FALSE} if
+solid (\code{dustiness} will be used directly).}
 
-\item{t_ebullicion, t_proceso}{Numeric. Required only if
-\code{es_liquido = TRUE}. See \code{\link[=coshh_classify_volatility]{coshh_classify_volatility()}}.}
+\item{boiling_point, process_temp}{Numeric. Required only if
+\code{is_liquid = TRUE}. See \code{\link[=coshh_classify_volatility]{coshh_classify_volatility()}}.}
 
-\item{pulverulencia}{Character. Required only if \code{es_liquido = FALSE}.
+\item{dustiness}{Character. Required only if \code{is_liquid = FALSE}.
 Dustiness class in the active language.}
 }
 \value{
-A one-row \code{data.frame} with columns \code{sustancia}, \code{frases},
-\code{grado}, \code{volatilidad}, \code{cantidad}, \code{riesgo} and \code{medidas}.
+A one-row \code{data.frame} with columns \code{substance}, \code{phrases},
+\code{grade}, \code{volatility}, \code{quantity}, \code{risk} and \code{measures}.
 }
 \description{
 Chains \code{\link[=coshh_grade]{coshh_grade()}}, \code{\link[=coshh_classify_volatility]{coshh_classify_volatility()}} (if applicable),
@@ -48,12 +48,12 @@ returned in the active language; see \code{\link[=expoquimr_lang]{expoquimr_lang
 }
 \examples{
 coshh_evaluate(
-  nombre = "Toluene",
-  frases = "H315, H336",
-  cantidad = "Medium",
-  es_liquido = TRUE,
-  t_ebullicion = 111,
-  t_proceso = 20
+  name = "Toluene",
+  phrases = "H315, H336",
+  quantity = "Medium",
+  is_liquid = TRUE,
+  boiling_point = 111,
+  process_temp = 20
 )
 
 }

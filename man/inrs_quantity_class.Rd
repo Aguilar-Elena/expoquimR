@@ -2,22 +2,22 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_quantity_class}
 \alias{inrs_quantity_class}
-\title{Clase de cantidad diaria manipulada (metodo INRS)}
+\title{Daily handled quantity class (INRS method)}
 \usage{
-inrs_quantity_class(valor, unidad = c("g", "ml", "kg", "l"))
+inrs_quantity_class(value, unit = c("g", "ml", "kg", "l"))
 }
 \arguments{
-\item{valor}{Numeric. Cantidad diaria manipulada.}
+\item{value}{Numeric. Daily quantity handled.}
 
-\item{unidad}{Character. Una de \code{"g"}, \code{"ml"}, \code{"kg"}, \code{"l"}.}
+\item{unit}{Character. One of \code{"g"}, \code{"ml"}, \code{"kg"}, \code{"l"}.}
 }
 \value{
-Character escalar (\code{"1"} a \code{"5"}), o \code{NA_character_} si
-\code{valor} es \code{NA}.
+Character scalar (\code{"1"} to \code{"5"}), or \code{NA_character_} if
+\code{value} is \code{NA}.
 }
 \description{
-Clasifica la cantidad diaria de sustancia manipulada en una de las 5
-clases del metodo INRS, segun su unidad.
+Classifies the daily quantity of substance handled into one of the 5
+classes of the INRS method, according to its unit.
 }
 \examples{
 inrs_quantity_class(50, "g")

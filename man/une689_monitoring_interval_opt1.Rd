@@ -2,24 +2,25 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_monitoring_interval_opt1}
 \alias{une689_monitoring_interval_opt1}
-\title{Periodicidad recomendada, opcion 1 (MG o MA frente al VLA)}
+\title{Recommended monitoring interval, option 1 (MG or MA vs VLA)}
 \usage{
-une689_monitoring_interval_opt1(valor_referencia, vla)
+une689_monitoring_interval_opt1(reference_value, vla)
 }
 \arguments{
-\item{valor_referencia}{Numeric. MG si la distribucion es lognormal,
-o MA si es normal (vease \code{\link[=une689_statistics]{une689_statistics()}}).}
+\item{reference_value}{Numeric. MG if the distribution is lognormal,
+or MA if normal (see \code{\link[=une689_statistics]{une689_statistics()}}).}
 
-\item{vla}{Numeric. Valor Limite Ambiental (mg/m3).}
+\item{vla}{Numeric. Valor Limite Ambiental / occupational exposure
+limit (mg/m3).}
 }
 \value{
-Character escalar describiendo la periodicidad recomendada,
-en meses.
+Character scalar describing the recommended monitoring
+interval, in months.
 }
 \description{
-Periodicidad recomendada, opcion 1 (MG o MA frente al VLA)
+Recommended monitoring interval, option 1 (MG or MA vs VLA)
 }
 \examples{
-une689_monitoring_interval_opt1(valor_referencia = 0.8, vla = 10)
+une689_monitoring_interval_opt1(reference_value = 0.8, vla = 10)
 
 }

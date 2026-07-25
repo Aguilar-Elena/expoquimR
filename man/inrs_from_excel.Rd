@@ -2,30 +2,30 @@
 % Please edit documentation in R/from_excel.R
 \name{inrs_from_excel}
 \alias{inrs_from_excel}
-\title{Evaluar productos quimicos INRS a partir de un fichero Excel}
+\title{Evaluate INRS chemical products from an Excel file}
 \usage{
-inrs_from_excel(ruta, hoja = "INRS_datos")
+inrs_from_excel(path, sheet = "INRS_datos")
 }
 \arguments{
-\item{ruta}{Character. Ruta al fichero \code{.xlsx}.}
+\item{path}{Character. Path to the \code{.xlsx} file.}
 
-\item{hoja}{Character o integer. Nombre o numero de la hoja (por
-defecto \code{"INRS_datos"}).}
+\item{sheet}{Character or integer. Name or number of the sheet
+(default \code{"INRS_datos"}).}
 }
 \value{
-Un \code{data.frame} con una fila por producto y todas las
-columnas de resultado de \code{\link[=inrs_evaluate]{inrs_evaluate()}}.
+A \code{data.frame} with one row per product and all the result
+columns of \code{\link[=inrs_evaluate]{inrs_evaluate()}}.
 }
 \description{
-Lee una hoja Excel con el formato de la plantilla INRS de expoquimR
-(una fila por producto) y devuelve la evaluacion completa llamando
-a \code{\link[=inrs_evaluate]{inrs_evaluate()}}.
+Reads an Excel sheet with the format of the expoquimR INRS template
+(one row per product) and returns the complete assessment by calling
+\code{\link[=inrs_evaluate]{inrs_evaluate()}}.
 }
 \examples{
 \dontrun{
-ruta <- system.file("plantillas", "plantilla_inrs.xlsx",
+path <- system.file("plantillas", "plantilla_inrs.xlsx",
                     package = "expoquimR")
-inrs_from_excel(ruta)
+inrs_from_excel(path)
 }
 
 }

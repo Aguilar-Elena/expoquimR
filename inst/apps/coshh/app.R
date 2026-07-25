@@ -1,11 +1,12 @@
 library(shiny)
 library(expoquimR)
 
-# Los valores validos de cantidad y volatilidad se leen directamente de la
-# tabla interna del paquete (expoquimR:::coshh_tabla_riesgo), para que la UI
-# nunca se desincronice de lo que aceptan las funciones de calculo.
-cantidades_validas <- unique(expoquimR:::coshh_tabla_riesgo$cantidad)
-cantidades_validas <- cantidades_validas[cantidades_validas != "Cualquiera"]
+# La tabla interna del paquete (expoquimR:::coshh_risk_table) ahora solo
+# almacena las claves en ingles ("Small"/"Medium"/"Large",
+# "Low"/"Medium"/"High"); coshh_risk() acepta tambien las etiquetas en
+# espanol (ver R/coshh.R), asi que la UI en espanol usa directamente esas
+# etiquetas.
+cantidades_validas <- c("Peque\u00f1a", "Mediana", "Grande")
 volatilidades_validas <- c("Baja", "Media", "Alta")
 
 ui <- fluidPage(
@@ -38,9 +39,9 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   resultados <- reactiveVal(data.frame(
-    sustancia = character(), frases = character(), grado = character(),
-    volatilidad = character(), cantidad = character(),
-    riesgo = integer(), medidas = character(),
+    substance = character(), phrases = character(), grade = character(),
+    volatility = character(), quantity = character(),
+    risk = integer(), measures = character(),
     stringsAsFactors = FALSE
   ))
 
@@ -55,13 +56,13 @@ server <- function(input, output, session) {
     }
 
     nueva <- coshh_evaluate(
-      nombre = input$nombre,
-      frases = input$frases,
-      cantidad = input$cantidad,
-      es_liquido = input$liquido,
-      t_ebullicion = input$t_ebullicion,
-      t_proceso = input$t_proceso,
-      pulverulencia = input$pulverulencia
+      name = input$nombre,
+      phrases = input$frases,
+      quantity = input$cantidad,
+      is_liquid = input$liquido,
+      boiling_point = input$t_ebullicion,
+      process_temp = input$t_proceso,
+      dustiness = input$pulverulencia
     )
 
     resultados(rbind(resultados(), nueva))

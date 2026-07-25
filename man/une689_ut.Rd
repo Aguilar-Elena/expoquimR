@@ -2,22 +2,21 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_ut}
 \alias{une689_ut}
-\title{Factor UT de UNE-EN 689 segun el tamano de muestra}
+\title{UNE-EN 689 UT factor from the sample size}
 \usage{
 une689_ut(n)
 }
 \arguments{
-\item{n}{Integer. Numero de jornadas (mediciones de ED) usadas en la
-evaluacion estadistica. Debe ser \verb{>= 6}.}
+\item{n}{Integer. Number of days (ED measurements) used in the
+statistical assessment. Must be \verb{>= 6}.}
 }
 \value{
-Numeric escalar con el valor de UT, o \code{NA_real_} si
-\code{n < 6}.
+Numeric scalar with the UT value, or \code{NA_real_} if \code{n < 6}.
 }
 \description{
-Consulta el factor de tolerancia unilateral (UT) tabulado por
-UNE-EN 689 para un numero de jornadas \code{n} entre 6 y 30. Para
-\code{n > 30} se usa el valor limite 1,820, tal como establece la norma.
+Looks up the one-sided tolerance factor (UT) tabulated by UNE-EN 689
+for a number of days \code{n} between 6 and 30. For \code{n > 30} the limit
+value 1.820 is used, as established by the standard.
 }
 \examples{
 une689_ut(6)

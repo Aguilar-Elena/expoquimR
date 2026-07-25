@@ -4,23 +4,23 @@
 \alias{coshh_risk}
 \title{Calculate the COSHH risk level}
 \usage{
-coshh_risk(grado, cantidad, volatilidad)
+coshh_risk(grade, quantity, volatility)
 }
 \arguments{
-\item{grado}{Character. Hazard group (\code{"A"} to \code{"E"}), as returned by
+\item{grade}{Character. Hazard group (\code{"A"} to \code{"E"}), as returned by
 \code{\link[=coshh_grade]{coshh_grade()}}.}
 
-\item{cantidad}{Character. Quantity class in the active language. Use
+\item{quantity}{Character. Quantity class in the active language. Use
 \code{"Small"} / \code{"Medium"} / \code{"Large"} (English) or \code{"Pequeña"} /
-\code{"Mediana"} / \code{"Grande"} (Spanish). See \code{\link[=expoquimr_lang]{expoquimr_lang()}}.}
+\code{"Mediana"} / \code{"Grande"} (Spanish).}
 
-\item{volatilidad}{Character. Volatility class in the active language.
+\item{volatility}{Character. Volatility class in the active language.
 Use \code{"Low"} / \code{"Medium"} / \code{"High"} (English) or \code{"Baja"} / \code{"Media"}
 / \code{"Alta"} (Spanish). For solids, this corresponds to dustiness.}
 }
 \value{
 Integer with the risk level (1 to 4), or \code{NA_integer_} if the
-combination is not defined in the table or \code{grado} is \code{NA}.
+combination is not defined in the table or \code{grade} is \code{NA}.
 }
 \description{
 Queries the hazard x quantity x volatility matrix of the COSHH Essentials
@@ -29,7 +29,7 @@ method to obtain the potential risk level (1 to 4). Substances of grade
 level, regardless of quantity or volatility.
 }
 \examples{
-coshh_risk(grado = "C", cantidad = "Medium", volatilidad = "High")
-coshh_risk(grado = "E", cantidad = "Small",  volatilidad = "Low")
+coshh_risk(grade = "C", quantity = "Medium", volatility = "High")
+coshh_risk(grade = "E", quantity = "Small",  volatility = "Low")
 
 }

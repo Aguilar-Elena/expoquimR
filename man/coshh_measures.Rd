@@ -4,10 +4,10 @@
 \alias{coshh_measures}
 \title{Get the recommended control measures for a COSHH risk level}
 \usage{
-coshh_measures(nivel_riesgo)
+coshh_measures(risk_level)
 }
 \arguments{
-\item{nivel_riesgo}{Integer or character. Risk level (1 to 4), as returned
+\item{risk_level}{Integer or character. Risk level (1 to 4), as returned
 by \code{\link[=coshh_risk]{coshh_risk()}}.}
 }
 \value{

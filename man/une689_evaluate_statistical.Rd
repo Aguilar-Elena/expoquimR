@@ -2,27 +2,27 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_evaluate_statistical}
 \alias{une689_evaluate_statistical}
-\title{Evaluacion estadistica completa UNE-EN 689 (funcion de alto nivel)}
+\title{Complete UNE-EN 689 statistical assessment (high-level wrapper)}
 \usage{
 une689_evaluate_statistical(ed, vla)
 }
 \arguments{
-\item{ed}{Numeric vector. Valores de ED (uno por jornada), todos
-positivos. Se exige un minimo de 6 (vease
-\code{\link[=une689_validate_min_days]{une689_validate_min_days()}}).}
+\item{ed}{Numeric vector. ED values (one per day), all positive. A
+minimum of 6 is required (see \code{\link[=une689_validate_min_days]{une689_validate_min_days()}}).}
 
-\item{vla}{Numeric. Valor Limite Ambiental (mg/m3).}
+\item{vla}{Numeric. Valor Limite Ambiental / occupational exposure
+limit (mg/m3).}
 }
 \value{
-Una lista con los elementos \code{n}, \code{tipo}, \code{MA}, \code{DS}, \code{MG},
-\code{DSG}, \code{W_normal}, \code{pval_normal}, \code{W_lognormal}, \code{pval_lognormal},
-\code{ut}, \code{lsc}, \code{ur}, \code{conformidad}.
+A list with elements \code{n}, \code{distribution_type}, \code{MA}, \code{DS},
+\code{MG}, \code{DSG}, \code{W_normal}, \code{pval_normal}, \code{W_lognormal},
+\code{pval_lognormal}, \code{ut}, \code{lsc}, \code{ur}, \code{conformity}.
 }
 \description{
-Encadena el ajuste de distribucion, el calculo de UT, LSC(95,70), UR y
-la conformidad estadistica a partir de un conjunto de valores de
-exposicion diaria (ED). Pensada para usarse directamente desde
-codigo, sin pasar por la aplicacion Shiny.
+Chains the distribution fit, the calculation of UT, LSC(95,70), UR and
+the statistical conformity from a set of daily exposure (ED) values.
+Designed to be used directly from code, without going through the
+Shiny application.
 }
 \examples{
 une689_evaluate_statistical(c(5, 6, 7, 8, 9, 10), vla = 10)

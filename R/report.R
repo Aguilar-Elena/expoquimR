@@ -11,8 +11,8 @@
 #' @param inrs A `data.frame` returned by [inrs_evaluate()] or
 #'   [inrs_from_excel()]. If `NULL` (default), the INRS section is omitted.
 #' @param une689 A list returned by [une689_from_excel()] or constructed
-#'   manually with elements `$preliminar` and optionally `$aditivo`. If `NULL`
-#'   (default), the UNE-EN 689 section is omitted.
+#'   manually with elements `$preliminary` and optionally `$additive`. If
+#'   `NULL` (default), the UNE-EN 689 section is omitted.
 #' @param evaluator Character. Name of the person responsible for the
 #'   assessment. Displayed in the report header. Default `""`.
 #' @param workplace Character. Name or description of the workplace or
@@ -30,9 +30,9 @@
 #' \dontrun{
 #' # COSHH only
 #' res <- coshh_evaluate(
-#'   nombre = "Toluene", frases = "H315, H336",
-#'   cantidad = "Medium", es_liquido = TRUE,
-#'   t_ebullicion = 111, t_proceso = 20
+#'   name = "Toluene", phrases = "H315, H336",
+#'   quantity = "Medium", is_liquid = TRUE,
+#'   boiling_point = 111, process_temp = 20
 #' )
 #' expoquimr_report(
 #'   coshh     = res,

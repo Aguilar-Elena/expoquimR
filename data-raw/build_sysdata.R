@@ -1,41 +1,39 @@
-## Script maestro: genera R/sysdata.rda con TODAS las tablas internas del
-## paquete de una sola vez. Cada vez que añadas un modulo nuevo (UNE-689,
-## etc.), crea su propio data-raw/<modulo>_tablas.R SIN llamada a
-## usethis::use_data(), y añade aqui un source() + los nombres de sus
-## objetos en la lista final.
+## Master script: generates R/sysdata.rda with ALL the package's internal
+## tables at once. Whenever you add a new module (UNE-689, etc.), create
+## its own data-raw/<module>_tablas.R WITHOUT a usethis::use_data() call,
+## and add here a source() plus its object names to the final list.
 ##
-## Ejecutar en tu Mac:
+## Run on your Mac:
 ##   devtools::load_all()
 ##   source("data-raw/build_sysdata.R")
 
 source("data-raw/coshh_tablas.R")
 source("data-raw/inrs_tablas.R")
-# source("data-raw/une689_tablas.R")  # cuando exista
+# source("data-raw/une689_tablas.R")  # once it exists
 
-# Convertimos todas las tibbles a data.frame puro: las funciones del
-# paquete solo usan indexado base ([ , $ , subset logico), y asi evitamos
-# que el paquete dependa de 'tibble' en tiempo de ejecucion solo por la
-# clase de estos objetos internos (tibble no esta ni en Imports ni en
-# Suggests: solo se usa aqui, en data-raw, como azucar sintactico para
-# escribir las tablas).
-coshh_tabla_grados   <- as.data.frame(coshh_tabla_grados)
-coshh_tabla_riesgo   <- as.data.frame(coshh_tabla_riesgo)
-coshh_tabla_medidas  <- as.data.frame(coshh_tabla_medidas)
+# Convert all tibbles to plain data.frame: the package's functions only
+# use base indexing ([ , $ , logical subset), so this avoids the package
+# depending on 'tibble' at runtime just for the class of these internal
+# objects (tibble is neither in Imports nor Suggests: it is only used
+# here, in data-raw, as syntactic sugar to write the tables).
+coshh_grade_table    <- as.data.frame(coshh_grade_table)
+coshh_risk_table     <- as.data.frame(coshh_risk_table)
+coshh_measures_table <- as.data.frame(coshh_measures_table)
 
-inrs_tabla_1                     <- as.data.frame(inrs_tabla_1)
-inrs_tabla_frecuencia            <- as.data.frame(inrs_tabla_frecuencia)
-inrs_tabla_exposicion_potencial  <- as.data.frame(inrs_tabla_exposicion_potencial)
-inrs_tabla_riesgo_potencial      <- as.data.frame(inrs_tabla_riesgo_potencial)
-inrs_tabla_puntuacion_riesgo     <- as.data.frame(inrs_tabla_puntuacion_riesgo)
-inrs_tabla_procedimiento         <- as.data.frame(inrs_tabla_procedimiento)
-inrs_tabla_proteccion            <- as.data.frame(inrs_tabla_proteccion)
+inrs_hazard_table              <- as.data.frame(inrs_hazard_table)
+inrs_frequency_table           <- as.data.frame(inrs_frequency_table)
+inrs_potential_exposure_table  <- as.data.frame(inrs_potential_exposure_table)
+inrs_potential_risk_table      <- as.data.frame(inrs_potential_risk_table)
+inrs_risk_score_table          <- as.data.frame(inrs_risk_score_table)
+inrs_process_table             <- as.data.frame(inrs_process_table)
+inrs_protection_table          <- as.data.frame(inrs_protection_table)
 
 usethis::use_data(
   # COSHH
-  coshh_tabla_grados, coshh_tabla_riesgo, coshh_tabla_medidas,
+  coshh_grade_table, coshh_risk_table, coshh_measures_table,
   # INRS
-  inrs_tabla_1, inrs_tabla_frecuencia, inrs_tabla_exposicion_potencial,
-  inrs_tabla_riesgo_potencial, inrs_tabla_puntuacion_riesgo,
-  inrs_tabla_procedimiento, inrs_tabla_proteccion,
+  inrs_hazard_table, inrs_frequency_table, inrs_potential_exposure_table,
+  inrs_potential_risk_table, inrs_risk_score_table,
+  inrs_process_table, inrs_protection_table,
   internal = TRUE, overwrite = TRUE
 )

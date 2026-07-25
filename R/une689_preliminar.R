@@ -1,44 +1,44 @@
-#' Exposicion diaria (ED) de una jornada, segun UNE-EN 689
+#' Daily exposure (ED) for a measurement day, per UNE-EN 689
 #'
-#' Calcula la exposicion diaria a partir de las concentraciones y tiempos
-#' de las muestras validas de una jornada. Si hay una unica muestra
-#' valida tomada durante las 8 horas completas de jornada, la ED es
-#' directamente esa concentracion. En caso contrario, se calcula como el
-#' promedio ponderado por tiempo sobre una jornada de 8 horas
-#' (`sum(concentracion * tiempo) / 8`).
+#' Calculates the daily exposure from the concentrations and times of the
+#' valid samples of a measurement day. If there is a single valid sample
+#' taken over the complete 8-hour working day, the ED is directly that
+#' concentration. Otherwise, it is calculated as the time-weighted
+#' average over an 8-hour day (`sum(concentration * time) / 8`).
 #'
-#' @param concentracion Numeric vector. Concentraciones medidas (mg/m3),
-#'   una por muestra.
-#' @param tiempo Numeric vector. Tiempo de cada muestra (horas), del
-#'   mismo largo que `concentracion`.
+#' @param concentration Numeric vector. Measured concentrations (mg/m3),
+#'   one per sample.
+#' @param time Numeric vector. Time of each sample (hours), same length
+#'   as `concentration`.
 #'
-#' @return Numeric escalar con la ED, o `NA_real_` si no hay ninguna
-#'   pareja (concentracion, tiempo) valida.
+#' @return Numeric scalar with the ED, or `NA_real_` if there is no valid
+#'   (concentration, time) pair.
 #'
 #' @examples
-#' une689_daily_exposure(concentracion = c(12, 8), tiempo = c(4, 4))
-#' une689_daily_exposure(concentracion = 9, tiempo = 8)
+#' une689_daily_exposure(concentration = c(12, 8), time = c(4, 4))
+#' une689_daily_exposure(concentration = 9, time = 8)
 #'
 #' @export
-une689_daily_exposure <- function(concentracion, tiempo) {
-  stopifnot(length(concentracion) == length(tiempo))
-  validas <- !is.na(concentracion) & !is.na(tiempo)
-  conc <- concentracion[validas]
-  tiem <- tiempo[validas]
+une689_daily_exposure <- function(concentration, time) {
+  stopifnot(length(concentration) == length(time))
+  valid <- !is.na(concentration) & !is.na(time)
+  conc <- concentration[valid]
+  tm   <- time[valid]
 
   if (length(conc) == 0) return(NA_real_)
-  if (length(conc) == 1 && isTRUE(tiem[1] == 8)) return(conc[1])
+  if (length(conc) == 1 && isTRUE(tm[1] == 8)) return(conc[1])
 
-  sum(conc * tiem) / 8
+  sum(conc * tm) / 8
 }
 
-#' Indice de exposicion (IE) de una jornada, segun UNE-EN 689
+#' Exposure index (IE) for a measurement day, per UNE-EN 689
 #'
-#' @param ed Numeric. Exposicion diaria, vease [une689_daily_exposure()].
-#' @param vla Numeric. Valor Limite Ambiental (mg/m3).
+#' @param ed Numeric. Daily exposure, see [une689_daily_exposure()].
+#' @param vla Numeric. Valor Limite Ambiental / occupational exposure
+#'   limit (mg/m3).
 #'
-#' @return Numeric escalar (`ed / vla`), o `NA_real_` si `ed` o `vla` no
-#'   son validos (`vla` debe ser `> 0`).
+#' @return Numeric scalar (`ed / vla`), or `NA_real_` if `ed` or `vla` are
+#'   not valid (`vla` must be `> 0`).
 #'
 #' @examples
 #' une689_exposure_index(ed = 9, vla = 10)
@@ -49,34 +49,33 @@ une689_exposure_index <- function(ed, vla) {
   ed / vla
 }
 
-#' Clasificar la conformidad de la evaluacion preliminar UNE-EN 689
+#' Classify the conformity of the UNE-EN 689 preliminary assessment
 #'
-#' A partir de los indices de exposicion (IE) de todas las jornadas
-#' evaluadas, determina si la exposicion es conforme, no conforme, o si
-#' no permite tomar una decision sin mediciones adicionales, segun los
-#' criterios de la evaluacion preliminar de UNE-EN 689.
+#' From the exposure indices (IE) of all the days evaluated, determines
+#' whether exposure is conforming, non-conforming, or whether no decision
+#' can be made without further measurements, following the criteria of
+#' the UNE-EN 689 preliminary assessment.
 #'
-#' @param ie Numeric vector. Indices de exposicion, uno por jornada
-#'   (vease [une689_exposure_index()]). Los valores `NA` (jornadas sin datos
-#'   suficientes) se ignoran.
+#' @param ie Numeric vector. Exposure indices, one per day (see
+#'   [une689_exposure_index()]). `NA` values (days without enough data)
+#'   are ignored.
 #'
-#' @return Character escalar: `.t("une689_conformity")` si todos los IE son
-#'   menores que 0,1; `.t("une689_no_conformity")` si algun IE es mayor que 1;
-#'   `.t("une689_no_decision")` si algun IE esta entre 0,1 y 1 (ambos inclusive) y
-#'   ninguno supera 1. Devuelve `NA_character_` si no hay ningun IE valido
-#'   (no hay datos suficientes para clasificar).
+#' @return Character scalar: `.t("une689_conformity")` if all IE values
+#'   are below 0.1; `.t("une689_no_conformity")` if any IE is above 1;
+#'   `.t("une689_no_decision")` if any IE is between 0.1 and 1 (both
+#'   inclusive) and none exceeds 1. Returns `NA_character_` if there is
+#'   no valid IE at all (not enough data to classify).
 #'
-#' @section Correccion respecto a la app original:
-#' En la app Shiny original, si todas las jornadas tenian IE = `NA` (por
-#' falta de datos), la comprobacion `all(IEs < 0.1, na.rm = TRUE)`
-#' devolvia `TRUE` (porque `all()` sobre un vector vacio es `TRUE` en R),
-#' y el resultado se informaba incorrectamente como
-#' **.t("une689_conformity")** sin haber datos reales. Esta funcion corrige ese caso
-#' devolviendo `NA_character_` (sin datos suficientes) en lugar de una
-#' falsa conformidad. Te aviso de este cambio porque, a diferencia de los
-#' puntos de INRS, no te pregunte antes de aplicarlo: informar
-#' "conformidad" sin datos es un fallo de seguridad, no una decision de
-#' criterio metodologico.
+#' @section Correction relative to the original app:
+#' In the original Shiny app, if all days had IE = `NA` (due to missing
+#' data), the check `all(IEs < 0.1, na.rm = TRUE)` returned `TRUE`
+#' (because `all()` over an empty vector is `TRUE` in R), and the result
+#' was incorrectly reported as **.t("une689_conformity")** with no actual
+#' data. This function fixes that case by returning `NA_character_` (not
+#' enough data) instead of a false conformity. This change is flagged
+#' here because, unlike the INRS points, it was applied without prior
+#' confirmation: reporting "conformity" with no data is a safety flaw,
+#' not a methodological judgement call.
 #'
 #' @examples
 #' une689_classify_conformity(c(0.02))
@@ -85,84 +84,85 @@ une689_exposure_index <- function(ed, vla) {
 #'
 #' @export
 une689_classify_conformity <- function(ie) {
-  ie_validos <- ie[!is.na(ie)]
-  if (length(ie_validos) == 0) return(NA_character_)
+  valid_ie <- ie[!is.na(ie)]
+  if (length(valid_ie) == 0) return(NA_character_)
 
-  if (all(ie_validos < 0.1)) {
+  if (all(valid_ie < 0.1)) {
     .t("une689_conformity")
-  } else if (any(ie_validos > 1)) {
+  } else if (any(valid_ie > 1)) {
     .t("une689_no_conformity")
-  } else if (any(ie_validos >= 0.1 & ie_validos <= 1)) {
+  } else if (any(valid_ie >= 0.1 & valid_ie <= 1)) {
     .t("une689_no_decision")
   } else {
-    # No deberia alcanzarse nunca con datos validos; se deja por completitud.
+    # Should never be reached with valid data; kept for completeness.
     .t("une689_indeterminate")
   }
 }
 
-#' Comprobar el numero minimo de jornadas para la evaluacion preliminar
+#' Check the minimum number of days for the preliminary assessment
 #'
-#' La evaluacion preliminar de UNE-EN 689 exige un minimo de jornadas
-#' evaluadas (habitualmente 3). Funcion de ayuda para validar esto antes
-#' de calcular, tanto desde codigo como desde la futura app Shiny.
+#' The UNE-EN 689 preliminary assessment requires a minimum number of
+#' evaluated days (usually 3). Helper function to validate this before
+#' calculating, both from code and from the Shiny app.
 #'
-#' @param n_jornadas Integer. Numero de jornadas con datos introducidos.
-#' @param minimo Integer. Numero minimo exigido (por defecto 3).
+#' @param n_days Integer. Number of days with data entered.
+#' @param minimum Integer. Minimum number required (default 3).
 #'
-#' @return Logical: `TRUE` si `n_jornadas >= minimo`.
+#' @return Logical: `TRUE` if `n_days >= minimum`.
 #'
 #' @examples
 #' une689_validate_min_days(2)
 #' une689_validate_min_days(3)
 #'
 #' @export
-une689_validate_min_days <- function(n_jornadas, minimo = 3L) {
-  n_jornadas >= minimo
+une689_validate_min_days <- function(n_days, minimum = 3L) {
+  n_days >= minimum
 }
 
-#' Evaluacion preliminar completa UNE-EN 689 (funcion de alto nivel)
+#' Complete UNE-EN 689 preliminary assessment (high-level wrapper)
 #'
-#' Calcula la ED y el IE de cada jornada y clasifica la conformidad
-#' global, a partir de un conjunto de muestras organizadas por jornada.
-#' Pensada para usarse directamente desde codigo, sin pasar por la
-#' aplicacion Shiny.
+#' Calculates the ED and IE for each day and classifies the overall
+#' conformity, from a set of samples organised by measurement day.
+#' Designed to be used directly from code, without going through the
+#' Shiny application.
 #'
-#' @param datos Un `data.frame` en formato largo con columnas `jornada`
-#'   (identificador de jornada, numerico o character), `concentracion`
-#'   (mg/m3) y `tiempo` (horas). Una fila por muestra.
-#' @param vla Numeric. Valor Limite Ambiental (mg/m3).
+#' @param data A `data.frame` in long format with columns `day`
+#'   (day identifier, numeric or character), `concentration` (mg/m3)
+#'   and `time` (hours). One row per sample.
+#' @param vla Numeric. Valor Limite Ambiental / occupational exposure
+#'   limit (mg/m3).
 #'
-#' @return Una lista con dos elementos:
+#' @return A list with two elements:
 #'   \describe{
-#'     \item{`tabla_jornadas`}{Un `data.frame` con columnas `jornada`,
-#'       `ED` e `IE`, una fila por jornada.}
-#'     \item{`resultado`}{Character escalar con la clasificacion global,
-#'       vease [une689_classify_conformity()].}
+#'     \item{`days_table`}{A `data.frame` with columns `day`, `ED` and
+#'       `IE`, one row per day.}
+#'     \item{`result`}{Character scalar with the overall classification,
+#'       see [une689_classify_conformity()].}
 #'   }
 #'
 #' @examples
-#' datos <- data.frame(
-#'   jornada = c(1, 1, 2, 3, 3),
-#'   concentracion = c(12, 8, 9, 5, 6),
-#'   tiempo = c(4, 4, 8, 3, 5)
+#' data <- data.frame(
+#'   day = c(1, 1, 2, 3, 3),
+#'   concentration = c(12, 8, 9, 5, 6),
+#'   time = c(4, 4, 8, 3, 5)
 #' )
-#' une689_evaluate_preliminary(datos, vla = 10)
+#' une689_evaluate_preliminary(data, vla = 10)
 #'
 #' @export
-une689_evaluate_preliminary <- function(datos, vla) {
-  stopifnot(all(c("jornada", "concentracion", "tiempo") %in% names(datos)))
+une689_evaluate_preliminary <- function(data, vla) {
+  stopifnot(all(c("day", "concentration", "time") %in% names(data)))
 
-  jornadas <- sort(unique(datos$jornada))
-  filas <- lapply(jornadas, function(j) {
-    sub <- datos[datos$jornada == j, ]
-    ed <- une689_daily_exposure(sub$concentracion, sub$tiempo)
+  days <- sort(unique(data$day))
+  rows <- lapply(days, function(d) {
+    subset_d <- data[data$day == d, ]
+    ed <- une689_daily_exposure(subset_d$concentration, subset_d$time)
     ie <- une689_exposure_index(ed, vla)
-    data.frame(jornada = j, ED = ed, IE = ie)
+    data.frame(day = d, ED = ed, IE = ie)
   })
-  tabla_jornadas <- do.call(rbind, filas)
-  rownames(tabla_jornadas) <- NULL
+  days_table <- do.call(rbind, rows)
+  rownames(days_table) <- NULL
 
-  resultado <- une689_classify_conformity(tabla_jornadas$IE)
+  result <- une689_classify_conformity(days_table$IE)
 
-  list(tabla_jornadas = tabla_jornadas, resultado = resultado)
+  list(days_table = days_table, result = result)
 }

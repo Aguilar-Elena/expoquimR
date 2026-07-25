@@ -2,21 +2,21 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_statistics}
 \alias{une689_statistics}
-\title{Estadisticos descriptivos de la exposicion diaria (UNE-EN 689)}
+\title{Descriptive statistics of daily exposure (UNE-EN 689)}
 \usage{
 une689_statistics(ed)
 }
 \arguments{
-\item{ed}{Numeric vector. Valores de exposicion diaria (ED), todos
-estrictamente positivos.}
+\item{ed}{Numeric vector. Daily exposure (ED) values, all strictly
+positive.}
 }
 \value{
-Una lista con los elementos \code{MA}, \code{DS}, \code{MG}, \code{DSG}.
+A list with elements \code{MA}, \code{DS}, \code{MG}, \code{DSG}.
 }
 \description{
-Calcula la media y desviacion tipica aritmeticas (MA, DS) y
-geometricas (MG, DSG) de un conjunto de valores de exposicion diaria
-(ED), necesarios para contrastar el ajuste normal y lognormal.
+Calculates the arithmetic mean and standard deviation (MA, DS) and the
+geometric mean and standard deviation (MG, DSG) of a set of daily
+exposure (ED) values, needed to test the normal and lognormal fits.
 }
 \examples{
 une689_statistics(c(5, 6, 7, 8, 9, 10))

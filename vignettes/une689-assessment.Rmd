@@ -56,22 +56,22 @@ declared.
 
 ```{r prelim}
 # Five samples across three working days
-datos <- data.frame(
-  jornada       = c(1, 1, 2, 3, 3),
-  concentracion = c(12, 8, 9, 5, 6),   # mg/m³
-  tiempo        = c(4,  4, 8, 3, 5)    # hours
+data <- data.frame(
+  day           = c(1, 1, 2, 3, 3),
+  concentration = c(12, 8, 9, 5, 6),   # mg/m³
+  time          = c(4,  4, 8, 3, 5)    # hours
 )
 
-res_pre <- une689_evaluate_preliminary(datos, vla = 10)
-res_pre$tabla_jornadas
-res_pre$resultado
+res_pre <- une689_evaluate_preliminary(data, vla = 10)
+res_pre$days_table
+res_pre$result
 ```
 
 ### Step-by-step
 
 ```{r prelim_steps}
 # Daily exposure for day 1 (two samples)
-une689_daily_exposure(concentracion = c(12, 8), tiempo = c(4, 4))
+une689_daily_exposure(concentration = c(12, 8), time = c(4, 4))
 
 # Exposure index
 une689_exposure_index(ed = 10, vla = 10)
@@ -92,13 +92,13 @@ eds <- c(10, 9, 5.625, 11, 8, 13)
 
 res_est <- une689_evaluate_statistical(eds, vla = 10)
 
-cat("Distribution:", res_est$tipo, "\n")
+cat("Distribution:", res_est$distribution_type, "\n")
 cat("MG =",  round(res_est$MG,  3), "\n")
 cat("DSG =", round(res_est$DSG, 3), "\n")
 cat("UT =",  res_est$ut, "\n")
 cat("LSC(95,70) =", round(res_est$lsc, 3), "\n")
 cat("UR =",  round(res_est$ur, 3), "\n")
-cat("Result:", res_est$conformidad, "\n")
+cat("Result:", res_est$conformity, "\n")
 ```
 
 ### Step-by-step
@@ -113,23 +113,23 @@ test <- une689_normality_test(eds)
 test$pval_lognormal
 
 # Distribution type (lognormal has priority)
-tipo <- une689_distribution_type(
+distribution_type <- une689_distribution_type(
   pval_normal    = test$pval_normal,
   pval_lognormal = test$pval_lognormal
 )
-tipo
+distribution_type
 
 # Tolerance factor UT for n = 6
 une689_ut(6)
 
 # LSC(95,70)
-une689_lsc(tipo, ut = une689_ut(6), MG = est$MG, DSG = est$DSG)
+une689_lsc(distribution_type, ut = une689_ut(6), MG = est$MG, DSG = est$DSG)
 
 # Risk index UR
-une689_ur(tipo, vla = 10, MG = est$MG, DSG = est$DSG)
+une689_ur(distribution_type, vla = 10, MG = est$MG, DSG = est$DSG)
 
 # Conformity decision
-une689_statistical_conformity(ur = une689_ur(tipo, vla = 10,
+une689_statistical_conformity(ur = une689_ur(distribution_type, vla = 10,
                                                MG = est$MG, DSG = est$DSG),
                                 ut = une689_ut(6))
 ```
@@ -141,7 +141,7 @@ frequently measurements should be repeated. Two options are available:
 
 ```{r periodic}
 # Option 1: MG or MA versus the OEL
-une689_monitoring_interval_opt1(valor_referencia = res_est$MG, vla = 10)
+une689_monitoring_interval_opt1(reference_value = res_est$MG, vla = 10)
 
 # Option 2: LSC(95,70) versus the OEL
 une689_monitoring_interval_opt2(lsc = res_est$lsc, vla = 10)
@@ -178,7 +178,7 @@ handle multiple independent additive groups automatically.
 The UNE-EN 689 Excel template has three sheets:
 
 - **Agents**: agent name and VLA, one row per agent.
-- **Measurements**: one row per sample, with a `tipo` field (`pre` for
+- **Measurements**: one row per sample, with a `type` field (`pre` for
   preliminary days, `add` for additional days).
 - **Additive_effects** (optional): groups of agents sharing a target organ.
 
@@ -187,11 +187,11 @@ ruta <- system.file("plantillas", "plantilla_une689.xlsx", package = "expoquimR"
 res <- une689_from_excel(ruta)
 
 # Preliminary results and statistical assessment per agent
-res$preliminar$Tolueno$resultado
-res$preliminar$Tolueno$estadistica$conformidad
+res$preliminary$Toluene$result
+res$preliminary$Toluene$statistics$conformity
 
 # Additive effects table
-res$aditivo
+res$additive
 ```
 
 ## Language

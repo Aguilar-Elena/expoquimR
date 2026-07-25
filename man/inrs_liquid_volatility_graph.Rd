@@ -2,28 +2,28 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_liquid_volatility_graph}
 \alias{inrs_liquid_volatility_graph}
-\title{Clase de volatilidad de un liquido a partir de temperatura y punto de ebullicion}
+\title{Volatility class of a liquid from use temperature and boiling point}
 \usage{
-inrs_liquid_volatility_graph(temperatura_uso, punto_ebullicion)
+inrs_liquid_volatility_graph(use_temperature, boiling_point)
 }
 \arguments{
-\item{temperatura_uso}{Numeric. Temperatura de uso (proceso), en
-grados Celsius. Corresponde al eje X del grafico.}
+\item{use_temperature}{Numeric. Use (process) temperature, in degrees
+Celsius. Corresponds to the X axis of the graph.}
 
-\item{punto_ebullicion}{Numeric. Punto de ebullicion, en grados
-Celsius. Corresponde al eje Y del grafico.}
+\item{boiling_point}{Numeric. Boiling point, in degrees Celsius.
+Corresponds to the Y axis of the graph.}
 }
 \value{
-Character escalar (\code{"1"} baja, \code{"2"} media, \code{"3"} alta).
+Character scalar (\code{"1"} low, \code{"2"} medium, \code{"3"} high).
 }
 \description{
-Clasifica la volatilidad de un liquido comparando su punto de
-ebullicion con las dos rectas de separacion de clases del grafico del
-metodo INRS (Figura 2, temperatura de utilizacion en el eje X, punto
-de ebullicion en el eje Y).
+Classifies the volatility of a liquid by comparing its boiling point
+with the two class-separating lines of the INRS method graph
+(Figure 2, use temperature on the X axis, boiling point on the Y
+axis).
 }
 \examples{
-inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 200)
-inrs_liquid_volatility_graph(temperatura_uso = 20, punto_ebullicion = 80)
+inrs_liquid_volatility_graph(use_temperature = 20, boiling_point = 200)
+inrs_liquid_volatility_graph(use_temperature = 20, boiling_point = 80)
 
 }

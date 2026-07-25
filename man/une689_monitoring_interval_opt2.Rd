@@ -2,21 +2,22 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_monitoring_interval_opt2}
 \alias{une689_monitoring_interval_opt2}
-\title{Periodicidad recomendada, opcion 2 (LSC95,70 frente al VLA)}
+\title{Recommended monitoring interval, option 2 (LSC95,70 vs VLA)}
 \usage{
 une689_monitoring_interval_opt2(lsc, vla)
 }
 \arguments{
-\item{lsc}{Numeric. LSC(95,70), vease \code{\link[=une689_lsc]{une689_lsc()}}.}
+\item{lsc}{Numeric. LSC(95,70), see \code{\link[=une689_lsc]{une689_lsc()}}.}
 
-\item{vla}{Numeric. Valor Limite Ambiental (mg/m3).}
+\item{vla}{Numeric. Valor Limite Ambiental / occupational exposure
+limit (mg/m3).}
 }
 \value{
-Character escalar describiendo la periodicidad recomendada,
-en meses, o un aviso de que la exposicion debe revisarse.
+Character scalar describing the recommended monitoring
+interval, in months, or a warning that exposure must be reviewed.
 }
 \description{
-Periodicidad recomendada, opcion 2 (LSC95,70 frente al VLA)
+Recommended monitoring interval, option 2 (LSC95,70 vs VLA)
 }
 \examples{
 une689_monitoring_interval_opt2(lsc = 4, vla = 10)

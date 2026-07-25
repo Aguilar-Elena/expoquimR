@@ -2,36 +2,36 @@
 % Please edit documentation in R/from_excel.R
 \name{coshh_from_excel}
 \alias{coshh_from_excel}
-\title{Evaluar sustancias COSHH a partir de un fichero Excel}
+\title{Evaluate COSHH substances from an Excel file}
 \usage{
-coshh_from_excel(ruta, hoja = "COSHH_datos")
+coshh_from_excel(path, sheet = "COSHH_datos")
 }
 \arguments{
-\item{ruta}{Character. Ruta al fichero \code{.xlsx}. Puede obtenerse con
-\code{\link[=system.file]{system.file()}} para la plantilla incluida en el paquete, o ser
-cualquier ruta local.}
+\item{path}{Character. Path to the \code{.xlsx} file. Can be obtained with
+\code{\link[=system.file]{system.file()}} for the template included in the package, or be any
+local path.}
 
-\item{hoja}{Character o integer. Nombre o numero de la hoja que
-contiene los datos (por defecto \code{"COSHH_datos"}).}
+\item{sheet}{Character or integer. Name or number of the sheet that
+contains the data (default \code{"COSHH_datos"}).}
 }
 \value{
-Un \code{data.frame} con una fila por sustancia y las columnas
-de resultado de \code{\link[=coshh_evaluate]{coshh_evaluate()}}.
+A \code{data.frame} with one row per substance and the result
+columns of \code{\link[=coshh_evaluate]{coshh_evaluate()}}.
 }
 \description{
-Lee una hoja Excel con el formato de la plantilla COSHH de expoquimR
-(una fila por sustancia) y devuelve la evaluacion completa de cada
-una llamando a \code{\link[=coshh_evaluate]{coshh_evaluate()}}.
+Reads an Excel sheet with the format of the expoquimR COSHH template
+(one row per substance) and returns the complete assessment of each
+one by calling \code{\link[=coshh_evaluate]{coshh_evaluate()}}.
 }
 \examples{
 \dontrun{
-# Con la plantilla incluida en el paquete:
-ruta <- system.file("plantillas", "plantilla_coshh.xlsx",
+# With the template included in the package:
+path <- system.file("plantillas", "plantilla_coshh.xlsx",
                     package = "expoquimR")
-coshh_from_excel(ruta)
+coshh_from_excel(path)
 
-# Con un fichero propio:
-coshh_from_excel("mis_datos_coshh.xlsx")
+# With your own file:
+coshh_from_excel("my_coshh_data.xlsx")
 }
 
 }

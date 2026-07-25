@@ -76,17 +76,17 @@ test_that("une689_evaluate_statistical returns a complete and coherent structure
 
   expect_equal(res$n,  6)
   expect_equal(res$ut, une689_ut(6))
-  expect_true(res$tipo %in% c(.t("une689_lognormal"),
+  expect_true(res$distribution_type %in% c(.t("une689_lognormal"),
                                .t("une689_normal"),
                                .t("une689_neither")))
-  if (res$tipo == .t("une689_neither")) {
+  if (res$distribution_type == .t("une689_neither")) {
     expect_true(is.na(res$ur))
     expect_true(is.na(res$lsc))
-    expect_true(is.na(res$conformidad))
+    expect_true(is.na(res$conformity))
   } else {
     expect_false(is.na(res$ur))
     expect_false(is.na(res$lsc))
-    expect_true(res$conformidad %in% c(.t("une689_conformity"),
+    expect_true(res$conformity %in% c(.t("une689_conformity"),
                                         .t("une689_no_conformity")))
   }
 })

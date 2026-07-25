@@ -119,24 +119,18 @@ The Shiny applications include an in-app language selector and do not depend on 
 
 ## Minimal usage
 
-> **Note on argument names:** function arguments follow the terminology of
-> the original normative documents (e.g. `vla` for occupational exposure
-> limit, `frases_h` for H-phrases). String values such as quantity classes,
-> process types and protection systems are language-sensitive and respond to
-> [expoquimr_lang()].
-
 ### COSHH Essentials
 
 ```r
 library(expoquimR)
 
 coshh_evaluate(
-  nombre       = "Toluene",
-  frases       = "H315, H336",
-  cantidad     = "Medium",
-  es_liquido   = TRUE,
-  t_ebullicion = 111,
-  t_proceso    = 20
+  name          = "Toluene",
+  phrases       = "H315, H336",
+  quantity      = "Medium",
+  is_liquid     = TRUE,
+  boiling_point = 111,
+  process_temp  = 20
 )
 ```
 
@@ -144,19 +138,19 @@ coshh_evaluate(
 
 ```r
 inrs_evaluate(
-  nombre            = "Toluene",
-  frases_h          = "H336",
-  vla               = 50,
-  cantidad_valor    = 5,
-  cantidad_unidad   = "l",
-  frecuencia_valor  = 3,
-  frecuencia_unidad = "horas",
-  tipo_sustancia    = "liquida",
-  metodo_liquido    = "grafico",
-  temperatura_uso   = 20,
-  punto_ebullicion  = 111,
-  procedimiento     = "Abierto",
-  proteccion        = "Condiciones moderadas de dispersion"
+  name            = "Toluene",
+  h_phrases       = "H336",
+  vla             = 50,
+  quantity_value  = 5,
+  quantity_unit   = "l",
+  frequency_value = 3,
+  frequency_unit  = "hours",
+  substance_type  = "liquid",
+  liquid_method   = "graph",
+  use_temperature = 20,
+  boiling_point   = 111,
+  procedure       = "Open",
+  protection      = "Moderate dispersion conditions"
 )
 ```
 
@@ -164,12 +158,12 @@ inrs_evaluate(
 
 ```r
 # Preliminary assessment
-datos <- data.frame(
-  jornada       = c(1, 1, 2, 3, 3),   # measurement day
-  concentracion = c(12, 8, 9, 5, 6),  # concentration (mg/m³)
-  tiempo        = c(4,  4, 8, 3, 5)   # duration (hours)
+data <- data.frame(
+  day           = c(1, 1, 2, 3, 3),   # measurement day
+  concentration = c(12, 8, 9, 5, 6),  # concentration (mg/m³)
+  time          = c(4,  4, 8, 3, 5)   # duration (hours)
 )
-une689_evaluate_preliminary(datos, vla = 10)
+une689_evaluate_preliminary(data, vla = 10)
 
 # Statistical assessment (>= 6 measurement days)
 ed_values <- c(10, 9, 5.6, 11, 8, 13)
@@ -188,14 +182,14 @@ run_une689()   # UNE-EN 689 app (multi-agent, additive effects, full workflow)
 
 ```r
 # Copy the template to your working directory, fill it in, then:
-ruta <- system.file("plantillas", "plantilla_coshh.xlsx", package = "expoquimR")
-coshh_from_excel(ruta)
+path <- system.file("plantillas", "plantilla_coshh.xlsx", package = "expoquimR")
+coshh_from_excel(path)
 
-ruta <- system.file("plantillas", "plantilla_inrs.xlsx", package = "expoquimR")
-inrs_from_excel(ruta)
+path <- system.file("plantillas", "plantilla_inrs.xlsx", package = "expoquimR")
+inrs_from_excel(path)
 
-ruta <- system.file("plantillas", "plantilla_une689.xlsx", package = "expoquimR")
-une689_from_excel(ruta)   # returns preliminary results, statistical assessment and additive effects
+path <- system.file("plantillas", "plantilla_une689.xlsx", package = "expoquimR")
+une689_from_excel(path)   # returns preliminary results, statistical assessment and additive effects
 ```
 
 <hr>
@@ -232,13 +226,13 @@ file.copy(
 )
 ```
 
-The UNE-EN 689 template has three sheets: **Agents** (name and VLA), **Measurements** (one row per sample, with a `tipo` field to distinguish preliminary from additional measurement days), and **Additive_effects** (optional, for groups of agents sharing a target organ).
+The UNE-EN 689 template has three sheets: **Agents** (name and VLA), **Measurements** (one row per sample, with a `type` field to distinguish preliminary from additional measurement days), and **Additive_effects** (optional, for groups of agents sharing a target organ).
 
 <hr>
 
 ## Outputs
 
-After running the high-level wrapper functions or `*_desde_excel()`:
+After running the high-level wrapper functions or `*_from_excel()`:
 
 | Output | Description |
 |---|---|

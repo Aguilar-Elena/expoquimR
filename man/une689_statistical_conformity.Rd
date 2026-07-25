@@ -2,23 +2,23 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_statistical_conformity}
 \alias{une689_statistical_conformity}
-\title{Conformidad de la evaluacion estadistica (UNE-EN 689)}
+\title{Conformity of the statistical assessment (UNE-EN 689)}
 \usage{
 une689_statistical_conformity(ur, ut)
 }
 \arguments{
-\item{ur}{Numeric. Indice de riesgo unilateral, vease \code{\link[=une689_ur]{une689_ur()}}.}
+\item{ur}{Numeric. One-sided risk index, see \code{\link[=une689_ur]{une689_ur()}}.}
 
-\item{ut}{Numeric. Factor UT, vease \code{\link[=une689_ut]{une689_ut()}}.}
+\item{ut}{Numeric. UT factor, see \code{\link[=une689_ut]{une689_ut()}}.}
 }
 \value{
-Character scalar: \code{"CONFORMITY"} if \code{ur >= ut}, \code{"NON-CONFORMITY"} if
-\code{ur < ut}, or \code{NA_character_} if \code{ur} is \code{NA} (e.g. when neither the normal
-nor the lognormal fit is adequate). Labels are returned in the active language;
-see \code{\link[=expoquimr_lang]{expoquimr_lang()}}.
+Character scalar: \code{"CONFORMITY"} if \code{ur >= ut},
+\code{"NON-CONFORMITY"} if \code{ur < ut}, or \code{NA_character_} if \code{ur} is \code{NA}
+(e.g. when neither the normal nor the lognormal fit is adequate).
+Labels are returned in the active language; see \code{\link[=expoquimr_lang]{expoquimr_lang()}}.
 }
 \description{
-Conformidad de la evaluacion estadistica (UNE-EN 689)
+Conformity of the statistical assessment (UNE-EN 689)
 }
 \examples{
 une689_statistical_conformity(ur = 2.1, ut = 2.005)

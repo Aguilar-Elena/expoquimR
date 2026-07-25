@@ -2,38 +2,39 @@
 % Please edit documentation in R/une689_preliminar.R
 \name{une689_evaluate_preliminary}
 \alias{une689_evaluate_preliminary}
-\title{Evaluacion preliminar completa UNE-EN 689 (funcion de alto nivel)}
+\title{Complete UNE-EN 689 preliminary assessment (high-level wrapper)}
 \usage{
-une689_evaluate_preliminary(datos, vla)
+une689_evaluate_preliminary(data, vla)
 }
 \arguments{
-\item{datos}{Un \code{data.frame} en formato largo con columnas \code{jornada}
-(identificador de jornada, numerico o character), \code{concentracion}
-(mg/m3) y \code{tiempo} (horas). Una fila por muestra.}
+\item{data}{A \code{data.frame} in long format with columns \code{day}
+(day identifier, numeric or character), \code{concentration} (mg/m3)
+and \code{time} (hours). One row per sample.}
 
-\item{vla}{Numeric. Valor Limite Ambiental (mg/m3).}
+\item{vla}{Numeric. Valor Limite Ambiental / occupational exposure
+limit (mg/m3).}
 }
 \value{
-Una lista con dos elementos:
+A list with two elements:
 \describe{
-\item{\code{tabla_jornadas}}{Un \code{data.frame} con columnas \code{jornada},
-\code{ED} e \code{IE}, una fila por jornada.}
-\item{\code{resultado}}{Character escalar con la clasificacion global,
-vease \code{\link[=une689_classify_conformity]{une689_classify_conformity()}}.}
+\item{\code{days_table}}{A \code{data.frame} with columns \code{day}, \code{ED} and
+\code{IE}, one row per day.}
+\item{\code{result}}{Character scalar with the overall classification,
+see \code{\link[=une689_classify_conformity]{une689_classify_conformity()}}.}
 }
 }
 \description{
-Calcula la ED y el IE de cada jornada y clasifica la conformidad
-global, a partir de un conjunto de muestras organizadas por jornada.
-Pensada para usarse directamente desde codigo, sin pasar por la
-aplicacion Shiny.
+Calculates the ED and IE for each day and classifies the overall
+conformity, from a set of samples organised by measurement day.
+Designed to be used directly from code, without going through the
+Shiny application.
 }
 \examples{
-datos <- data.frame(
-  jornada = c(1, 1, 2, 3, 3),
-  concentracion = c(12, 8, 9, 5, 6),
-  tiempo = c(4, 4, 8, 3, 5)
+data <- data.frame(
+  day = c(1, 1, 2, 3, 3),
+  concentration = c(12, 8, 9, 5, 6),
+  time = c(4, 4, 8, 3, 5)
 )
-une689_evaluate_preliminary(datos, vla = 10)
+une689_evaluate_preliminary(data, vla = 10)
 
 }

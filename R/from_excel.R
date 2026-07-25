@@ -1,306 +1,306 @@
-#' Evaluar sustancias COSHH a partir de un fichero Excel
+#' Evaluate COSHH substances from an Excel file
 #'
-#' Lee una hoja Excel con el formato de la plantilla COSHH de expoquimR
-#' (una fila por sustancia) y devuelve la evaluacion completa de cada
-#' una llamando a [coshh_evaluate()].
+#' Reads an Excel sheet with the format of the expoquimR COSHH template
+#' (one row per substance) and returns the complete assessment of each
+#' one by calling [coshh_evaluate()].
 #'
-#' @param ruta Character. Ruta al fichero `.xlsx`. Puede obtenerse con
-#'   [system.file()] para la plantilla incluida en el paquete, o ser
-#'   cualquier ruta local.
-#' @param hoja Character o integer. Nombre o numero de la hoja que
-#'   contiene los datos (por defecto `"COSHH_datos"`).
+#' @param path Character. Path to the `.xlsx` file. Can be obtained with
+#'   [system.file()] for the template included in the package, or be any
+#'   local path.
+#' @param sheet Character or integer. Name or number of the sheet that
+#'   contains the data (default `"COSHH_datos"`).
 #'
-#' @return Un `data.frame` con una fila por sustancia y las columnas
-#'   de resultado de [coshh_evaluate()].
+#' @return A `data.frame` with one row per substance and the result
+#'   columns of [coshh_evaluate()].
 #'
 #' @examples
 #' \dontrun{
-#' # Con la plantilla incluida en el paquete:
-#' ruta <- system.file("plantillas", "plantilla_coshh.xlsx",
+#' # With the template included in the package:
+#' path <- system.file("plantillas", "plantilla_coshh.xlsx",
 #'                     package = "expoquimR")
-#' coshh_from_excel(ruta)
+#' coshh_from_excel(path)
 #'
-#' # Con un fichero propio:
-#' coshh_from_excel("mis_datos_coshh.xlsx")
+#' # With your own file:
+#' coshh_from_excel("my_coshh_data.xlsx")
 #' }
 #'
 #' @export
-coshh_from_excel <- function(ruta, hoja = "COSHH_datos") {
+coshh_from_excel <- function(path, sheet = "COSHH_datos") {
   if (!requireNamespace("readxl", quietly = TRUE)) {
     stop(.t("need_readxl"), call. = FALSE)
   }
 
-  df <- as.data.frame(readxl::read_excel(ruta, sheet = hoja, skip = 2, col_types = "text"))
+  df <- as.data.frame(readxl::read_excel(path, sheet = sheet, skip = 2, col_types = "text"))
 
-  cols_req <- c("sustancia", "cantidad", "es_liquido")
-  faltan <- setdiff(cols_req, names(df))
-  if (length(faltan) > 0) {
-    stop(.t("missing_cols", paste(faltan, collapse = ", ")), call. = FALSE)
+  required_cols <- c("substance", "quantity", "is_liquid")
+  missing_cols <- setdiff(required_cols, names(df))
+  if (length(missing_cols) > 0) {
+    stop(.t("missing_cols", paste(missing_cols, collapse = ", ")), call. = FALSE)
   }
 
-  resultados <- lapply(seq_len(nrow(df)), function(i) {
-    fila <- df[i, ]
+  results <- lapply(seq_len(nrow(df)), function(i) {
+    row <- df[i, ]
 
-    es_liq <- isTRUE(toupper(trimws(fila$es_liquido)) == "TRUE")
+    is_liq <- isTRUE(toupper(trimws(row$is_liquid)) == "TRUE")
 
-    frases_h_str <- trimws(fila$frases_h %||% "")
-    frases_r_str <- trimws(fila$frases_r %||% "")
-    frases_combinadas <- paste(
-      c(frases_h_str, frases_r_str)[nzchar(c(frases_h_str, frases_r_str))],
+    h_phrases_str <- trimws(row$h_phrases %||% "")
+    r_phrases_str <- trimws(row$r_phrases %||% "")
+    combined_phrases <- paste(
+      c(h_phrases_str, r_phrases_str)[nzchar(c(h_phrases_str, r_phrases_str))],
       collapse = ", "
     )
 
     coshh_evaluate(
-      nombre        = fila$sustancia %||% paste("Sustancia", i),
-      frases        = frases_combinadas,
-      cantidad      = trimws(fila$cantidad),
-      es_liquido    = es_liq,
-      t_ebullicion  = suppressWarnings(as.numeric(fila$t_ebullicion)),
-      t_proceso     = suppressWarnings(as.numeric(fila$t_proceso)),
-      pulverulencia = trimws(fila$pulverulencia %||% NA_character_)
+      name          = row$substance %||% paste("Substance", i),
+      phrases       = combined_phrases,
+      quantity      = trimws(row$quantity),
+      is_liquid     = is_liq,
+      boiling_point = suppressWarnings(as.numeric(row$boiling_point)),
+      process_temp  = suppressWarnings(as.numeric(row$process_temp)),
+      dustiness     = trimws(row$dustiness %||% NA_character_)
     )
   })
 
-  do.call(rbind, resultados)
+  do.call(rbind, results)
 }
 
-#' Evaluar productos quimicos INRS a partir de un fichero Excel
+#' Evaluate INRS chemical products from an Excel file
 #'
-#' Lee una hoja Excel con el formato de la plantilla INRS de expoquimR
-#' (una fila por producto) y devuelve la evaluacion completa llamando
-#' a [inrs_evaluate()].
+#' Reads an Excel sheet with the format of the expoquimR INRS template
+#' (one row per product) and returns the complete assessment by calling
+#' [inrs_evaluate()].
 #'
-#' @param ruta Character. Ruta al fichero `.xlsx`.
-#' @param hoja Character o integer. Nombre o numero de la hoja (por
-#'   defecto `"INRS_datos"`).
+#' @param path Character. Path to the `.xlsx` file.
+#' @param sheet Character or integer. Name or number of the sheet
+#'   (default `"INRS_datos"`).
 #'
-#' @return Un `data.frame` con una fila por producto y todas las
-#'   columnas de resultado de [inrs_evaluate()].
+#' @return A `data.frame` with one row per product and all the result
+#'   columns of [inrs_evaluate()].
 #'
 #' @examples
 #' \dontrun{
-#' ruta <- system.file("plantillas", "plantilla_inrs.xlsx",
+#' path <- system.file("plantillas", "plantilla_inrs.xlsx",
 #'                     package = "expoquimR")
-#' inrs_from_excel(ruta)
+#' inrs_from_excel(path)
 #' }
 #'
 #' @export
-inrs_from_excel <- function(ruta, hoja = "INRS_datos") {
+inrs_from_excel <- function(path, sheet = "INRS_datos") {
   if (!requireNamespace("readxl", quietly = TRUE)) {
     stop(.t("need_readxl"), call. = FALSE)
   }
 
-  df <- as.data.frame(readxl::read_excel(ruta, sheet = hoja, skip = 2, col_types = "text"))
+  df <- as.data.frame(readxl::read_excel(path, sheet = sheet, skip = 2, col_types = "text"))
 
-  cols_req <- c("producto", "procedimiento", "proteccion")
-  faltan <- setdiff(cols_req, names(df))
-  if (length(faltan) > 0) {
-    stop(.t("missing_cols", paste(faltan, collapse = ", ")), call. = FALSE)
+  required_cols <- c("product", "procedure", "protection")
+  missing_cols <- setdiff(required_cols, names(df))
+  if (length(missing_cols) > 0) {
+    stop(.t("missing_cols", paste(missing_cols, collapse = ", ")), call. = FALSE)
   }
 
-  resultados <- lapply(seq_len(nrow(df)), function(i) {
-    fila <- df[i, ]
+  results <- lapply(seq_len(nrow(df)), function(i) {
+    row <- df[i, ]
 
-    frases_h <- if (!is.na(fila$frases_h) && nzchar(trimws(fila$frases_h)))
-      trimws(strsplit(fila$frases_h, ",")[[1]]) else character(0)
-    frases_r <- if (!is.na(fila$frases_r) && nzchar(trimws(fila$frases_r)))
-      trimws(strsplit(fila$frases_r, ",")[[1]]) else character(0)
-    proceso  <- if (!is.na(fila$proceso) && nzchar(trimws(fila$proceso)))
-      trimws(fila$proceso) else NULL
+    h_phrases <- if (!is.na(row$h_phrases) && nzchar(trimws(row$h_phrases)))
+      trimws(strsplit(row$h_phrases, ",")[[1]]) else character(0)
+    r_phrases <- if (!is.na(row$r_phrases) && nzchar(trimws(row$r_phrases)))
+      trimws(strsplit(row$r_phrases, ",")[[1]]) else character(0)
+    process  <- if (!is.na(row$process) && nzchar(trimws(row$process)))
+      trimws(row$process) else NULL
 
     inrs_evaluate(
-      nombre            = fila$producto %||% paste("Producto", i),
-      frases_h          = frases_h,
-      frases_r          = frases_r,
-      proceso           = proceso,
-      vla               = suppressWarnings(as.numeric(fila$vla)),
-      cantidad_valor    = suppressWarnings(as.numeric(fila$cantidad_valor)),
-      cantidad_unidad   = trimws(fila$cantidad_unidad   %||% "g"),
-      frecuencia_valor  = suppressWarnings(as.numeric(fila$frecuencia_valor)),
-      frecuencia_unidad = trimws(fila$frecuencia_unidad %||% "horas"),
-      tipo_sustancia    = trimws(fila$tipo_sustancia    %||% "liquida"),
-      metodo_liquido    = trimws(fila$metodo_liquido    %||% "grafico"),
-      temperatura_uso   = suppressWarnings(as.numeric(fila$temperatura_uso)),
-      punto_ebullicion  = suppressWarnings(as.numeric(fila$punto_ebullicion)),
-      presion_vapor     = suppressWarnings(as.numeric(fila$presion_vapor)),
-      descripcion_solida = trimws(fila$descripcion_solida %||% NA_character_),
-      procedimiento     = trimws(fila$procedimiento),
-      proteccion        = trimws(fila$proteccion)
+      name               = row$product %||% paste("Product", i),
+      h_phrases          = h_phrases,
+      r_phrases          = r_phrases,
+      process            = process,
+      vla                = suppressWarnings(as.numeric(row$vla)),
+      quantity_value     = suppressWarnings(as.numeric(row$quantity_value)),
+      quantity_unit      = trimws(row$quantity_unit  %||% "g"),
+      frequency_value    = suppressWarnings(as.numeric(row$frequency_value)),
+      frequency_unit     = trimws(row$frequency_unit %||% "hours"),
+      substance_type     = trimws(row$substance_type %||% "liquid"),
+      liquid_method      = trimws(row$liquid_method   %||% "graph"),
+      use_temperature    = suppressWarnings(as.numeric(row$use_temperature)),
+      boiling_point      = suppressWarnings(as.numeric(row$boiling_point)),
+      vapour_pressure    = suppressWarnings(as.numeric(row$vapour_pressure)),
+      solid_description  = trimws(row$solid_description %||% NA_character_),
+      procedure          = trimws(row$procedure),
+      protection         = trimws(row$protection)
     )
   })
 
-  do.call(rbind, resultados)
+  do.call(rbind, results)
 }
 
-#' Evaluar exposicion quimica UNE-EN 689 a partir de un fichero Excel
+#' Evaluate UNE-EN 689 chemical exposure from an Excel file
 #'
-#' Lee las tres hojas de la plantilla UNE-EN 689 de expoquimR
-#' (`Agentes`, `Mediciones` y opcionalmente `Efectos_aditivos`) y
-#' devuelve una lista con la evaluacion preliminar de cada agente,
-#' y si procede, el calculo de efectos aditivos por grupo.
+#' Reads the three sheets of the expoquimR UNE-EN 689 template
+#' (`Agents`, `Measurements` and optionally `Additive_effects`) and
+#' returns a list with the preliminary assessment of each agent, and if
+#' applicable, the additive effects calculation by group.
 #'
-#' @param ruta Character. Ruta al fichero `.xlsx`.
+#' @param path Character. Path to the `.xlsx` file.
 #'
-#' @return Una lista con los elementos:
+#' @return A list with the elements:
 #'   \describe{
-#'     \item{`preliminar`}{Lista con un elemento por agente, cada uno
-#'       con `nombre`, `vla`, `tabla_jornadas` y `resultado`.}
-#'     \item{`aditivo`}{`data.frame` con columnas `grupo`, `agente`,
-#'       `ie_medio` e `ie_combinado`, o `NULL` si no hay hoja de
-#'       efectos aditivos.}
+#'     \item{`preliminary`}{A list with one element per agent, each with
+#'       `name`, `vla`, `days_table` and `result`.}
+#'     \item{`additive`}{`data.frame` with columns `group`, `agent`,
+#'       `mean_ie` and `combined_ie`, or `NULL` if there is no additive
+#'       effects sheet.}
 #'   }
 #'
 #' @examples
 #' \dontrun{
-#' ruta <- system.file("plantillas", "plantilla_une689.xlsx",
+#' path <- system.file("plantillas", "plantilla_une689.xlsx",
 #'                     package = "expoquimR")
-#' res <- une689_from_excel(ruta)
-#' res$preliminar
-#' res$aditivo
+#' res <- une689_from_excel(path)
+#' res$preliminary
+#' res$additive
 #' }
 #'
 #' @export
-une689_from_excel <- function(ruta) {
+une689_from_excel <- function(path) {
   if (!requireNamespace("readxl", quietly = TRUE)) {
     stop(.t("need_readxl"), call. = FALSE)
   }
 
-  hojas <- readxl::excel_sheets(ruta)
+  sheets <- readxl::excel_sheets(path)
 
-  # ---- Agentes --------------------------------------------------------------
-  if (!"Agentes" %in% hojas) {
-    stop("No se encontro la hoja 'Agentes' en el fichero.", call. = FALSE)
+  # ---- Agents -----------------------------------------------------------
+  if (!"Agents" %in% sheets) {
+    stop(.t("excel_no_sheet_agents"), call. = FALSE)
   }
-  ag_df <- as.data.frame(readxl::read_excel(ruta, sheet = "Agentes",
+  agents_df <- as.data.frame(readxl::read_excel(path, sheet = "Agents",
                                               skip = 2, col_types = "text"))
-  ag_df$vla_mg_m3 <- suppressWarnings(as.numeric(ag_df$vla_mg_m3))
+  agents_df$vla_mg_m3 <- suppressWarnings(as.numeric(agents_df$vla_mg_m3))
 
-  # ---- Mediciones -----------------------------------------------------------
-  if (!"Mediciones" %in% hojas) {
-    stop("No se encontro la hoja 'Mediciones' en el fichero.", call. = FALSE)
+  # ---- Measurements -------------------------------------------------------
+  if (!"Measurements" %in% sheets) {
+    stop(.t("excel_no_sheet_meas"), call. = FALSE)
   }
-  med_df <- as.data.frame(readxl::read_excel(ruta, sheet = "Mediciones",
+  meas_df <- as.data.frame(readxl::read_excel(path, sheet = "Measurements",
                                                skip = 2, col_types = "text"))
-  med_df$concentracion_mg_m3 <- suppressWarnings(as.numeric(med_df$concentracion_mg_m3))
-  med_df$tiempo_h             <- suppressWarnings(as.numeric(med_df$tiempo_h))
-  med_df$jornada              <- suppressWarnings(as.integer(med_df$jornada))
+  meas_df$concentration_mg_m3 <- suppressWarnings(as.numeric(meas_df$concentration_mg_m3))
+  meas_df$time_h              <- suppressWarnings(as.numeric(meas_df$time_h))
+  meas_df$day                 <- suppressWarnings(as.integer(meas_df$day))
 
-  # ---- Evaluacion preliminar por agente -------------------------------------
-  preliminar <- lapply(seq_len(nrow(ag_df)), function(i) {
-    nombre <- ag_df$agente[i]
-    vla    <- ag_df$vla_mg_m3[i]
+  # ---- Preliminary assessment per agent ------------------------------------
+  preliminary <- lapply(seq_len(nrow(agents_df)), function(i) {
+    name <- agents_df$agent[i]
+    vla  <- agents_df$vla_mg_m3[i]
 
-    # Seleccionar mediciones de este agente (solo tipo "pre")
-    sub <- med_df[
-      trimws(tolower(med_df$agente)) == trimws(tolower(nombre)) &
-        trimws(tolower(med_df$tipo)) == "pre",
+    # Select measurements for this agent (only type "pre")
+    sub <- meas_df[
+      trimws(tolower(meas_df$agent)) == trimws(tolower(name)) &
+        trimws(tolower(meas_df$type)) == "pre",
     ]
-    sub <- sub[!is.na(sub$concentracion_mg_m3) & !is.na(sub$tiempo_h), ]
+    sub <- sub[!is.na(sub$concentration_mg_m3) & !is.na(sub$time_h), ]
 
     if (nrow(sub) == 0 || is.na(vla)) {
-      return(list(nombre = nombre, vla = vla,
-                  tabla_jornadas = NULL, resultado = NA_character_))
+      return(list(name = name, vla = vla,
+                  days_table = NULL, result = NA_character_))
     }
 
-    datos <- data.frame(
-      jornada       = sub$jornada,
-      concentracion = sub$concentracion_mg_m3,
-      tiempo        = sub$tiempo_h
+    data <- data.frame(
+      day           = sub$day,
+      concentration = sub$concentration_mg_m3,
+      time          = sub$time_h
     )
 
-    res <- une689_evaluate_preliminary(datos, vla = vla)
+    res <- une689_evaluate_preliminary(data, vla = vla)
 
-    # Si NO DECISION, intentar evaluacion estadistica con jornadas adicionales
-    if (!is.na(res$resultado) && res$resultado == .t("une689_no_decision")) {
-      sub_add <- med_df[
-        trimws(tolower(med_df$agente)) == trimws(tolower(nombre)) &
-          trimws(tolower(med_df$tipo)) == "add",
+    # If NO DECISION, try statistical assessment with additional days
+    if (!is.na(res$result) && res$result == .t("une689_no_decision")) {
+      sub_add <- meas_df[
+        trimws(tolower(meas_df$agent)) == trimws(tolower(name)) &
+          trimws(tolower(meas_df$type)) == "add",
       ]
-      sub_add <- sub_add[!is.na(sub_add$concentracion_mg_m3) &
-                           !is.na(sub_add$tiempo_h), ]
+      sub_add <- sub_add[!is.na(sub_add$concentration_mg_m3) &
+                           !is.na(sub_add$time_h), ]
 
       if (nrow(sub_add) > 0) {
-        n_pre <- max(datos$jornada, na.rm = TRUE)
-        datos_add <- data.frame(
-          jornada       = sub_add$jornada + n_pre,
-          concentracion = sub_add$concentracion_mg_m3,
-          tiempo        = sub_add$tiempo_h
+        n_pre <- max(data$day, na.rm = TRUE)
+        data_add <- data.frame(
+          day           = sub_add$day + n_pre,
+          concentration = sub_add$concentration_mg_m3,
+          time          = sub_add$time_h
         )
-        datos_total <- rbind(datos, datos_add)
+        data_total <- rbind(data, data_add)
 
-        jids <- sort(unique(datos_total$jornada))
-        eds  <- vapply(jids, function(j) {
-          s <- datos_total[datos_total$jornada == j, ]
-          une689_daily_exposure(s$concentracion, s$tiempo)
+        day_ids <- sort(unique(data_total$day))
+        eds  <- vapply(day_ids, function(d) {
+          s <- data_total[data_total$day == d, ]
+          une689_daily_exposure(s$concentration, s$time)
         }, numeric(1))
         eds <- eds[!is.na(eds) & eds > 0]
 
-        if (une689_validate_min_days(length(eds), minimo = 6L)) {
-          est <- une689_evaluate_statistical(eds, vla = vla)
-          est$eds <- eds   # needed for density plot in expoquimr_report()
-          est$vla <- vla
+        if (une689_validate_min_days(length(eds), minimum = 6L)) {
+          stats_result <- une689_evaluate_statistical(eds, vla = vla)
+          stats_result$eds <- eds   # needed for density plot in expoquimr_report()
+          stats_result$vla <- vla
           return(list(
-            nombre         = nombre,
-            vla            = vla,
-            tabla_jornadas = res$tabla_jornadas,
-            resultado      = res$resultado,
-            estadistica    = est
+            name       = name,
+            vla        = vla,
+            days_table = res$days_table,
+            result     = res$result,
+            statistics = stats_result
           ))
         }
       }
     }
 
-    list(nombre = nombre, vla = vla,
-         tabla_jornadas = res$tabla_jornadas,
-         resultado = res$resultado)
+    list(name = name, vla = vla,
+         days_table = res$days_table,
+         result = res$result)
   })
-  names(preliminar) <- ag_df$agente
+  names(preliminary) <- agents_df$agent
 
-  # ---- Efectos aditivos -----------------------------------------------------
-  aditivo <- NULL
-  if ("Efectos_aditivos" %in% hojas) {
-    ad_df <- as.data.frame(readxl::read_excel(ruta, sheet = "Efectos_aditivos", skip = 2, col_types = "text"))
-    ad_df$grupo <- suppressWarnings(as.integer(ad_df$grupo))
+  # ---- Additive effects -----------------------------------------------------
+  additive <- NULL
+  if ("Additive_effects" %in% sheets) {
+    add_df <- as.data.frame(readxl::read_excel(path, sheet = "Additive_effects", skip = 2, col_types = "text"))
+    add_df$group <- suppressWarnings(as.integer(add_df$group))
 
-    grupos <- sort(unique(ad_df$grupo[!is.na(ad_df$grupo)]))
-    filas_ad <- lapply(grupos, function(g) {
-      agentes_g <- trimws(ad_df$agente[ad_df$grupo == g])
-      desc_g    <- ad_df$descripcion_grupo[ad_df$grupo == g][1]
+    groups <- sort(unique(add_df$group[!is.na(add_df$group)]))
+    group_rows <- lapply(groups, function(g) {
+      group_agents <- trimws(add_df$agent[add_df$group == g])
+      group_desc   <- add_df$group_description[add_df$group == g][1]
 
-      ie_por_agente <- vapply(agentes_g, function(ag) {
-        pre <- preliminar[[ag]]
-        if (is.null(pre) || is.null(pre$tabla_jornadas)) return(NA_real_)
-        mean(pre$tabla_jornadas$IE, na.rm = TRUE)
+      ie_per_agent <- vapply(group_agents, function(ag) {
+        pre <- preliminary[[ag]]
+        if (is.null(pre) || is.null(pre$days_table)) return(NA_real_)
+        mean(pre$days_table$IE, na.rm = TRUE)
       }, numeric(1))
 
-      # Solo calcular ie_combinado si TODOS los agentes del grupo tienen datos
-      tiene_na <- anyNA(ie_por_agente)
-      ie_combinado <- if (tiene_na) NA_real_ else sum(ie_por_agente)
+      # Only calculate combined_ie if ALL agents in the group have data
+      has_na <- anyNA(ie_per_agent)
+      combined_ie <- if (has_na) NA_real_ else sum(ie_per_agent)
 
-      resultado_grupo <- if (tiene_na) {
+      group_result <- if (has_na) {
         .t("une689_additive_na")
-      } else if (ie_combinado < 0.1) {
+      } else if (combined_ie < 0.1) {
         .t("une689_conformity")
-      } else if (ie_combinado > 1) {
+      } else if (combined_ie > 1) {
         .t("une689_no_conformity")
       } else {
         .t("une689_no_decision")
       }
       data.frame(
-        grupo           = g,
-        descripcion     = desc_g %||% "",
-        agente          = agentes_g,
-        ie_medio        = round(ie_por_agente, 4),
-        ie_combinado    = round(ie_combinado, 4),
-        resultado_grupo = resultado_grupo,
+        group          = g,
+        description    = group_desc %||% "",
+        agent          = group_agents,
+        mean_ie        = round(ie_per_agent, 4),
+        combined_ie    = round(combined_ie, 4),
+        group_result   = group_result,
         stringsAsFactors = FALSE
       )
     })
-    aditivo <- do.call(rbind, filas_ad)
+    additive <- do.call(rbind, group_rows)
   }
 
-  list(preliminar = preliminar, aditivo = aditivo)
+  list(preliminary = preliminary, additive = additive)
 }
 
-# Helper interno (evita dependencia de rlang en estas funciones)
+# Internal helper (avoids a dependency on rlang in these functions)
 `%||%` <- function(a, b) if (is.null(a) || (length(a) == 1 && is.na(a))) b else a

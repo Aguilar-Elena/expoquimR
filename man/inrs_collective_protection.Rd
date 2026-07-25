@@ -2,22 +2,21 @@
 % Please edit documentation in R/inrs.R
 \name{inrs_collective_protection}
 \alias{inrs_collective_protection}
-\title{Clase y puntuacion de proteccion colectiva (metodo INRS)}
+\title{Collective protection class and score (INRS method)}
 \usage{
-inrs_collective_protection(situacion)
+inrs_collective_protection(situation)
 }
 \arguments{
-\item{situacion}{Character. Una de las situaciones de la Figura 4
-INRS, p. ej. \code{"Captacion envolvente"}.}
+\item{situation}{Character. One of the situations of INRS Figure 4,
+e.g. \code{"Enclosing hood / full enclosure"}.}
 }
 \value{
-Un \code{data.frame} de una fila con columnas \code{clase} y
-\code{puntuacion}.
+A one-row \code{data.frame} with columns \code{class} and \code{score}.
 }
 \description{
-Clase y puntuacion de proteccion colectiva (metodo INRS)
+Collective protection class and score (INRS method)
 }
 \examples{
-inrs_collective_protection("Captacion envolvente")
+inrs_collective_protection("Enclosing hood / full enclosure")
 
 }

@@ -2,10 +2,10 @@
 % Please edit documentation in R/une689_estadistica.R
 \name{une689_ur}
 \alias{une689_ur}
-\title{Indice de riesgo unilateral UR (UNE-EN 689)}
+\title{One-sided risk index UR (UNE-EN 689)}
 \usage{
 une689_ur(
-  tipo,
+  distribution_type,
   vla,
   MA = NA_real_,
   DS = NA_real_,
@@ -14,17 +14,18 @@ une689_ur(
 )
 }
 \arguments{
-\item{tipo}{Character. Distribution type; see \code{\link[=une689_lsc]{une689_lsc()}}.}
+\item{distribution_type}{Character. Distribution type; see \code{\link[=une689_lsc]{une689_lsc()}}.}
 
-\item{vla}{Numeric. Valor Limite Ambiental (mg/m3).}
+\item{vla}{Numeric. Valor Limite Ambiental / occupational exposure
+limit (mg/m3).}
 
-\item{MA, DS, MG, DSG}{Numeric. Vease \code{\link[=une689_lsc]{une689_lsc()}}.}
+\item{MA, DS, MG, DSG}{Numeric. See \code{\link[=une689_lsc]{une689_lsc()}}.}
 }
 \value{
-Numeric scalar, or \code{NA_real_} if \code{tipo = "Neither"}.
+Numeric scalar, or \code{NA_real_} if \code{distribution_type = "Neither"}.
 }
 \description{
-Indice de riesgo unilateral UR (UNE-EN 689)
+One-sided risk index UR (UNE-EN 689)
 }
 \examples{
 une689_ur("Normal", vla = 10, MA = 7.5, DS = 1.87)
