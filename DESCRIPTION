@@ -46,7 +46,7 @@ Description: Provides a unified toolkit for occupational chemical exposure
     Mallet, Pilorget and Berne (2013, ISBN:978-2-7389-2166-2)
     "Evaluation du risque chimique" INRS ED 6084;
     European Committee for Standardisation (2018)
-    <https://www.en-standard.eu/bs-en-689-2018/>.
+    <https://www.en-standard.eu/bs-en-689-2018-workplace-exposure-measurement-of-exposure-by-inhalation-to-chemical-agents-strategy-for-testing-compliance-with-occupational-exposure-limit-values/>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB

@@ -4,6 +4,6 @@
 ^data-raw$
 ^doc$
 ^Meta$
-^\\.github$
+^\.github$
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
