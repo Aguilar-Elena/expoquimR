@@ -28,7 +28,8 @@ double-escaping bug in `.Rbuildignore`; this has been fixed.)
 * Local: macOS 26.3 (aarch64), R 4.4.0
 * rhub v2 (GitHub Actions): ubuntu-latest R-devel, windows-latest R-devel,
   macos-arm64 R-devel — all passed
-* win-builder: R Under development — [RE-RUN AND UPDATE BEFORE SUBMITTING]
+* win-builder: R Under development (2026-07-24 r90297 ucrt) — 1 NOTE only
+  (New submission; expected for a first CRAN submission)
 
 ## Downstream dependencies
 
