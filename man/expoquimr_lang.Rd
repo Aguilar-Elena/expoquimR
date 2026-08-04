@@ -20,9 +20,14 @@ labels returned by high-level wrapper functions, and error/warning
 messages. It does \strong{not} affect the Shiny apps, which have their own
 in-app language selector.
 }
+\details{
+The active language is stored in a private package environment, not in
+\code{\link[=options]{options()}}, so calling this function never alters the user's global R
+session settings.
+}
 \examples{
 expoquimr_lang()          # query current language
-expoquimr_lang("es")      # switch to Spanish
-expoquimr_lang("en")      # switch back to English
+old <- expoquimr_lang("es")  # switch to Spanish, saving the previous value
+expoquimr_lang(old)          # restore it
 
 }

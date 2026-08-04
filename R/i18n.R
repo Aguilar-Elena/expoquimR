@@ -2,9 +2,13 @@
 # Default language: English ("en")
 # Supported languages: "en", "es"
 #
+# The active language is stored in a private package environment (NOT in
+# options()), so switching it never touches the user's global R session
+# state. See expoquimr_lang() below.
+#
 # Usage:
-#   options(expoquimR.lang = "es")   # switch to Spanish
-#   options(expoquimR.lang = "en")   # switch to English (default)
+#   expoquimr_lang("es")             # switch to Spanish
+#   expoquimr_lang("en")             # switch to English (default)
 #   .t("coshh_volatility_low")       # get translated string
 
 .translations <- list(
@@ -140,6 +144,12 @@
   )
 )
 
+# Private package environment holding mutable state (currently just the
+# active language). Using our own environment instead of options() means
+# expoquimr_lang() never touches the user's global R session settings.
+.expoquimR_state <- new.env(parent = emptyenv())
+.expoquimR_state$lang <- "en"
+
 #' Get or set the language used by expoquimR
 #'
 #' expoquimR supports English (`"en"`, default) and Spanish (`"es"`). The
@@ -148,6 +158,10 @@
 #' messages. It does **not** affect the Shiny apps, which have their own
 #' in-app language selector.
 #'
+#' The active language is stored in a private package environment, not in
+#' [options()], so calling this function never alters the user's global R
+#' session settings.
+#'
 #' @param lang Character. `"en"` (English, default) or `"es"` (Spanish).
 #'   If `NULL`, returns the currently active language without changing it.
 #'
@@ -155,12 +169,12 @@
 #'
 #' @examples
 #' expoquimr_lang()          # query current language
-#' expoquimr_lang("es")      # switch to Spanish
-#' expoquimr_lang("en")      # switch back to English
+#' old <- expoquimr_lang("es")  # switch to Spanish, saving the previous value
+#' expoquimr_lang(old)          # restore it
 #'
 #' @export
 expoquimr_lang <- function(lang = NULL) {
-  prev <- getOption("expoquimR.lang", default = "en")
+  prev <- .expoquimR_state$lang
   if (is.null(lang)) {
     message("Current expoquimR language: ", prev)
     return(invisible(prev))
@@ -170,14 +184,14 @@ expoquimr_lang <- function(lang = NULL) {
     stop(sprintf(.translations[["en"]][["lang_not_supported"]], lang),
          call. = FALSE)
   }
-  options(expoquimR.lang = lang)
+  .expoquimR_state$lang <- lang
   invisible(prev)
 }
 
 # Internal helper: get a translated string by key
 # sprintf-style arguments can be passed via ...
 .t <- function(key, ...) {
-  lang <- getOption("expoquimR.lang", default = "en")
+  lang <- .expoquimR_state$lang
   if (!lang %in% names(.translations)) lang <- "en"
   txt <- .translations[[lang]][[key]]
   if (is.null(txt)) {

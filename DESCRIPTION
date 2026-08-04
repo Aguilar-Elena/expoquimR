@@ -27,9 +27,9 @@ Authors@R: c(
     )
 Description: Provides a unified toolkit for occupational chemical exposure
     risk assessment, implementing three internationally recognised
-    methods end to end: the qualitative control-banding methods 'COSHH
-    Essentials' (UK Health and Safety Executive) and the method of the
-    French National Research and Safety Institute ('INRS'), together
+    methods end to end: the qualitative control-banding methods COSHH
+    Essentials (UK Health and Safety Executive) and the method of the
+    French National Research and Safety Institute (INRS), together
     with the quantitative statistical procedure of the UNE-EN 689
     standard for comparing measured exposure levels against
     occupational exposure limits. Every step of each method, from

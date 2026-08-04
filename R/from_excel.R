@@ -14,15 +14,13 @@
 #'   columns of [coshh_evaluate()].
 #'
 #' @examples
-#' \dontrun{
 #' # With the template included in the package:
 #' path <- system.file("plantillas", "plantilla_coshh.xlsx",
 #'                     package = "expoquimR")
 #' coshh_from_excel(path)
 #'
-#' # With your own file:
-#' coshh_from_excel("my_coshh_data.xlsx")
-#' }
+#' # With your own file, simply pass its path:
+#' # coshh_from_excel("my_coshh_data.xlsx")
 #'
 #' @export
 coshh_from_excel <- function(path, sheet = "COSHH_datos") {
@@ -78,11 +76,9 @@ coshh_from_excel <- function(path, sheet = "COSHH_datos") {
 #'   columns of [inrs_evaluate()].
 #'
 #' @examples
-#' \dontrun{
 #' path <- system.file("plantillas", "plantilla_inrs.xlsx",
 #'                     package = "expoquimR")
 #' inrs_from_excel(path)
-#' }
 #'
 #' @export
 inrs_from_excel <- function(path, sheet = "INRS_datos") {
@@ -151,7 +147,7 @@ inrs_from_excel <- function(path, sheet = "INRS_datos") {
 #'   }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' path <- system.file("plantillas", "plantilla_une689.xlsx",
 #'                     package = "expoquimR")
 #' res <- une689_from_excel(path)

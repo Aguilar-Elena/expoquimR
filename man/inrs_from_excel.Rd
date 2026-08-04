@@ -22,10 +22,8 @@ Reads an Excel sheet with the format of the expoquimR INRS template
 \code{\link[=inrs_evaluate]{inrs_evaluate()}}.
 }
 \examples{
-\dontrun{
 path <- system.file("plantillas", "plantilla_inrs.xlsx",
                     package = "expoquimR")
 inrs_from_excel(path)
-}
 
 }

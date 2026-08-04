@@ -26,7 +26,7 @@ returns a list with the preliminary assessment of each agent, and if
 applicable, the additive effects calculation by group.
 }
 \examples{
-\dontrun{
+\donttest{
 path <- system.file("plantillas", "plantilla_une689.xlsx",
                     package = "expoquimR")
 res <- une689_from_excel(path)

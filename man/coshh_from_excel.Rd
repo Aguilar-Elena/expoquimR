@@ -24,14 +24,12 @@ Reads an Excel sheet with the format of the expoquimR COSHH template
 one by calling \code{\link[=coshh_evaluate]{coshh_evaluate()}}.
 }
 \examples{
-\dontrun{
 # With the template included in the package:
 path <- system.file("plantillas", "plantilla_coshh.xlsx",
                     package = "expoquimR")
 coshh_from_excel(path)
 
-# With your own file:
-coshh_from_excel("my_coshh_data.xlsx")
-}
+# With your own file, simply pass its path:
+# coshh_from_excel("my_coshh_data.xlsx")
 
 }

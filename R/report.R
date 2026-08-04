@@ -27,32 +27,36 @@
 #' @return Invisibly returns the path to the generated HTML file.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # COSHH only
 #' res <- coshh_evaluate(
 #'   name = "Toluene", phrases = "H315, H336",
 #'   quantity = "Medium", is_liquid = TRUE,
 #'   boiling_point = 111, process_temp = 20
 #' )
+#' out1 <- tempfile(fileext = ".html")
 #' expoquimr_report(
 #'   coshh     = res,
 #'   evaluator = "Dr. Jane Smith",
 #'   workplace = "Printing workshop A",
-#'   output    = "report_coshh.html"
+#'   output    = out1,
+#'   open      = FALSE
 #' )
 #'
 #' # All three methods
-#' ruta <- system.file("plantillas", "plantilla_une689.xlsx",
+#' path <- system.file("plantillas", "plantilla_une689.xlsx",
 #'                     package = "expoquimR")
-#' res_une <- une689_from_excel(ruta)
+#' res_une <- une689_from_excel(path)
 #'
+#' out2 <- tempfile(fileext = ".html")
 #' expoquimr_report(
 #'   coshh     = res,
 #'   une689    = res_une,
 #'   evaluator = "Dr. Jane Smith",
 #'   workplace = "Printing workshop A",
-#'   output    = "full_report.html",
-#'   lang      = "en"
+#'   output    = out2,
+#'   lang      = "en",
+#'   open      = FALSE
 #' )
 #' }
 #'
@@ -63,7 +67,7 @@ expoquimr_report <- function(coshh     = NULL,
                               evaluator = "",
                               workplace = "",
                               output    = "expoquimr_report.html",
-                              lang      = getOption("expoquimR.lang", "en"),
+                              lang      = .expoquimR_state$lang,
                               open      = TRUE) {
 
   for (pkg in c("rmarkdown", "knitr", "kableExtra")) {
