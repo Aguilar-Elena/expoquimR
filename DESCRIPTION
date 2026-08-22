@@ -44,7 +44,7 @@ Description: Provides a unified toolkit for occupational chemical exposure
     References: UK Health and Safety Executive (2003)
     <https://www.hse.gov.uk/coshh/essentials/index.htm>;
     Mallet, Pilorget and Berne (2013, ISBN:978-2-7389-2166-2)
-    "Evaluation du risque chimique" INRS ED 6084;
+    "Méthodologie d'évaluation simplifiée du risque chimique: un outil d'aide à la décision" INRS ND 2233;
     European Committee for Standardisation (2018)
     <https://www.en-standard.eu/bs-en-689-2018-workplace-exposure-measurement-of-exposure-by-inhalation-to-chemical-agents-strategy-for-testing-compliance-with-occupational-exposure-limit-values/>.
 License: MIT + file LICENSE

@@ -7,3 +7,5 @@
 ^\.github$
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
