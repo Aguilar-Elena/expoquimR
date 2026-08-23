@@ -24,6 +24,7 @@ Reads an Excel sheet with the format of the expoquimR COSHH template
 one by calling \code{\link[=coshh_evaluate]{coshh_evaluate()}}.
 }
 \examples{
+\dontshow{if (requireNamespace("readxl", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 # With the template included in the package:
 path <- system.file("plantillas", "plantilla_coshh.xlsx",
                     package = "expoquimR")
@@ -31,5 +32,5 @@ coshh_from_excel(path)
 
 # With your own file, simply pass its path:
 # coshh_from_excel("my_coshh_data.xlsx")
-
+\dontshow{\}) # examplesIf}
 }
