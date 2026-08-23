@@ -371,7 +371,7 @@ If you use `expoquimR` in your research, please cite:
 
 ## Authors
 
-**PhD. Raúl Aguilar Elena** · <raguilar@universidadviu.com>  
+**PhD. Raúl Aguilar-Elena** · <raguilar@universidadviu.com>  
 Occupational Risk Prevention and Occupational Health Research Group  
 Universidad Internacional de Valencia (VIU), Valencia, Spain
 
@@ -387,4 +387,4 @@ Universidad Internacional de Valencia (VIU), Valencia, Spain
 
 ## License
 
-MIT © 2025 Raúl Aguilar Elena & Ana Delgado-Garcia
+MIT © 2025 Raúl Aguilar-Elena & Ana Delgado-Garcia
