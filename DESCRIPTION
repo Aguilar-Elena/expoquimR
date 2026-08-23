@@ -51,7 +51,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/Aguilar-Elena/expoquimR
+URL: https://github.com/Aguilar-Elena/expoquimR, https://aguilar-elena.github.io/expoquimR/
 BugReports: https://github.com/Aguilar-Elena/expoquimR/issues
 Depends: R (>= 4.1.0)
 Imports:
