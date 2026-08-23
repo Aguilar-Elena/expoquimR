@@ -13,7 +13,7 @@
 #' @return A `data.frame` with one row per substance and the result
 #'   columns of [coshh_evaluate()].
 #'
-#' @examples
+#' @examplesIf requireNamespace("readxl", quietly = TRUE)
 #' # With the template included in the package:
 #' path <- system.file("plantillas", "plantilla_coshh.xlsx",
 #'                     package = "expoquimR")
@@ -75,7 +75,7 @@ coshh_from_excel <- function(path, sheet = "COSHH_datos") {
 #' @return A `data.frame` with one row per product and all the result
 #'   columns of [inrs_evaluate()].
 #'
-#' @examples
+#' @examplesIf requireNamespace("readxl", quietly = TRUE)
 #' path <- system.file("plantillas", "plantilla_inrs.xlsx",
 #'                     package = "expoquimR")
 #' inrs_from_excel(path)
@@ -146,14 +146,12 @@ inrs_from_excel <- function(path, sheet = "INRS_datos") {
 #'       effects sheet.}
 #'   }
 #'
-#' @examples
-#' \donttest{
+#' @examplesIf requireNamespace("readxl", quietly = TRUE)
 #' path <- system.file("plantillas", "plantilla_une689.xlsx",
 #'                     package = "expoquimR")
 #' res <- une689_from_excel(path)
 #' res$preliminary
 #' res$additive
-#' }
 #'
 #' @export
 une689_from_excel <- function(path) {

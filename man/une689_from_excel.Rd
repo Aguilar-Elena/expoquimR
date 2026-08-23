@@ -26,12 +26,11 @@ returns a list with the preliminary assessment of each agent, and if
 applicable, the additive effects calculation by group.
 }
 \examples{
-\donttest{
+\dontshow{if (requireNamespace("readxl", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 path <- system.file("plantillas", "plantilla_une689.xlsx",
                     package = "expoquimR")
 res <- une689_from_excel(path)
 res$preliminary
 res$additive
-}
-
+\dontshow{\}) # examplesIf}
 }

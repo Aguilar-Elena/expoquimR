@@ -22,8 +22,9 @@ Reads an Excel sheet with the format of the expoquimR INRS template
 \code{\link[=inrs_evaluate]{inrs_evaluate()}}.
 }
 \examples{
+\dontshow{if (requireNamespace("readxl", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 path <- system.file("plantillas", "plantilla_inrs.xlsx",
                     package = "expoquimR")
 inrs_from_excel(path)
-
+\dontshow{\}) # examplesIf}
 }
