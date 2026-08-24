@@ -2,7 +2,7 @@
 
 ## Authors
 
-- **Raúl Aguilar Elena**. Author, maintainer.
+- **Raúl Aguilar-Elena**. Author, maintainer.
   [](https://orcid.org/0000-0001-8656-8155)
 
 - **Ana Delgado-Garcia**. Author.
