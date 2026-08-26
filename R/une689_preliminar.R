@@ -150,7 +150,7 @@ une689_validate_min_days <- function(n_days, minimum = 3L) {
 #'
 #' @export
 une689_evaluate_preliminary <- function(data, vla) {
-  stopifnot(all(c("day", "concentration", "time") %in% names(data)))
+  data <- .normalize_une689_preliminary_data(data)
 
   days <- sort(unique(data$day))
   rows <- lapply(days, function(d) {

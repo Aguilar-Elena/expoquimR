@@ -199,3 +199,106 @@ test_that("UNE-EN 689 rejects data outside the statistical evaluation domain", {
     "positive"
   )
 })
+
+
+test_that("UNE-EN 689 preliminary assessment validates tabular input", {
+  x <- data.frame(
+    day = c(1, 1, 2, 3),
+    concentration = c(1, 2, 3, 4),
+    time = c(4, 4, 8, 8)
+  )
+
+  expect_silent(
+    une689_evaluate_preliminary(x, vla = 10)
+  )
+
+  expect_error(
+    une689_evaluate_preliminary(
+      x[, c("day", "concentration")],
+      vla = 10
+    ),
+    "Missing: time"
+  )
+
+  expect_error(
+    une689_evaluate_preliminary(
+      list(
+        day = x$day,
+        concentration = x$concentration,
+        time = x$time
+      ),
+      vla = 10
+    ),
+    "data.frame or a two-dimensional matrix"
+  )
+})
+
+
+test_that("UNE-EN 689 preliminary assessment accepts named matrices", {
+  x <- cbind(
+    day = c(1, 1, 2, 3),
+    concentration = c(1, 2, 3, 4),
+    time = c(4, 4, 8, 8)
+  )
+
+  expect_message(
+    result <- une689_evaluate_preliminary(x, vla = 10),
+    "Converting matrix"
+  )
+
+  expect_type(result, "list")
+  expect_s3_class(result$days_table, "data.frame")
+})
+
+
+test_that("UNE-EN 689 preliminary assessment normalises data-frame subclasses", {
+  x <- data.frame(
+    day = c(1, 1, 2, 3),
+    concentration = c(1, 2, 3, 4),
+    time = c(4, 4, 8, 8)
+  )
+
+  class(x) <- c("expoquimr_test_table", "data.frame")
+
+  expect_message(
+    result <- une689_evaluate_preliminary(x, vla = 10),
+    "class-specific attributes"
+  )
+
+  expect_s3_class(result$days_table, "data.frame")
+})
+
+
+test_that("UNE-EN 689 preliminary assessment rejects list columns", {
+  x <- data.frame(
+    day = c(1, 2, 3),
+    concentration = c(1, 2, 3),
+    time = c(8, 8, 8)
+  )
+
+  x$concentration <- I(list(1, 2, 3))
+
+  expect_error(
+    une689_evaluate_preliminary(x, vla = 10),
+    "list column"
+  )
+})
+
+
+test_that("UNE-EN 689 preliminary assessment rejects unsupported column classes", {
+  x <- data.frame(
+    day = c(1, 2, 3),
+    concentration = c(1, 2, 3),
+    time = c(8, 8, 8)
+  )
+
+  x$concentration <- structure(
+    x$concentration,
+    class = "expoquimr_test_numeric"
+  )
+
+  expect_error(
+    une689_evaluate_preliminary(x, vla = 10),
+    "unsupported column class"
+  )
+})

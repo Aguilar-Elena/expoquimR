@@ -16,17 +16,17 @@
 #' @srrstats {G1.4} All exported functions are documented with roxygen2.
 #' @srrstats {G1.4a} Package-level internal helper functions are documented using roxygen2 with @noRd. Local helper functions defined inside exported functions remain encapsulated within their documented parent functions. 
 #' @srrstats {G2.0} Input lengths are explicitly validated for scalar and vector arguments through internal validation helpers and existing function-specific checks.
-#' @srrstatsTODO {G2.0a} Provide explicit secondary documentation of any expectations on lengths of inputs
+#' @srrstats {G2.0a} Function-level documentation explicitly states relevant input-length requirements, including equal-length concentration/time vectors and minimum ED sample sizes for UNE-EN 689 statistical assessment.
 #' @srrstats {G2.1} Numeric input types are explicitly validated before statistical calculations are performed.
-#' @srrstatsTODO {G2.1a} *Provide explicit secondary documentation of expectations on data types of all vector inputs.*
+#' @srrstats {G2.1a} Function-level documentation explicitly identifies vector input types, including numeric exposure vectors and character hazard-phrase vectors.
 #' @srrstats {G2.2} Parameters expected to be scalar are explicitly restricted to length one.
-#' @srrstatsTODO {G2.3} *For univariate character input:*
+#' @srrstats {G2.3} Univariate character inputs are constrained or normalised as appropriate; permitted categorical values and case-handling behaviour are documented at function level.
 #' @srrstats {G2.3a} Enumerated character inputs use match.arg() or equivalent validation where applicable, including INRS quantity, frequency, substance-type, and liquid-method parameters.
 #' @srrstats {G2.3b} Character inputs are normalised with tolower()/trimws() where case-insensitive matching is appropriate; constrained categorical parameters are otherwise handled through explicit argument matching.
-#' @srrstatsTODO {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
-#' @srrstatsTODO {G2.4a} *explicit conversion to `integer` via `as.integer()`*
-#' @srrstatsTODO {G2.4b} *explicit conversion to continuous via `as.numeric()`*
-#' @srrstatsTODO {G2.4c} *explicit conversion to character via `as.character()` (and not `paste` or `paste0`)*
+#' @srrstats {G2.4} Input preprocessing performs explicit type conversion where required, particularly when importing external tabular data and when normalising internal categorical values.
+#' @srrstats {G2.4a} Integer-valued fields are explicitly converted with as.integer() where required, including UNE-EN 689 day and additive-group identifiers imported from Excel.
+#' @srrstats {G2.4b} Continuous measurement and exposure fields imported from Excel are explicitly converted with as.numeric() before analytical processing.
+#' @srrstats {G2.4c} Explicit as.character() conversion is used where numeric or categorical internal values must be matched as character values.
 #' @srrstatsTODO {G2.6} *Software which accepts one-dimensional input should ensure values are appropriately pre-processed regardless of class structures.* 
 #' @srrstatsTODO {G2.7} *Software should accept as input as many of the above standard tabular forms as possible, including extension to domain-specific forms.* 
 #' @srrstatsTODO {G2.8} *Software should provide appropriate conversion or dispatch routines as part of initial pre-processing to ensure that all other sub-functions of a package receive inputs of a single defined class or type.*

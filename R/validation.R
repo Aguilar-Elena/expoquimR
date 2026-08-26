@@ -96,3 +96,105 @@
 
   invisible(TRUE)
 }
+
+
+#' Normalise UNE-EN 689 preliminary tabular input
+#'
+#' Internal helper that validates and normalises tabular input used by
+#' [une689_evaluate_preliminary()]. Base data frames, data-frame subclasses,
+#' and two-dimensional matrices with the required column names are accepted.
+#'
+#' @param data Tabular object containing `day`, `concentration`, and `time`.
+#'
+#' @return A base `data.frame` with validated columns.
+#' @noRd
+.normalize_une689_preliminary_data <- function(data) {
+  required <- c("day", "concentration", "time")
+
+  if (is.matrix(data)) {
+    if (is.null(colnames(data))) {
+      stop(
+        "`data` matrices must have named columns.",
+        call. = FALSE
+      )
+    }
+
+    message("Converting matrix `data` to a base data.frame.")
+    data <- as.data.frame(data, stringsAsFactors = FALSE)
+  } else if (is.data.frame(data)) {
+    if (!identical(class(data), "data.frame")) {
+      message(
+        "Converting `data` to a base data.frame; ",
+        "class-specific attributes may not be preserved."
+      )
+      data <- as.data.frame(data)
+    }
+  } else {
+    stop(
+      "`data` must be a data.frame or a two-dimensional matrix.",
+      call. = FALSE
+    )
+  }
+
+  missing_columns <- setdiff(required, names(data))
+
+  if (length(missing_columns) > 0L) {
+    stop(
+      sprintf(
+        "`data` must contain columns: %s. Missing: %s.",
+        paste(required, collapse = ", "),
+        paste(missing_columns, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
+  for (nm in required) {
+    if (is.list(data[[nm]])) {
+      stop(
+        sprintf(
+          "`data$%s` must be an atomic vector, not a list column.",
+          nm
+        ),
+        call. = FALSE
+      )
+    }
+  }
+
+  if (is.object(data$concentration)) {
+    stop(
+      "`data$concentration` has an unsupported column class.",
+      call. = FALSE
+    )
+  }
+
+  if (is.object(data$time)) {
+    stop(
+      "`data$time` has an unsupported column class.",
+      call. = FALSE
+    )
+  }
+
+  if (!is.numeric(data$concentration)) {
+    stop(
+      "`data$concentration` must be numeric.",
+      call. = FALSE
+    )
+  }
+
+  if (!is.numeric(data$time)) {
+    stop(
+      "`data$time` must be numeric.",
+      call. = FALSE
+    )
+  }
+
+  if (!(is.numeric(data$day) || is.character(data$day))) {
+    stop(
+      "`data$day` must be numeric or character.",
+      call. = FALSE
+    )
+  }
+
+  data
+}
