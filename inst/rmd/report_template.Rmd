@@ -217,7 +217,7 @@ if (!is.null(params$une689$preliminary)) {
     # Build the chunk text dynamically
     lines <- c(
       sprintf('\n<div class="agent-block">'),
-      sprintf('<div class="agent-title">Agent: %s &nbsp;|&nbsp; OEL = %s mg/m³</div>',
+      sprintf('<div class="agent-title">Agent: %s &nbsp;|&nbsp; OEL = %.4f mg/m³</div>',
               ag$name, ag$vla),
       ""
     )
@@ -302,30 +302,37 @@ if (!is.null(params$une689$preliminary)) {
       center  <- ifelse(!is.na(est$MG), est$MG, est$MA)
       label_c <- ifelse(!is.na(est$MG), "MG", "MA")
 
-      p <- ggplot(data.frame(ED = eds), aes(x = ED)) +
-        geom_density(fill="#F0A500", alpha=0.35, color="#F0A500", linewidth=1) +
-        geom_rug(color="#1F4E79", alpha=0.7) +
-        geom_vline(xintercept=center,  color="#28a745", linetype="dashed", linewidth=1) +
-        geom_vline(xintercept=ag$vla,  color="#dc3545", linetype="dashed", linewidth=1) +
-        geom_vline(xintercept=est$lsc, color="#8B0000", linetype="dotted", linewidth=1) +
-        annotate("label", x=center,  y=Inf, vjust=1.5,
-                 label=paste0(label_c," = ",round(center,2)),
-                 color="#28a745", fill="white", size=3.2) +
-        annotate("label", x=ag$vla,  y=Inf, vjust=3.5,
-                 label=paste0("OEL = ",round(ag$vla,2)),
-                 color="#dc3545", fill="white", size=3.2) +
-        annotate("label", x=est$lsc, y=Inf, vjust=5.5,
-                 label=paste0("LSC = ",round(est$lsc,2)),
-                 color="#8B0000", fill="white", size=3.2) +
-        labs(title=paste0("ED distribution — ", ag$name,
-                          "  |  ", est$distribution_type),
-             subtitle=paste0("n=",est$n," | UR=",round(est$ur,3),
-                              " | UT=",round(est$ut,3),
-                              " | ",est$conformity %||% "?"),
-             x="Daily exposure ED (mg/m³)", y="Density") +
-        theme_minimal(base_size=12) +
-        theme(plot.title=element_text(color="#1F4E79", face="bold"),
-              plot.subtitle=element_text(color="#555"))
+      p <- expoquimR:::.une689_density_plot(
+        eds = eds,
+        center = center,
+        vla = ag$vla,
+        lsc = est$lsc,
+        center_label = label_c,
+        vla_label = "OEL",
+        lsc_label = "LSC",
+        title = paste0(
+          "ED distribution — ", ag$name,
+          "  |  ", est$distribution_type
+        ),
+        subtitle = paste0(
+          "n=", est$n,
+          " | UR=", round(est$ur, 3),
+          " | UT=", round(est$ut, 3),
+          " | ", est$conformity %||% "?"
+        ),
+        x_label = "Daily exposure ED (mg/m³)",
+        y_label = "Density",
+        digits = 2
+      ) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(
+            color = "#1F4E79",
+            face = "bold"
+          ),
+          plot.subtitle = ggplot2::element_text(
+            color = "#555"
+          )
+        )
       print(p)
     }
   }

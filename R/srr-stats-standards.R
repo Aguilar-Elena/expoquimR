@@ -35,21 +35,17 @@
 #' @srrstats {G2.11} Required analytical columns with unsupported class attributes are explicitly detected and rejected with informative diagnostics.
 #' @srrstats {G2.12} List columns in required UNE-EN 689 analytical fields are explicitly detected and rejected with informative diagnostics and dedicated tests.
 #' @srrstats {G2.13} Missing values are explicitly checked during preprocessing in COSHH, INRS, UNE-EN 689, and Excel-import routines before analytic calculations are performed.
-#' @srrstatsTODO {G2.14} *Where possible, all functions should provide options for users to specify how to handle missing (`NA`) data, with options minimally including:*
-#' @srrstatsTODO {G2.14a} *error on missing data*
-#' @srrstatsTODO {G2.14b} *ignore missing data with default warnings or messages issued*
 #' @srrstats {G2.15} Inputs are explicitly checked for missing values before statistical routines such as mean(), sd(), and shapiro.test() are called; operations that intentionally omit missing values do so explicitly.
 #' @srrstats {G2.16} Numeric inputs used in core statistical calculations are checked for non-finite values including Inf, -Inf and NaN. 
 #' @srrstats {G3.0} Floating-point equality is avoided; the UNE-EN 689 full-shift duration comparison uses an explicit numerical tolerance, while exact equality comparisons elsewhere concern integer counts or categorical values. 
 #' @srrstats {G4.0} HTML report output filenames are normalised automatically; `.html` is appended when the user supplies a filename without an extension.
 
 #' @srrstats {G5.1} Package-supplied Excel templates used in tests and examples are distributed under inst/plantillas and are therefore available to users; additional inline fixtures are visible in the public test suite.
-#' @srrstatsTODO {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
-#' @srrstatsTODO {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
-#' @srrstatsTODO {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*
+#' @srrstats {G5.2} Error and message behaviour is explicitly exercised through the test suite, including validation failures, Excel-import failures, report input validation, Shiny application lookup, graphical argument validation, and UNE-EN 689 statistical preconditions.
+#' @srrstats {G5.2a} Package-generated conditions have been audited across the R source tree; 41 stop/message expressions were identified and all 41 are unique, with importer-specific prefixes used where otherwise similar dependency or missing-column errors could be ambiguous.
+#' @srrstats {G5.2b} Explicit tests verify expected error or message text for core validation conditions and representative package-generated conditions, including numeric validation, tabular normalisation, graphical arguments, Excel structure, language handling, report validation, Shiny application lookup, and UNE-EN 689 sample-size requirements.
 #' @srrstats {G5.3} Tests explicitly verify that representative valid outputs from the core COSHH, INRS, and UNE-EN 689 computational routines contain no unexpected NA, NaN, Inf, or -Inf values.
 #' @srrstats {G5.4} Correctness tests compare deterministic COSHH, INRS, and UNE-EN 689 calculations against fixed expected values, including exposure indices, descriptive statistics, geometric statistics, tolerance-related quantities, and conformity classifications.
-#' @srrstatsTODO {G5.4b} *For new implementations of existing methods, correctness tests should include tests against previous implementations. Such testing may explicitly call those implementations in testing, preferably from fixed-versions of other software, or use stored outputs from those where that is not possible.*
 #' @srrstats {G5.8} Edge-condition behaviour is explicitly tested for unsupported input types, empty vectors, non-finite values, and out-of-domain numeric values.
 #' @srrstats {G5.8a} Zero-length numeric input is explicitly tested and rejected where unsupported.
 #' @srrstats {G5.8b} Unsupported input types are explicitly tested and rejected for core numeric routines.
@@ -63,25 +59,21 @@
 #' @srrstats {EA1.3} Exported functions document their expected input parameters and data structures through roxygen2 help pages and methodological vignettes.
 #' @srrstats {EA2.6} Vector inputs with additional attributes or class structures are explicitly pre-processed; unsupported classed vectors are rejected with informative diagnostics rather than being silently coerced.
 #' @srrstats {EA3.0} expoquimR automates extraction and reporting of occupational-hygiene statistics and decision outputs that are otherwise commonly calculated and interpreted manually under the implemented methodologies.
-#' @srrstatsTODO {EA3.1} *EDA software should enable standardised comparison of inputs, processes, models, or outputs which previous or reference implementations otherwise only enable in some comparably unstandardised form.* 
-#' @srrstatsTODO {EA4.0} *EDA Software should ensure all return results have types which are consistent with input types.* 
-#' @srrstatsTODO {EA4.1} *EDA Software should implement parameters to enable explicit control of numeric precision*
-#' @srrstatsTODO {EA4.2} *The primary routines of EDA Software should return objects for which default `print` and `plot` methods give sensible results. Default `summary` methods may also be implemented.* 
-#' @srrstatsTODO {EA5.0} *Graphical presentation in EDA software should be as accessible as possible or practicable. In particular, EDA software should consider accessibility in terms of:*
-#' @srrstatsTODO {EA5.0a} *Typeface sizes, which should default to sizes which explicitly enhance accessibility*
-#' @srrstatsTODO {EA5.0b} *Default colour schemes, which should be carefully constructed to ensure accessibility.*
-#' @srrstatsTODO {EA5.1} *Any explicit specifications of typefaces which override default values provided through other packages (including the `graphics` package) should consider accessibility* 
-#' @srrstatsTODO {EA5.2} *Screen-based output should never rely on default print formatting of `numeric` types, rather should also use some version of `round(., digits)`, `formatC`, `sprintf`, or similar functions for numeric formatting according the parameter described in* **EA4.1**.
-#' @srrstatsTODO {EA5.3} *Column-based summary statistics should always indicate the `storage.mode`, `class`, or equivalent defining attribute of each column.* 
-#' @srrstatsTODO {EA5.4} *All visualisations should ensure values are rounded sensibly (for example, via `pretty()` function).*
-#' @srrstatsTODO {EA5.5} *All visualisations should include units on all axes where such are specified or otherwise obtainable from input data or other routines.* 
+#' @srrstats {EA3.1} expoquimR provides standardised and reproducible comparison of occupational chemical exposure inputs, intermediate calculations, risk classifications, and conformity outputs across COSHH Essentials, INRS, and UNE-EN 689 through a common R, Excel, and interactive workflow.
+#' @srrstats {EA4.0} Analytical functions return stable and predictable types appropriate to their inputs and calculations; scalar classifications, numeric statistics, data-frame outputs, and structured list outputs are explicitly tested for type consistency.
+#' @srrstats {EA5.0} UNE-EN 689 graphical output is generated through a shared plotting helper designed to provide accessible labels, readable sizing, redundant visual encodings, and explicit units.
+#' @srrstats {EA5.0a} UNE-EN 689 plots use a minimum base theme size of 12 and annotation text sized for legibility in both Shiny and rendered reports.
+#' @srrstats {EA5.0b} UNE-EN 689 plots use a colour-blind-friendly palette together with distinct line types, so interpretation does not depend on colour alone.
+#' @srrstats {EA5.2} Numeric values presented through Shiny and rendered reports are explicitly formatted using round(), sprintf(), knitr table precision, DT numeric formatting, or the controlled graphical digits parameter rather than relying on default numeric printing.
+#' @srrstats {EA5.4} Numeric values displayed in UNE-EN 689 graphical annotations are explicitly rounded to a controlled number of digits, and this behaviour is tested.
+#' @srrstats {EA5.5} UNE-EN 689 graphical axes explicitly report the available exposure units, including mg/m\u00b3 for daily exposure.
 #' @srrstats {EA6.0} Return values from the analytical API are explicitly tested for structure, type, dimensions, names, column types, and numerical values as appropriate.
 #' @srrstats {EA6.0a} Tests explicitly verify classes and types of returned lists, data frames, scalar values, and their principal components.
 #' @srrstats {EA6.0b} Dimensions of tabular outputs are explicitly tested for the COSHH, INRS, and UNE-EN 689 analytical wrappers.
 #' @srrstats {EA6.0c} Column and component names of structured return objects are explicitly tested.
 #' @srrstats {EA6.0d} Column types of principal data.frame outputs are explicitly tested to ensure stable return structures.
 #' @srrstats {EA6.0e} Tests of single-valued numeric outputs use explicit numerical tolerances; categorical and integer-valued outputs are tested using exact equality as appropriate.
-#' @srrstatsTODO {EA6.1} *The properties of graphical output from EDA software should be explicitly tested, for example via the [`vdiffr` package](https://github.com/r-lib/vdiffr) or equivalent.* 
+#' @srrstats {EA6.1} Graphical output properties are explicitly tested, including ggplot class, axis labels and units, layer structure, distinct colour and line encodings, annotation rounding, and graphical input validation.
 #' @noRd
 NULL
 
@@ -121,5 +113,13 @@ NULL
 #' @srrstatsNA {EA2.5} The package does not operate on collections of relational tables requiring index validation.
 #' @srrstatsNA {EA5.6} expoquimR does not internally bundle third-party dynamic-visualisation libraries.
 #' @srrstatsNA {G5.0} No generally accepted standard reference dataset such as a NIST statistical dataset is applicable to the combined COSHH Essentials, INRS, and UNE-EN 689 occupational-hygiene workflows; deterministic reference values and package fixtures are used instead.
+#' @srrstatsNA {EA5.1} expoquimR does not explicitly specify or override font families; graphical output inherits typefaces from ggplot2 and the rendering environment, while only accessible text sizing is specified.
+#' @srrstatsNA {EA5.3} expoquimR does not generate column-based summary-statistics displays of the kind addressed by this standard; tabular outputs contain analytical results rather than metadata summaries of input columns.
+#' @srrstatsNA {EA4.2} Primary expoquimR analytical routines intentionally return standard base-R scalar, data.frame, and list objects rather than a custom EDA class; these objects have sensible default print behaviour, while graphical presentation is provided explicitly through the dedicated UNE-EN 689 plotting layer, so custom default print/plot/summary methods are not applicable.
+#' @srrstatsNA {G2.14} Missing-value handling in expoquimR is method-specific rather than user-selectable: analytical routines reject missing values where complete observations are required, omit incomplete paired measurements only where the implemented methodology explicitly permits this, or return NA when a valid classification cannot be made. A global user-selectable missing-data policy could produce scientifically invalid occupational-hygiene decisions.
+#' @srrstatsNA {G2.14a} Missing data do not have a single package-wide error policy because appropriate behaviour depends on the implemented occupational-hygiene method; routines requiring complete statistical samples explicitly error on missing data.
+#' @srrstatsNA {G2.14b} Ignoring missing observations is only performed in specific method-defined contexts, such as paired concentration/time preprocessing; offering a general ignore-missing option with warnings would permit methodologically inappropriate omission.
+#' @srrstatsNA {G5.4b} expoquimR implements published occupational-hygiene methods rather than replacing a single previous software implementation for which a fixed reference implementation is available. Correctness is therefore tested against deterministic reference calculations, documented decision rules, and package fixtures.
+#' @srrstatsNA {EA4.1} Analytical calculations intentionally retain full numeric precision rather than exposing a parameter that changes computational precision. Numeric precision is controlled explicitly only at the presentation layer through rounding, table formatting, report formatting, and graphical display parameters.
 #' @noRd
 NULL

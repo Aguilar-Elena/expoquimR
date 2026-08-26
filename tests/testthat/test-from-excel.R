@@ -318,14 +318,17 @@ test_that("Excel import functions reject nonexistent files", {
   missing <- tempfile(fileext = ".xlsx")
 
   expect_error(
-    coshh_from_excel(missing)
+    coshh_from_excel(missing),
+    "does not exist"
   )
 
   expect_error(
-    inrs_from_excel(missing)
+    inrs_from_excel(missing),
+    "does not exist"
   )
 
   expect_error(
-    une689_from_excel(missing)
+    une689_from_excel(missing),
+    "does not exist"
   )
 })
