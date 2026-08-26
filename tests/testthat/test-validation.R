@@ -164,3 +164,38 @@ test_that("UNE-EN 689 statistics rejects unsupported edge cases", {
     "numeric"
   )
 })
+
+test_that("UNE-EN 689 handles all-NA and identical exposure vectors", {
+  expect_error(
+    une689_statistics(rep(NA_real_, 6)),
+    "must not contain NA"
+  )
+
+  identical_stats <- une689_statistics(rep(0.5, 6))
+
+  expect_equal(identical_stats$MA, 0.5)
+  expect_equal(identical_stats$DS, 0)
+  expect_equal(identical_stats$MG, 0.5)
+  expect_equal(identical_stats$DSG, 1)
+
+  expect_error(
+    une689_evaluate_statistical(rep(0.5, 6), vla = 1),
+    "identical"
+  )
+})
+
+test_that("UNE-EN 689 rejects data outside the statistical evaluation domain", {
+  expect_error(
+    une689_evaluate_statistical(c(0.4, 0.5, 0.6), vla = 1)
+  )
+
+  expect_error(
+    une689_statistics(c(0.4, 0, 0.6)),
+    "positive"
+  )
+
+  expect_error(
+    une689_statistics(c(0.4, -0.5, 0.6)),
+    "positive"
+  )
+})

@@ -53,8 +53,8 @@
 #' @srrstats {G5.8} Edge-condition behaviour is explicitly tested for unsupported input types, empty vectors, non-finite values, and out-of-domain numeric values.
 #' @srrstats {G5.8a} Zero-length numeric input is explicitly tested and rejected where unsupported.
 #' @srrstats {G5.8b} Unsupported input types are explicitly tested and rejected for core numeric routines.
-#' @srrstatsTODO {G5.8c} *Data with all-`NA` fields or columns or all identical fields or columns*
-#' @srrstatsTODO {G5.8d} *Data outside the scope of the algorithm (for example, data with more fields (columns) than observations (rows) for some regression algorithms)*
+#' @srrstats {G5.8c} All-NA and all-identical exposure vectors are explicitly tested. All-NA exposure data are rejected, while identical valid observations produce the expected zero-variance summary; statistical evaluation of identical observations produces an explicit diagnostic.
+#' @srrstats {G5.8d} Inputs outside the methodological domain are explicitly tested, including insufficient sample sizes and non-positive occupational exposure values.
 #' @srrstatsTODO {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
 #' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
 #' @srrstats {EA1.0} The package documentation identifies occupational hygienists, occupational safety and health researchers, prevention practitioners, and engineers as target users.
