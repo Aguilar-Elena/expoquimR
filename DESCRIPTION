@@ -50,7 +50,7 @@ Description: Provides a unified toolkit for occupational chemical exposure
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd", "srr::srr_stats_roclet"))
 URL: https://github.com/Aguilar-Elena/expoquimR, https://aguilar-elena.github.io/expoquimR/
 BugReports: https://github.com/Aguilar-Elena/expoquimR/issues
 Depends: R (>= 4.1.0)

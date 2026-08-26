@@ -104,3 +104,11 @@ maintainer:
 
 Raúl Aguilar-Elena  
 raguilar@universidadviu.com
+
+## Life cycle
+
+This package is in a stable state of development, with some degree of active subsequent development as envisioned by the primary authors.
+
+## Life cycle
+
+This package is in a stable state of development, with some degree of active subsequent development as envisioned by the primary authors.

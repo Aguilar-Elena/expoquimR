@@ -188,8 +188,17 @@ expoquimr_lang <- function(lang = NULL) {
   invisible(prev)
 }
 
-# Internal helper: get a translated string by key
-# sprintf-style arguments can be passed via ...
+#' Retrieve an internal translated string
+#'
+#' Looks up a translation key in the currently selected expoquimR language,
+#' falling back to English when the key is unavailable in that language.
+#' Additional arguments are substituted with [sprintf()] when required.
+#'
+#' @param key Character scalar identifying a translation entry.
+#' @param ... Values used for `sprintf()`-style substitution.
+#'
+#' @return A character string containing the translated text.
+#' @noRd
 .t <- function(key, ...) {
   lang <- .expoquimR_state$lang
   if (!lang %in% names(.translations)) lang <- "en"

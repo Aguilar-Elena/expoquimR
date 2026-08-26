@@ -296,5 +296,15 @@ une689_from_excel <- function(path) {
   list(preliminary = preliminary, additive = additive)
 }
 
-# Internal helper (avoids a dependency on rlang in these functions)
+#' Null-or-missing fallback operator
+#'
+#' Internal helper returning a fallback value when the first argument is
+#' `NULL` or a single missing value. This avoids an additional dependency
+#' for the Excel-import routines.
+#'
+#' @param a Primary value.
+#' @param b Fallback value.
+#'
+#' @return `b` when `a` is `NULL` or a single `NA`; otherwise `a`.
+#' @noRd
 `%||%` <- function(a, b) if (is.null(a) || (length(a) == 1 && is.na(a))) b else a
