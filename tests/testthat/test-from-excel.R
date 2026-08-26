@@ -295,7 +295,8 @@ test_that("UNE-EN 689 Excel template produces reproducible preliminary results",
 
   expect_equal(
     from_excel$vla,
-    vla
+    vla,
+    tolerance = 1e-12
   )
 
   expect_equal(
