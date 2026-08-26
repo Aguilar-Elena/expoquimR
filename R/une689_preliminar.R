@@ -26,7 +26,12 @@ une689_daily_exposure <- function(concentration, time) {
   tm   <- time[valid]
 
   if (length(conc) == 0) return(NA_real_)
-  if (length(conc) == 1 && isTRUE(tm[1] == 8)) return(conc[1])
+  if (
+    length(conc) == 1 &&
+    isTRUE(all.equal(tm[1], 8, tolerance = sqrt(.Machine$double.eps)))
+  ) {
+    return(conc[1])
+  }
 
   sum(conc * tm) / 8
 }

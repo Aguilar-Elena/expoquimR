@@ -302,3 +302,49 @@ test_that("UNE-EN 689 preliminary assessment rejects unsupported column classes"
     "unsupported column class"
   )
 })
+
+
+test_that("UNE-EN 689 normality testing validates inputs before Shapiro-Wilk", {
+  expect_error(
+    une689_normality_test(c(1, NA_real_, 3)),
+    "must not contain NA"
+  )
+
+  expect_error(
+    une689_normality_test(c(1, Inf, 3)),
+    "finite"
+  )
+
+  expect_error(
+    une689_normality_test(c(1, 0, 3)),
+    "positive"
+  )
+
+  expect_error(
+    une689_normality_test(c(1, -1, 3)),
+    "positive"
+  )
+
+  expect_error(
+    une689_normality_test(c(1, 2)),
+    "between 3 and 5000"
+  )
+})
+
+
+test_that("UNE-EN 689 daily exposure uses tolerant comparison for full-day duration", {
+  expect_equal(
+    une689_daily_exposure(9, 8),
+    9
+  )
+
+  expect_equal(
+    une689_daily_exposure(9, 8 + .Machine$double.eps),
+    9
+  )
+
+  expect_equal(
+    une689_daily_exposure(9, 7),
+    7.875
+  )
+})
