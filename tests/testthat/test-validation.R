@@ -173,10 +173,10 @@ test_that("UNE-EN 689 handles all-NA and identical exposure vectors", {
 
   identical_stats <- une689_statistics(rep(0.5, 6))
 
-  expect_equal(identical_stats$MA, 0.5)
-  expect_equal(identical_stats$DS, 0)
-  expect_equal(identical_stats$MG, 0.5)
-  expect_equal(identical_stats$DSG, 1)
+  expect_equal(identical_stats$MA, 0.5, tolerance = 1e-12)
+  expect_equal(identical_stats$DS, 0, tolerance = 1e-12)
+  expect_equal(identical_stats$MG, 0.5, tolerance = 1e-12)
+  expect_equal(identical_stats$DSG, 1, tolerance = 1e-12)
 
   expect_error(
     une689_evaluate_statistical(rep(0.5, 6), vla = 1),
@@ -335,17 +335,20 @@ test_that("UNE-EN 689 normality testing validates inputs before Shapiro-Wilk", {
 test_that("UNE-EN 689 daily exposure uses tolerant comparison for full-day duration", {
   expect_equal(
     une689_daily_exposure(9, 8),
-    9
+    9,
+    tolerance = 1e-12
   )
 
   expect_equal(
     une689_daily_exposure(9, 8 + .Machine$double.eps),
-    9
+    9,
+    tolerance = 1e-12
   )
 
   expect_equal(
     une689_daily_exposure(9, 7),
-    7.875
+    7.875,
+    tolerance = 1e-12
   )
 })
 
@@ -403,4 +406,55 @@ test_that("HTML report output extension is normalised", {
     expoquimR:::.ensure_html_extension(NA_character_),
     "non-empty character scalar"
   )
+})
+
+
+test_that("core valid outputs contain no undefined numeric values", {
+  s <- une689_statistics(c(5, 6, 7, 8, 9, 10))
+  expect_true(all(is.finite(unlist(s))))
+
+  risk <- inrs_inhalation_risk(
+    potential_risk_score = 100,
+    volatility_score = 10,
+    procedure_score = 0.5,
+    protection_score = 0.7,
+    vla_correction_factor = 10
+  )
+  expect_true(is.finite(risk))
+
+  vol <- coshh_classify_volatility(
+    boiling_point = 111,
+    process_temp = 20
+  )
+  expect_false(is.na(vol))
+})
+
+
+test_that("trivial floating-point noise does not materially change UNE-EN 689 summaries", {
+  x <- c(5, 6, 7, 8, 9, 10)
+  noise <- seq_along(x) * .Machine$double.eps
+  y <- x + noise
+
+  a <- une689_statistics(x)
+  b <- une689_statistics(y)
+
+  expect_equal(a$MA, b$MA, tolerance = 1e-12)
+  expect_equal(a$DS, b$DS, tolerance = 1e-12)
+  expect_equal(a$MG, b$MG, tolerance = 1e-12)
+  expect_equal(a$DSG, b$DSG, tolerance = 1e-12)
+})
+
+
+test_that("trivial floating-point noise does not change COSHH volatility classification", {
+  base <- coshh_classify_volatility(
+    boiling_point = 111,
+    process_temp = 20
+  )
+
+  perturbed <- coshh_classify_volatility(
+    boiling_point = 111 + .Machine$double.eps,
+    process_temp = 20 + .Machine$double.eps
+  )
+
+  expect_identical(base, perturbed)
 })

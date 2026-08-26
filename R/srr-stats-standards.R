@@ -42,12 +42,12 @@
 #' @srrstats {G2.16} Numeric inputs used in core statistical calculations are checked for non-finite values including Inf, -Inf and NaN. 
 #' @srrstats {G3.0} Floating-point equality is avoided; the UNE-EN 689 full-shift duration comparison uses an explicit numerical tolerance, while exact equality comparisons elsewhere concern integer counts or categorical values. 
 #' @srrstats {G4.0} HTML report output filenames are normalised automatically; `.html` is appended when the user supplies a filename without an extension.
-#' @srrstatsTODO {G5.0} *Where applicable or practicable, tests should use standard data sets with known properties (for example, the [NIST Standard Reference Datasets](https://www.itl.nist.gov/div898/strd/), or data sets provided by other widely-used R packages).*
+
 #' @srrstats {G5.1} Package-supplied Excel templates used in tests and examples are distributed under inst/plantillas and are therefore available to users; additional inline fixtures are visible in the public test suite.
 #' @srrstatsTODO {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
 #' @srrstatsTODO {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
 #' @srrstatsTODO {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*
-#' @srrstatsTODO {G5.3} *For functions which are expected to return objects containing no missing (`NA`) or undefined (`NaN`, `Inf`) values, the absence of any such values in return objects should be explicitly tested.* 
+#' @srrstats {G5.3} Tests explicitly verify that representative valid outputs from the core COSHH, INRS, and UNE-EN 689 computational routines contain no unexpected NA, NaN, Inf, or -Inf values.
 #' @srrstats {G5.4} Correctness tests compare deterministic COSHH, INRS, and UNE-EN 689 calculations against fixed expected values, including exposure indices, descriptive statistics, geometric statistics, tolerance-related quantities, and conformity classifications.
 #' @srrstatsTODO {G5.4b} *For new implementations of existing methods, correctness tests should include tests against previous implementations. Such testing may explicitly call those implementations in testing, preferably from fixed-versions of other software, or use stored outputs from those where that is not possible.*
 #' @srrstats {G5.8} Edge-condition behaviour is explicitly tested for unsupported input types, empty vectors, non-finite values, and out-of-domain numeric values.
@@ -55,13 +55,13 @@
 #' @srrstats {G5.8b} Unsupported input types are explicitly tested and rejected for core numeric routines.
 #' @srrstats {G5.8c} All-NA and all-identical exposure vectors are explicitly tested. All-NA exposure data are rejected, while identical valid observations produce the expected zero-variance summary; statistical evaluation of identical observations produces an explicit diagnostic.
 #' @srrstats {G5.8d} Inputs outside the methodological domain are explicitly tested, including insufficient sample sizes and non-positive occupational exposure values.
-#' @srrstatsTODO {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
-#' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
+#' @srrstats {G5.9} Numerical noise susceptibility is explicitly tested for deterministic occupational-hygiene calculations.
+#' @srrstats {G5.9a} Tests verify that perturbations at approximately machine-precision scale do not materially alter UNE-EN 689 numerical summaries or COSHH categorical classifications.
 #' @srrstats {EA1.0} The package documentation identifies occupational hygienists, occupational safety and health researchers, prevention practitioners, and engineers as target users.
 #' @srrstats {EA1.1} The package documentation identifies the supported data, including qualitative chemical hazard/exposure descriptors and quantitative occupational exposure measurements.
 #' @srrstats {EA1.2} The documented questions include qualitative risk classification, semi-quantitative prioritisation, quantitative exposure assessment, OEL conformity, additive exposure, and monitoring-interval decisions.
 #' @srrstats {EA1.3} Exported functions document their expected input parameters and data structures through roxygen2 help pages and methodological vignettes.
-#' @srrstatsTODO {EA2.6} *Routines should appropriately process vector data regardless of additional attributes* 
+#' @srrstats {EA2.6} Vector inputs with additional attributes or class structures are explicitly pre-processed; unsupported classed vectors are rejected with informative diagnostics rather than being silently coerced.
 #' @srrstats {EA3.0} expoquimR automates extraction and reporting of occupational-hygiene statistics and decision outputs that are otherwise commonly calculated and interpreted manually under the implemented methodologies.
 #' @srrstatsTODO {EA3.1} *EDA software should enable standardised comparison of inputs, processes, models, or outputs which previous or reference implementations otherwise only enable in some comparably unstandardised form.* 
 #' @srrstatsTODO {EA4.0} *EDA Software should ensure all return results have types which are consistent with input types.* 
@@ -75,12 +75,12 @@
 #' @srrstatsTODO {EA5.3} *Column-based summary statistics should always indicate the `storage.mode`, `class`, or equivalent defining attribute of each column.* 
 #' @srrstatsTODO {EA5.4} *All visualisations should ensure values are rounded sensibly (for example, via `pretty()` function).*
 #' @srrstatsTODO {EA5.5} *All visualisations should include units on all axes where such are specified or otherwise obtainable from input data or other routines.* 
-#' @srrstatsTODO {EA6.0} *Return values from all functions should be tested, including tests for the following characteristics:*
-#' @srrstatsTODO {EA6.0a} *Classes and types of objects*
-#' @srrstatsTODO {EA6.0b} *Dimensions of tabular objects*
-#' @srrstatsTODO {EA6.0c} *Column names (or equivalent) of tabular objects*
-#' @srrstatsTODO {EA6.0d} *Classes or types of all columns contained within `data.frame`-type tabular objects *
-#' @srrstatsTODO {EA6.0e} *Values of single-valued objects; for `numeric` values either using `testthat::expect_equal()` or equivalent with a defined value for the `tolerance` parameter, or using `round(..., digits = x)` with some defined value of `x` prior to testing equality.* 
+#' @srrstats {EA6.0} Return values from the analytical API are explicitly tested for structure, type, dimensions, names, column types, and numerical values as appropriate.
+#' @srrstats {EA6.0a} Tests explicitly verify classes and types of returned lists, data frames, scalar values, and their principal components.
+#' @srrstats {EA6.0b} Dimensions of tabular outputs are explicitly tested for the COSHH, INRS, and UNE-EN 689 analytical wrappers.
+#' @srrstats {EA6.0c} Column and component names of structured return objects are explicitly tested.
+#' @srrstats {EA6.0d} Column types of principal data.frame outputs are explicitly tested to ensure stable return structures.
+#' @srrstats {EA6.0e} Tests of single-valued numeric outputs use explicit numerical tolerances; categorical and integer-valued outputs are tested using exact equality as appropriate.
 #' @srrstatsTODO {EA6.1} *The properties of graphical output from EDA software should be explicitly tested, for example via the [`vdiffr` package](https://github.com/r-lib/vdiffr) or equivalent.* 
 #' @noRd
 NULL
@@ -120,5 +120,6 @@ NULL
 #' @srrstatsNA {EA2.4} The package does not require a relational table class system such as dm.
 #' @srrstatsNA {EA2.5} The package does not operate on collections of relational tables requiring index validation.
 #' @srrstatsNA {EA5.6} expoquimR does not internally bundle third-party dynamic-visualisation libraries.
+#' @srrstatsNA {G5.0} No generally accepted standard reference dataset such as a NIST statistical dataset is applicable to the combined COSHH Essentials, INRS, and UNE-EN 689 occupational-hygiene workflows; deterministic reference values and package fixtures are used instead.
 #' @noRd
 NULL
