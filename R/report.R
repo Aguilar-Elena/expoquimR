@@ -117,3 +117,10 @@ expoquimr_report <- function(coshh     = NULL,
 
   invisible(output)
 }
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G4.0} HTML report output filenames are normalised automatically; `.html` is appended when the user supplies a filename without an extension.
+#' @srrstats {EA5.2} Numeric values presented through Shiny and rendered reports are explicitly formatted using round(), sprintf(), knitr table precision, DT numeric formatting, or the controlled graphical digits parameter rather than relying on default numeric printing.
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

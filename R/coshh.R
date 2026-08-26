@@ -216,3 +216,13 @@ coshh_evaluate <- function(name,
     stringsAsFactors = FALSE
   )
 }
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G1.1} expoquimR implements established occupational-hygiene methods rather than claiming novel statistical algorithms; its contribution is an integrated R implementation combining COSHH Essentials, INRS, and EN 689 workflows.
+#' @srrstats {G2.1a} Function-level documentation explicitly identifies vector input types, including numeric exposure vectors and character hazard-phrase vectors.
+#' @srrstats {G2.3} Univariate character inputs are constrained or normalised as appropriate; permitted categorical values and case-handling behaviour are documented at function level.
+#' @srrstats {G2.3b} Character inputs are normalised with tolower()/trimws() where case-insensitive matching is appropriate; constrained categorical parameters are otherwise handled through explicit argument matching.
+#' @srrstats {EA3.0} expoquimR automates extraction and reporting of occupational-hygiene statistics and decision outputs that are otherwise commonly calculated and interpreted manually under the implemented methodologies.
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

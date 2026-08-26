@@ -1,3 +1,7 @@
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G5.4} Correctness tests compare deterministic COSHH, INRS, and UNE-EN 689 calculations against fixed expected values, including exposure indices, descriptive statistics, geometric statistics, tolerance-related quantities, and conformity classifications.
+# ---- end rOpenSci statistical standards ----
+
 test_that("coshh_classify_volatility classifies correctly in English (default)", {
   expect_equal(coshh_classify_volatility(boiling_point = 111, process_temp = 20), "Medium")
   expect_equal(coshh_classify_volatility(boiling_point = 56,  process_temp = 40), "High")

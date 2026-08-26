@@ -313,3 +313,9 @@ une689_monitoring_interval_opt2 <- function(lsc, vla) {
     .t("une689_period_review")
   }
 }
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G1.3} Statistical terminology used by expoquimR is explicitly described in function documentation, the README, and the UNE-EN 689 vignette, including normal and lognormal distributions, Shapiro-Wilk testing, arithmetic and geometric summaries, tolerance limits, confidence and coverage, and risk indices.
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

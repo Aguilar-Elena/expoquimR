@@ -149,3 +149,12 @@
 }
 
 utils::globalVariables("ED")
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {EA5.0} UNE-EN 689 graphical output is generated through a shared plotting helper designed to provide accessible labels, readable sizing, redundant visual encodings, and explicit units.
+#' @srrstats {EA5.0a} UNE-EN 689 plots use a minimum base theme size of 12 and annotation text sized for legibility in both Shiny and rendered reports.
+#' @srrstats {EA5.0b} UNE-EN 689 plots use a colour-blind-friendly palette together with distinct line types, so interpretation does not depend on colour alone.
+#' @srrstats {EA5.5} UNE-EN 689 graphical axes explicitly report the available exposure units, including mg/m\u00b3 for daily exposure.
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

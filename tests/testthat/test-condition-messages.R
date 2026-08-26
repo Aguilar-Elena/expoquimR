@@ -1,3 +1,9 @@
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G5.2} Error and message behaviour is explicitly exercised through the test suite, including validation failures, Excel-import failures, report input validation, Shiny application lookup, graphical argument validation, and UNE-EN 689 statistical preconditions.
+#' @srrstats {G5.2a} Package-generated conditions have been audited across the R source tree; 41 stop/message expressions were identified and all 41 are unique, with importer-specific prefixes used where otherwise similar dependency or missing-column errors could be ambiguous.
+#' @srrstats {G5.2b} Explicit tests verify expected error or message text for core validation conditions and representative package-generated conditions, including numeric validation, tabular normalisation, graphical arguments, Excel structure, language handling, report validation, Shiny application lookup, and UNE-EN 689 sample-size requirements.
+# ---- end rOpenSci statistical standards ----
+
 test_that("plotting helper identifies invalid label arguments", {
   expect_error(
     expoquimR:::.une689_density_plot(

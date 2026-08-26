@@ -1,3 +1,8 @@
+# ---- rOpenSci statistical standards ----
+#' @srrstats {EA5.4} Numeric values displayed in UNE-EN 689 graphical annotations are explicitly rounded to a controlled number of digits, and this behaviour is tested.
+#' @srrstats {EA6.1} Graphical output properties are explicitly tested, including ggplot class, axis labels and units, layer structure, distinct colour and line encodings, annotation rounding, and graphical input validation.
+# ---- end rOpenSci statistical standards ----
+
 test_that("UNE-EN 689 density plot returns a stable ggplot object", {
 
   skip_if_not_installed("ggplot2")

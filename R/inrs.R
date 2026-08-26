@@ -545,3 +545,12 @@ inrs_evaluate <- function(name,
     stringsAsFactors = FALSE
   )
 }
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G1.0} Primary methodological references for COSHH Essentials, the INRS simplified chemical-risk method, and EN 689 are listed in DESCRIPTION and the package documentation.
+#' @srrstats {G2.3a} Enumerated character inputs use match.arg() or equivalent validation where applicable, including INRS quantity, frequency, substance-type, and liquid-method parameters.
+#' @srrstats {EA1.2} The documented questions include qualitative risk classification, semi-quantitative prioritisation, quantitative exposure assessment, OEL conformity, additive exposure, and monitoring-interval decisions.
+#' @srrstats {EA3.1} expoquimR provides standardised and reproducible comparison of occupational chemical exposure inputs, intermediate calculations, risk classifications, and conformity outputs across COSHH Essentials, INRS, and UNE-EN 689 through a common R, Excel, and interactive workflow.
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

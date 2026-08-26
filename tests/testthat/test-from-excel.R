@@ -1,3 +1,7 @@
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G5.1} Package-supplied Excel templates used in tests and examples are distributed under inst/plantillas and are therefore available to users; additional inline fixtures are visible in the public test suite.
+# ---- end rOpenSci statistical standards ----
+
 test_that("COSHH Excel template is read and evaluated reproducibly", {
 
   skip_if_not_installed("readxl")

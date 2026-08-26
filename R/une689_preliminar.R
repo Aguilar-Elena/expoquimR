@@ -171,3 +171,10 @@ une689_evaluate_preliminary <- function(data, vla) {
 
   list(days_table = days_table, result = result)
 }
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G2.0a} Function-level documentation explicitly states relevant input-length requirements, including equal-length concentration/time vectors and minimum ED sample sizes for UNE-EN 689 statistical assessment.
+#' @srrstats {G3.0} Floating-point equality is avoided; the UNE-EN 689 full-shift duration comparison uses an explicit numerical tolerance, while exact equality comparisons elsewhere concern integer counts or categorical values. 
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

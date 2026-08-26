@@ -1,3 +1,14 @@
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G5.3} Tests explicitly verify that representative valid outputs from the core COSHH, INRS, and UNE-EN 689 computational routines contain no unexpected NA, NaN, Inf, or -Inf values.
+#' @srrstats {G5.8} Edge-condition behaviour is explicitly tested for unsupported input types, empty vectors, non-finite values, and out-of-domain numeric values.
+#' @srrstats {G5.8a} Zero-length numeric input is explicitly tested and rejected where unsupported.
+#' @srrstats {G5.8b} Unsupported input types are explicitly tested and rejected for core numeric routines.
+#' @srrstats {G5.8c} All-NA and all-identical exposure vectors are explicitly tested. All-NA exposure data are rejected, while identical valid observations produce the expected zero-variance summary; statistical evaluation of identical observations produces an explicit diagnostic.
+#' @srrstats {G5.8d} Inputs outside the methodological domain are explicitly tested, including insufficient sample sizes and non-positive occupational exposure values.
+#' @srrstats {G5.9} Numerical noise susceptibility is explicitly tested for deterministic occupational-hygiene calculations.
+#' @srrstats {G5.9a} Tests verify that perturbations at approximately machine-precision scale do not materially alter UNE-EN 689 numerical summaries or COSHH categorical classifications.
+# ---- end rOpenSci statistical standards ----
+
 test_that("numeric scalar validation handles invalid inputs", {
   expect_invisible(
     expoquimR:::.assert_numeric_scalar(1, "x")

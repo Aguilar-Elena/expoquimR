@@ -308,3 +308,12 @@ une689_from_excel <- function(path) {
 #' @return `b` when `a` is `NULL` or a single `NA`; otherwise `a`.
 #' @noRd
 `%||%` <- function(a, b) if (is.null(a) || (length(a) == 1 && is.na(a))) b else a
+
+# ---- rOpenSci statistical standards ----
+#' @srrstats {G2.4} Input preprocessing performs explicit type conversion where required, particularly when importing external tabular data and when normalising internal categorical values.
+#' @srrstats {G2.4a} Integer-valued fields are explicitly converted with as.integer() where required, including UNE-EN 689 day and additive-group identifiers imported from Excel.
+#' @srrstats {G2.4b} Continuous measurement and exposure fields imported from Excel are explicitly converted with as.numeric() before analytical processing.
+#' @srrstats {G2.4c} Explicit as.character() conversion is used where numeric or categorical internal values must be matched as character values.
+#' @noRd
+NULL
+# ---- end rOpenSci statistical standards ----

@@ -1,3 +1,13 @@
+# ---- rOpenSci statistical standards ----
+#' @srrstats {EA4.0} Analytical functions return stable and predictable types appropriate to their inputs and calculations; scalar classifications, numeric statistics, data-frame outputs, and structured list outputs are explicitly tested for type consistency.
+#' @srrstats {EA6.0} Return values from the analytical API are explicitly tested for structure, type, dimensions, names, column types, and numerical values as appropriate.
+#' @srrstats {EA6.0a} Tests explicitly verify classes and types of returned lists, data frames, scalar values, and their principal components.
+#' @srrstats {EA6.0b} Dimensions of tabular outputs are explicitly tested for the COSHH, INRS, and UNE-EN 689 analytical wrappers.
+#' @srrstats {EA6.0c} Column and component names of structured return objects are explicitly tested.
+#' @srrstats {EA6.0d} Column types of principal data.frame outputs are explicitly tested to ensure stable return structures.
+#' @srrstats {EA6.0e} Tests of single-valued numeric outputs use explicit numerical tolerances; categorical and integer-valued outputs are tested using exact equality as appropriate.
+# ---- end rOpenSci statistical standards ----
+
 test_that("COSHH evaluation has stable return structure", {
   res <- coshh_evaluate(
     name = "Toluene",
