@@ -22,10 +22,8 @@
 #'
 #' @export
 coshh_classify_volatility <- function(boiling_point, process_temp) {
-  stopifnot(is.numeric(boiling_point), is.numeric(process_temp))
-  if (anyNA(boiling_point) || anyNA(process_temp)) {
-    stop("boiling_point and process_temp must not be NA.", call. = FALSE)
-  }
+  .assert_numeric_scalar(boiling_point, "boiling_point")
+  .assert_numeric_scalar(process_temp, "process_temp")
   ifelse(
     boiling_point > 5 * process_temp + 50, .t("coshh_vol_low"),
     ifelse(boiling_point > 2 * process_temp + 10, .t("coshh_vol_medium"),

@@ -49,9 +49,13 @@ une689_ut <- function(n) {
 #'
 #' @export
 une689_statistics <- function(ed) {
-  if (any(is.na(ed)) || any(ed <= 0)) {
-    stop(.t("ed_positive"), call. = FALSE)
-  }
+  .assert_numeric_vector(
+    ed,
+    "ed",
+    allow_na = FALSE,
+    allow_empty = FALSE,
+    positive = TRUE
+  )
   log_ed <- log(ed)
   list(
     MA = mean(ed),
