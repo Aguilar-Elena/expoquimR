@@ -16,6 +16,16 @@
     )
   }
 
+  if (is.object(x)) {
+    stop(
+      sprintf(
+        "`%s` must be an unclassed numeric scalar; classed numeric objects are not supported.",
+        name
+      ),
+      call. = FALSE
+    )
+  }
+
   if (is.na(x)) {
     if (allow_na) {
       return(invisible(TRUE))
@@ -60,6 +70,16 @@
   if (!is.numeric(x)) {
     stop(
       sprintf("`%s` must be numeric.", name),
+      call. = FALSE
+    )
+  }
+
+  if (is.object(x)) {
+    stop(
+      sprintf(
+        "`%s` must be an unclassed numeric vector; classed numeric objects are not supported.",
+        name
+      ),
       call. = FALSE
     )
   }
@@ -197,4 +217,26 @@
   }
 
   data
+}
+
+
+#' Ensure an HTML report filename has an extension
+#'
+#' Internal helper used by [expoquimr_report()] to append `.html` when the
+#' supplied output filename has no extension.
+#'
+#' @param path Character scalar containing an output path.
+#'
+#' @return Character scalar with an explicit file extension.
+#' @noRd
+.ensure_html_extension <- function(path) {
+  if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path)) {
+    stop("`output` must be a non-empty character scalar.", call. = FALSE)
+  }
+
+  if (!nzchar(tools::file_ext(path))) {
+    path <- paste0(path, ".html")
+  }
+
+  path
 }

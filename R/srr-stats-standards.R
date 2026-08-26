@@ -12,7 +12,7 @@
 #' @srrstats {G1.0} Primary methodological references for COSHH Essentials, the INRS simplified chemical-risk method, and EN 689 are listed in DESCRIPTION and the package documentation.
 #' @srrstats {G1.1} expoquimR implements established occupational-hygiene methods rather than claiming novel statistical algorithms; its contribution is an integrated R implementation combining COSHH Essentials, INRS, and EN 689 workflows.
 #' @srrstats {G1.2} The current development state and anticipated continued maintenance of expoquimR are documented in the Life cycle section of CONTRIBUTING.md. 
-#' @srrstatsTODO {G1.3} *All statistical terminology should be clarified and unambiguously defined.* 
+#' @srrstats {G1.3} Statistical terminology used by expoquimR is explicitly described in function documentation, the README, and the UNE-EN 689 vignette, including normal and lognormal distributions, Shapiro-Wilk testing, arithmetic and geometric summaries, tolerance limits, confidence and coverage, and risk indices.
 #' @srrstats {G1.4} All exported functions are documented with roxygen2.
 #' @srrstats {G1.4a} Package-level internal helper functions are documented using roxygen2 with @noRd. Local helper functions defined inside exported functions remain encapsulated within their documented parent functions. 
 #' @srrstats {G2.0} Input lengths are explicitly validated for scalar and vector arguments through internal validation helpers and existing function-specific checks.
@@ -27,7 +27,7 @@
 #' @srrstats {G2.4a} Integer-valued fields are explicitly converted with as.integer() where required, including UNE-EN 689 day and additive-group identifiers imported from Excel.
 #' @srrstats {G2.4b} Continuous measurement and exposure fields imported from Excel are explicitly converted with as.numeric() before analytical processing.
 #' @srrstats {G2.4c} Explicit as.character() conversion is used where numeric or categorical internal values must be matched as character values.
-#' @srrstatsTODO {G2.6} *Software which accepts one-dimensional input should ensure values are appropriately pre-processed regardless of class structures.* 
+#' @srrstats {G2.6} One-dimensional numerical inputs are explicitly checked for unsupported class structures before analytical processing; classed vectors such as Date or domain-specific numeric classes are rejected with informative diagnostics rather than silently stripped of attributes.
 #' @srrstats {G2.7} The preliminary UNE-EN 689 interface accepts base data frames, data-frame subclasses, and named two-dimensional matrices as tabular input.
 #' @srrstats {G2.8} Tabular inputs are normalised during initial preprocessing to a base data.frame before analytical sub-functions are called.
 #' @srrstats {G2.9} Conversion of data-frame subclasses to base data.frame emits an explicit diagnostic message because class-specific attributes may not be preserved.
@@ -41,7 +41,7 @@
 #' @srrstats {G2.15} Inputs are explicitly checked for missing values before statistical routines such as mean(), sd(), and shapiro.test() are called; operations that intentionally omit missing values do so explicitly.
 #' @srrstats {G2.16} Numeric inputs used in core statistical calculations are checked for non-finite values including Inf, -Inf and NaN. 
 #' @srrstats {G3.0} Floating-point equality is avoided; the UNE-EN 689 full-shift duration comparison uses an explicit numerical tolerance, while exact equality comparisons elsewhere concern integer counts or categorical values. 
-#' @srrstatsTODO {G4.0} *Statistical Software which enables outputs to be written to local files should parse parameters specifying file names to ensure appropriate file suffixes are automatically generated where not provided.* 
+#' @srrstats {G4.0} HTML report output filenames are normalised automatically; `.html` is appended when the user supplies a filename without an extension.
 #' @srrstatsTODO {G5.0} *Where applicable or practicable, tests should use standard data sets with known properties (for example, the [NIST Standard Reference Datasets](https://www.itl.nist.gov/div898/strd/), or data sets provided by other widely-used R packages).*
 #' @srrstats {G5.1} Package-supplied Excel templates used in tests and examples are distributed under inst/plantillas and are therefore available to users; additional inline fixtures are visible in the public test suite.
 #' @srrstatsTODO {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*

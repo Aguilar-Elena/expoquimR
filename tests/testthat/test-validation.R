@@ -348,3 +348,59 @@ test_that("UNE-EN 689 daily exposure uses tolerant comparison for full-day durat
     7.875
   )
 })
+
+
+test_that("numeric validators reject unsupported classed vectors", {
+  custom <- structure(
+    c(1, 2, 3),
+    class = "expoquimr_test_numeric"
+  )
+
+  expect_error(
+    expoquimR:::.assert_numeric_vector(custom, "x"),
+    "classed numeric objects are not supported"
+  )
+
+  expect_error(
+    une689_statistics(custom),
+    "classed numeric objects are not supported"
+  )
+
+  expect_error(
+    une689_statistics(factor(c("1", "2", "3"))),
+    "must be numeric"
+  )
+
+  expect_error(
+    une689_statistics(as.Date("2026-01-01") + 0:2),
+    "must be numeric"
+  )
+})
+
+
+test_that("HTML report output extension is normalised", {
+  expect_equal(
+    expoquimR:::.ensure_html_extension("report"),
+    "report.html"
+  )
+
+  expect_equal(
+    expoquimR:::.ensure_html_extension("report.html"),
+    "report.html"
+  )
+
+  expect_equal(
+    expoquimR:::.ensure_html_extension("/tmp/my.report.html"),
+    "/tmp/my.report.html"
+  )
+
+  expect_error(
+    expoquimR:::.ensure_html_extension(""),
+    "non-empty character scalar"
+  )
+
+  expect_error(
+    expoquimR:::.ensure_html_extension(NA_character_),
+    "non-empty character scalar"
+  )
+})
