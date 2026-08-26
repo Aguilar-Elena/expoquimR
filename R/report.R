@@ -91,6 +91,7 @@ expoquimr_report <- function(coshh     = NULL,
          call. = FALSE)
   }
 
+  output <- .ensure_html_extension(output)
   output <- normalizePath(output, mustWork = FALSE)
 
   rmarkdown::render(

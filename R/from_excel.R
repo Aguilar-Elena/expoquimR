@@ -25,7 +25,7 @@
 #' @export
 coshh_from_excel <- function(path, sheet = "COSHH_datos") {
   if (!requireNamespace("readxl", quietly = TRUE)) {
-    stop(.t("need_readxl"), call. = FALSE)
+    stop(paste0("coshh_from_excel: ", .t("need_readxl")), call. = FALSE)
   }
 
   df <- as.data.frame(readxl::read_excel(path, sheet = sheet, skip = 2, col_types = "text"))
@@ -33,7 +33,7 @@ coshh_from_excel <- function(path, sheet = "COSHH_datos") {
   required_cols <- c("substance", "quantity", "is_liquid")
   missing_cols <- setdiff(required_cols, names(df))
   if (length(missing_cols) > 0) {
-    stop(.t("missing_cols", paste(missing_cols, collapse = ", ")), call. = FALSE)
+    stop(paste0("coshh_from_excel: ", .t("missing_cols", paste(missing_cols, collapse = ", "))), call. = FALSE)
   }
 
   results <- lapply(seq_len(nrow(df)), function(i) {
@@ -83,7 +83,7 @@ coshh_from_excel <- function(path, sheet = "COSHH_datos") {
 #' @export
 inrs_from_excel <- function(path, sheet = "INRS_datos") {
   if (!requireNamespace("readxl", quietly = TRUE)) {
-    stop(.t("need_readxl"), call. = FALSE)
+    stop(paste0("inrs_from_excel: ", .t("need_readxl")), call. = FALSE)
   }
 
   df <- as.data.frame(readxl::read_excel(path, sheet = sheet, skip = 2, col_types = "text"))
@@ -91,7 +91,7 @@ inrs_from_excel <- function(path, sheet = "INRS_datos") {
   required_cols <- c("product", "procedure", "protection")
   missing_cols <- setdiff(required_cols, names(df))
   if (length(missing_cols) > 0) {
-    stop(.t("missing_cols", paste(missing_cols, collapse = ", ")), call. = FALSE)
+    stop(paste0("inrs_from_excel: ", .t("missing_cols", paste(missing_cols, collapse = ", "))), call. = FALSE)
   }
 
   results <- lapply(seq_len(nrow(df)), function(i) {
@@ -156,7 +156,7 @@ inrs_from_excel <- function(path, sheet = "INRS_datos") {
 #' @export
 une689_from_excel <- function(path) {
   if (!requireNamespace("readxl", quietly = TRUE)) {
-    stop(.t("need_readxl"), call. = FALSE)
+    stop(paste0("une689_from_excel: ", .t("need_readxl")), call. = FALSE)
   }
 
   sheets <- readxl::excel_sheets(path)
@@ -296,5 +296,15 @@ une689_from_excel <- function(path) {
   list(preliminary = preliminary, additive = additive)
 }
 
-# Internal helper (avoids a dependency on rlang in these functions)
+#' Null-or-missing fallback operator
+#'
+#' Internal helper returning a fallback value when the first argument is
+#' `NULL` or a single missing value. This avoids an additional dependency
+#' for the Excel-import routines.
+#'
+#' @param a Primary value.
+#' @param b Fallback value.
+#'
+#' @return `b` when `a` is `NULL` or a single `NA`; otherwise `a`.
+#' @noRd
 `%||%` <- function(a, b) if (is.null(a) || (length(a) == 1 && is.na(a))) b else a

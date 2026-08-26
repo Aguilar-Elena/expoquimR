@@ -26,7 +26,12 @@ une689_daily_exposure <- function(concentration, time) {
   tm   <- time[valid]
 
   if (length(conc) == 0) return(NA_real_)
-  if (length(conc) == 1 && isTRUE(tm[1] == 8)) return(conc[1])
+  if (
+    length(conc) == 1 &&
+    isTRUE(all.equal(tm[1], 8, tolerance = sqrt(.Machine$double.eps)))
+  ) {
+    return(conc[1])
+  }
 
   sum(conc * tm) / 8
 }
@@ -150,7 +155,7 @@ une689_validate_min_days <- function(n_days, minimum = 3L) {
 #'
 #' @export
 une689_evaluate_preliminary <- function(data, vla) {
-  stopifnot(all(c("day", "concentration", "time") %in% names(data)))
+  data <- .normalize_une689_preliminary_data(data)
 
   days <- sort(unique(data$day))
   rows <- lapply(days, function(d) {

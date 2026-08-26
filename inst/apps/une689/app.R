@@ -382,7 +382,23 @@ server <- function(input, output, session) {
     output[[paste0("tbl_pre_", ag)]] <- DT::renderDataTable({
       rp <- res_preliminar()[[as.character(ag)]]
       if (is.null(rp)) return(NULL)
-      DT::datatable(rp$table, rownames = FALSE, options = list(dom = "t"))
+      tbl <- DT::datatable(
+        rp$table,
+        rownames = FALSE,
+        options = list(dom = "t")
+      )
+
+      numeric_cols <- intersect(c("ED", "IE"), names(rp$table))
+
+      if (length(numeric_cols) > 0L) {
+        tbl <- DT::formatRound(
+          tbl,
+          columns = numeric_cols,
+          digits = 4
+        )
+      }
+
+      tbl
     })
   })
 
@@ -585,28 +601,24 @@ server <- function(input, output, session) {
     re <- res_estadistica()[[as.character(ag)]]
     if (is.null(re) || re$distribution_type == "Neither") return(NULL)
 
-    df      <- data.frame(ED = re$eds)
+
     centro  <- if (re$distribution_type == "Lognormal") re$MG else re$MA
     label_c <- if (re$distribution_type == "Lognormal") "MG" else "MA"
     nombre  <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
 
-    ggplot(df, aes(x = ED)) +
-      geom_density(color = "orange", fill = "orange", alpha = 0.3) +
-      geom_vline(xintercept = centro,  color = "green4",  linetype = "dashed") +
-      geom_vline(xintercept = re$vla,  color = "red",     linetype = "dashed") +
-      geom_vline(xintercept = re$lsc,  color = "darkred", linetype = "dotted") +
-      annotate("text", x = centro, y = 0,
-               label = paste0(label_c, ": ", round(centro, 3)),
-               color = "green4", vjust = -1) +
-      annotate("text", x = re$vla, y = 0,
-               label = paste0("VLA: ", round(re$vla, 3)),
-               color = "red", vjust = -1) +
-      annotate("text", x = re$lsc, y = 0,
-               label = paste0("LSC\u2089\u2085,\u2087\u2080: ", round(re$lsc, 3)),
-               color = "darkred", vjust = -1) +
-      labs(title = paste0("Distribuci\u00f3n de la ED \u2014 ", nombre),
-           x = "ED (mg/m\u00b3)", y = "Densidad") +
-      theme_minimal()
+    expoquimR:::.une689_density_plot(
+      eds = re$eds,
+      center = centro,
+      vla = re$vla,
+      lsc = re$lsc,
+      center_label = label_c,
+      vla_label = "VLA",
+      lsc_label = "LSC₉₅,₇₀",
+      title = paste0("Distribución de la ED — ", nombre),
+      x_label = "ED (mg/m³)",
+      y_label = "Densidad",
+      digits = 3
+    )
   })
 
   # ---- periodicidad ---------------------------------------------------------

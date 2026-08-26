@@ -43,7 +43,16 @@ run_une689 <- function(...) {
   .expoquimR_run_app("une689", ...)
 }
 
-# Internal helper: checks dependencies and launches the app from inst/apps/<id>
+#' Launch an expoquimR Shiny application
+#'
+#' Internal helper that checks the optional Shiny dependencies and launches
+#' the application stored under `inst/apps/<id>`.
+#'
+#' @param id Character scalar identifying the application to launch.
+#' @param ... Additional arguments passed to [shiny::runApp()].
+#'
+#' @return The value returned invisibly by [shiny::runApp()].
+#' @noRd
 .expoquimR_run_app <- function(id, ...) {
   missing_pkgs <- c("shiny", "DT", "ggplot2")[
     !vapply(c("shiny", "DT", "ggplot2"), requireNamespace, logical(1), quietly = TRUE)

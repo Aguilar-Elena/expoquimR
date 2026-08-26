@@ -49,9 +49,13 @@ une689_ut <- function(n) {
 #'
 #' @export
 une689_statistics <- function(ed) {
-  if (any(is.na(ed)) || any(ed <= 0)) {
-    stop(.t("ed_positive"), call. = FALSE)
-  }
+  .assert_numeric_vector(
+    ed,
+    "ed",
+    allow_na = FALSE,
+    allow_empty = FALSE,
+    positive = TRUE
+  )
   log_ed <- log(ed)
   list(
     MA = mean(ed),
@@ -79,6 +83,21 @@ une689_statistics <- function(ed) {
 #'
 #' @export
 une689_normality_test <- function(ed) {
+  .assert_numeric_vector(
+    ed,
+    "ed",
+    allow_na = FALSE,
+    allow_empty = FALSE,
+    positive = TRUE
+  )
+
+  if (length(ed) < 3L || length(ed) > 5000L) {
+    stop(
+      "`ed` must contain between 3 and 5000 observations for the Shapiro-Wilk test.",
+      call. = FALSE
+    )
+  }
+
   test_normal <- stats::shapiro.test(ed)
   test_lognormal <- stats::shapiro.test(log(ed))
 

@@ -1,17 +1,17 @@
 test_that("une689_ut queries the table and applies the limit for n > 30", {
-  expect_equal(une689_ut(6),  2.187)
-  expect_equal(une689_ut(30), 1.820)
-  expect_equal(une689_ut(50), 1.820)
+  expect_equal(une689_ut(6),  2.187, tolerance = 1e-12)
+  expect_equal(une689_ut(30), 1.820, tolerance = 1e-12)
+  expect_equal(une689_ut(50), 1.820, tolerance = 1e-12)
   expect_true(is.na(une689_ut(5)))
 })
 
 test_that("une689_statistics calculates MA/DS/MG/DSG correctly", {
   ed  <- c(5, 6, 7, 8, 9, 10)
   res <- une689_statistics(ed)
-  expect_equal(res$MA,  mean(ed))
-  expect_equal(res$DS,  sd(ed))
-  expect_equal(res$MG,  exp(mean(log(ed))))
-  expect_equal(res$DSG, exp(sd(log(ed))))
+  expect_equal(res$MA,  mean(ed), tolerance = 1e-12)
+  expect_equal(res$DS,  sd(ed), tolerance = 1e-12)
+  expect_equal(res$MG,  exp(mean(log(ed))), tolerance = 1e-12)
+  expect_equal(res$DSG, exp(sd(log(ed))), tolerance = 1e-12)
 })
 
 test_that("une689_statistics requires positive values without NA", {
@@ -46,15 +46,15 @@ test_that("une689_lsc and une689_ur calculate according to distribution type", {
   nor_type <- .t("une689_normal")
 
   expect_equal(une689_lsc(nor_type, ut = 2, MA = 7.5, DS = 1.87),
-               7.5 + 2 * 1.87)
+               7.5 + 2 * 1.87, tolerance = 1e-12)
   expect_equal(une689_lsc(log_type, ut = 2, MG = 7.3, DSG = 1.3),
-               7.3 * 1.3^2)
+               7.3 * 1.3^2, tolerance = 1e-12)
   expect_true(is.na(une689_lsc(.t("une689_neither"), ut = 2)))
 
   expect_equal(une689_ur(nor_type, vla = 10, MA = 7.5, DS = 1.87),
-               (10 - 7.5) / 1.87)
+               (10 - 7.5) / 1.87, tolerance = 1e-12)
   expect_equal(une689_ur(log_type, vla = 10, MG = 7.3, DSG = 1.3),
-               (log(10) - log(7.3)) / log(1.3))
+               (log(10) - log(7.3)) / log(1.3), tolerance = 1e-12)
   expect_true(is.na(une689_ur(.t("une689_neither"), vla = 10)))
 })
 
@@ -75,7 +75,7 @@ test_that("une689_evaluate_statistical returns a complete and coherent structure
   res <- une689_evaluate_statistical(ed, vla = 10)
 
   expect_equal(res$n,  6)
-  expect_equal(res$ut, une689_ut(6))
+  expect_equal(res$ut, une689_ut(6), tolerance = 1e-12)
   expect_true(res$distribution_type %in% c(.t("une689_lognormal"),
                                .t("une689_normal"),
                                .t("une689_neither")))

@@ -295,7 +295,8 @@ test_that("UNE-EN 689 Excel template produces reproducible preliminary results",
 
   expect_equal(
     from_excel$vla,
-    vla
+    vla,
+    tolerance = 1e-12
   )
 
   expect_equal(
@@ -317,14 +318,17 @@ test_that("Excel import functions reject nonexistent files", {
   missing <- tempfile(fileext = ".xlsx")
 
   expect_error(
-    coshh_from_excel(missing)
+    coshh_from_excel(missing),
+    "does not exist"
   )
 
   expect_error(
-    inrs_from_excel(missing)
+    inrs_from_excel(missing),
+    "does not exist"
   )
 
   expect_error(
-    une689_from_excel(missing)
+    une689_from_excel(missing),
+    "does not exist"
   )
 })
