@@ -112,6 +112,8 @@ ui <- fluidPage(
         ),
         mainPanel(
           verbatimTextOutput("resumen_estadistica"),
+          # DIAGNOSTICO_DISTRIBUCIONES_SHINY_V1
+          uiOutput("diagnostico_distribuciones_ui"),
           plotOutput("grafico_densidad"),
           textOutput("nota_grafico_ges"),
           plotOutput("grafico_probabilidad")
@@ -667,7 +669,18 @@ server <- function(input, output, session) {
     )
     if (is.null(res)) return()
     re  <- res_estadistica()
-    re[[key]] <- c(res, list(eds = eds, vla = vla))
+    # Diagnostico informativo; no modifica la decision del procedimiento actual.
+    diagnostico <- tryCatch(
+      une689_compare_distributions(ed = eds, vla = vla),
+      error = function(e) {
+        showNotification(paste(tr("Diagnostico de distribuciones no disponible:",
+                                  "Distribution diagnostics unavailable:"),
+                               conditionMessage(e)), type = "warning")
+        NULL
+      }
+    )
+    re[[key]] <- c(res, list(eds = eds, vla = vla,
+                             diagnostico_distribuciones = diagnostico))
     res_estadistica(re)
   })
 
@@ -699,7 +712,55 @@ server <- function(input, output, session) {
     cat(tr("\nResultado:", "\nResult:"), if (is.na(re$conformity)) tr("No determinado", "Undetermined") else clasificar(re$conformity), "\n")
   })
 
-  output$grafico_densidad <- renderPlot({
+  output$diagnostico_distribuciones_ui <- renderUI({
+    ag <- as.integer(input$agente_est %||% "1")
+    re <- res_estadistica()[[as.character(ag)]]
+    if (is.null(re) || is.null(re$diagnostico_distribuciones)) return(NULL)
+    diag <- re$diagnostico_distribuciones
+    tagList(
+      hr(),
+      h4(tr("Comparacion de distribuciones", "Distribution comparison")),
+      p(tr("Prueba de Shapiro-Wilk: no rechazar una distribucion no demuestra que sea correcta. La seleccion requiere examen grafico y criterio tecnico del GES.",
+           "Shapiro-Wilk test: failure to reject a distribution does not prove it is correct. Selection requires graphical review and professional SEG assessment.")),
+      tableOutput("tabla_diagnostico_distribuciones"),
+      if (isTRUE(diag$discordant))
+        div(class = "alert alert-warning",
+            strong(tr("Advertencia: decisiones discordantes. ", "Warning: discordant decisions. ")),
+            tr("Los modelos normal y lognormal producen conclusiones matematicas diferentes. Revise la distribucion, el GES y la justificacion tecnica antes de interpretar la conformidad.",
+               "Normal and lognormal models yield different mathematical conclusions. Review the distribution, SEG and technical rationale before interpreting conformity."))
+      else if (isTRUE(diag$requires_review))
+        div(class = "alert alert-warning",
+            tr("Se requiere revision tecnica de la distribucion y de los datos.",
+               "Technical review of the distribution and data is required.")),
+      p(class = "text-muted",
+        tr("Este diagnostico es complementario: no modifica el resultado principal ni la periodicidad calculada.",
+           "This diagnostic is supplementary: it does not change the main result or the calculated monitoring interval."))
+    )
+  })
+
+  output$tabla_diagnostico_distribuciones <- renderTable({
+    ag <- as.integer(input$agente_est %||% "1")
+    re <- res_estadistica()[[as.character(ag)]]
+    if (is.null(re) || is.null(re$diagnostico_distribuciones)) return(NULL)
+    m <- re$diagnostico_distribuciones$models
+    if (is.null(m) || !nrow(m)) return(NULL)
+    es <- !identical(idioma_graficos(), "en")
+    fmt <- function(x, n = 4L) ifelse(is.na(x), "—", formato_grafico(x, n))
+    data.frame(
+      Modelo = as.character(m$model),
+      `p (Shapiro-Wilk)` = fmt(m$p_value),
+      `No rechazada` = ifelse(m$not_rejected, if (es) "Si" else "Yes", if (es) "No" else "No"),
+      UT = fmt(m$ut, 3L),
+      LSC = fmt(m$lsc),
+      UR = fmt(m$ur),
+      Decision = vapply(as.character(m$mathematical_decision), clasificar, character(1)),
+      check.names = FALSE
+    ) |> setNames(if (es)
+      c("Modelo", "p (Shapiro-Wilk)", "No rechazada", "UT", "LSC", "UR", "Decision matematica")
+      else c("Model", "p (Shapiro-Wilk)", "Not rejected", "UT", "UCL", "UR", "Mathematical decision"))
+  }, striped = TRUE, bordered = TRUE, spacing = "s", rownames = FALSE)
+
+    output$grafico_densidad <- renderPlot({
     ag <- as.integer(input$agente_est %||% "1")
     re <- res_estadistica()[[as.character(ag)]]
     if (is.null(re) || !re$distribution_type %in% c("Normal", "Lognormal")) return(NULL)
