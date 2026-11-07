@@ -262,7 +262,8 @@ if (!is.null(params$une689$preliminary)) {
     # Build the chunk text dynamically
     lines <- c(
       sprintf('\n<div class="agent-block">'),
-      sprintf(L('<div class="agent-title">Agent: %s &nbsp;|&nbsp; OEL = %s mg/m³</div>', '<div class="agent-title">Agente: %s &nbsp;|&nbsp; VLA = %s mg/m³</div>'),
+      sprintf(L('<div class="agent-title">Agent: %s &nbsp;|&nbsp; OEL = %.4f mg/m³</div>', '<div class="agent-title">Agente: %s &nbsp;|&nbsp; VLA = %.4f mg/m³</div>'),
+
               ag$name, ag$vla),
       ""
     )
@@ -371,6 +372,7 @@ if (!is.null(params$une689$preliminary)) {
         theme_minimal(base_size=12) +
         theme(plot.title=element_text(color="#1F4E79", face="bold"),
               plot.subtitle=element_text(color="#555555"))
+
       print(p)
       # Graphical examination of the exposure distribution on probability paper.
       if (!est$distribution_type %in% c("Neither", "Ninguna")) {

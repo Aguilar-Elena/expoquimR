@@ -5,7 +5,7 @@ Version: 0.2.0
 Authors@R: c(
     person(
         given = "Raúl",
-        family = "Aguilar Elena",
+        family = "Aguilar-Elena",
         role = c("aut", "cre"),
         email = "raguilar@universidadviu.com",
         comment = c(ORCID = "0000-0001-8656-8155")
@@ -44,15 +44,15 @@ Description: Provides a unified toolkit for occupational chemical exposure
     References: UK Health and Safety Executive (2003)
     <https://www.hse.gov.uk/coshh/essentials/index.htm>;
     Mallet, Pilorget and Berne (2013, ISBN:978-2-7389-2166-2)
-    "Evaluation du risque chimique" INRS ED 6084;
+    "Méthodologie d'évaluation simplifiée du risque chimique: un outil d'aide à la décision" INRS ND 2233;
     European Committee for Standardisation (2018)
     <https://www.en-standard.eu/bs-en-689-2018-workplace-exposure-measurement-of-exposure-by-inhalation-to-chemical-agents-strategy-for-testing-compliance-with-occupational-exposure-limit-values/>;
     Lorenzale Algarra and colleagues (2026) <doi:10.1080/10803548.2025.2575603>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
-Roxygen: list(markdown = TRUE)
-URL: https://github.com/Aguilar-Elena/expoquimR
+Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd", "srr::srr_stats_roclet"))
+URL: https://github.com/Aguilar-Elena/expoquimR, https://aguilar-elena.github.io/expoquimR/
 BugReports: https://github.com/Aguilar-Elena/expoquimR/issues
 Depends: R (>= 4.1.0)
 Imports:

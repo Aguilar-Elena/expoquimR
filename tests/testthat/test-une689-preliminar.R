@@ -1,20 +1,20 @@
 test_that("une689_daily_exposure calculates the general case (weighted average / 8h)", {
-  expect_equal(une689_daily_exposure(c(12, 8), c(4, 4)), 10)
-  expect_equal(une689_daily_exposure(c(5, 6),  c(3, 5)), 45 / 8)
+  expect_equal(une689_daily_exposure(c(12, 8), c(4, 4)), 10, tolerance = 1e-12)
+  expect_equal(une689_daily_exposure(c(5, 6),  c(3, 5)), 45 / 8, tolerance = 1e-12)
 })
 
 test_that("une689_daily_exposure applies the special case for a single 8h sample", {
-  expect_equal(une689_daily_exposure(9, 8), 9)
-  expect_equal(une689_daily_exposure(9, 4), 9 * 4 / 8)
+  expect_equal(une689_daily_exposure(9, 8), 9, tolerance = 1e-12)
+  expect_equal(une689_daily_exposure(9, 4), 9 * 4 / 8, tolerance = 1e-12)
 })
 
 test_that("une689_daily_exposure ignores NA pairs and returns NA with no data", {
-  expect_equal(une689_daily_exposure(c(12, NA), c(4, NA)), 12 * 4 / 8)
+  expect_equal(une689_daily_exposure(c(12, NA), c(4, NA)), 12 * 4 / 8, tolerance = 1e-12)
   expect_true(is.na(une689_daily_exposure(NA_real_, NA_real_)))
 })
 
 test_that("une689_exposure_index divides ED by VLA and validates VLA > 0", {
-  expect_equal(une689_exposure_index(9, 10), 0.9)
+  expect_equal(une689_exposure_index(9, 10), 0.9, tolerance = 1e-12)
   expect_true(is.na(une689_exposure_index(9,  NA)))
   expect_true(is.na(une689_exposure_index(9,  0)))
   expect_true(is.na(une689_exposure_index(NA, 10)))
@@ -56,8 +56,8 @@ test_that("une689_evaluate_preliminary calculates ED/IE per day and classifies t
   res <- une689_evaluate_preliminary(data, vla = 10)
 
   expect_equal(nrow(res$days_table), 3)
-  expect_equal(res$days_table$ED, c(10, 9, 45 / 8))
-  expect_equal(res$days_table$IE, c(1, 0.9, 45 / 80))
+  expect_equal(res$days_table$ED, c(10, 9, 45 / 8), tolerance = 1e-12)
+  expect_equal(res$days_table$IE, c(1, 0.9, 45 / 80), tolerance = 1e-12)
   expect_equal(res$result, .t("une689_no_decision"))
 })
 

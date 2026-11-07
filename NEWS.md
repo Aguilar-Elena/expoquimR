@@ -9,3 +9,21 @@
 
 The new graphical output is an aid to professional interpretation, not an
 automated determination of SEG validity.
+
+## Software peer-review preparation
+
+* Preparation of the package for external software peer review.
+* Added contribution guidelines and a code of conduct.
+* Expanded quality-assurance and reproducibility infrastructure.
+* Ongoing documentation of reference-case verification against previously
+  completed occupational hygiene assessments.
+* Review of methodological references and package documentation.
+
+# expoquimR 0.1.0
+
+* Initial CRAN release.
+* Added implementations of COSHH Essentials, the INRS simplified chemical
+  risk assessment method, and UNE-EN 689 occupational exposure assessment.
+* Added programmatic R interfaces, Excel-based workflows, and optional
+  Shiny applications.
+* Added English and Spanish output.

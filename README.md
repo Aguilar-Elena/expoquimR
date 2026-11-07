@@ -3,6 +3,8 @@
 **Qualitative and Quantitative Assessment of Occupational Chemical Exposure Risk**
 
 <!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/Aguilar-Elena/expoquimR/graph/badge.svg)](https://app.codecov.io/gh/Aguilar-Elena/expoquimR)
+
 [![CRAN status](https://www.r-pkg.org/badges/version/expoquimR)](https://CRAN.R-project.org/package=expoquimR)
 [![R-CMD-check](https://github.com/Aguilar-Elena/expoquimR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Aguilar-Elena/expoquimR/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -304,7 +306,7 @@ https://CRAN.R-project.org/package=expoquimR
 
 ## Authors
 
-**PhD. Raúl Aguilar Elena** &middot; raguilar@universidadviu.com  
+**PhD. Raúl Aguilar-Elena** &middot; raguilar@universidadviu.com
 Occupational Risk Prevention and Occupational Health Research Group  
 Universidad Internacional de Valencia (VIU), Valencia, Spain
 
@@ -320,4 +322,4 @@ Universidad Internacional de Valencia (VIU), Valencia, Spain
 
 ## License
 
-MIT © 2025 Raúl Aguilar Elena & Ana Delgado-Garcia
+MIT © 2025 Raúl Aguilar-Elena & Ana Delgado-Garcia

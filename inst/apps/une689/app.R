@@ -464,6 +464,7 @@ server <- function(input, output, session) {
         names(tabla) <- sub("^Jornada$", "Day", names(tabla))
       }
       DT::datatable(tabla, rownames = FALSE, options = list(dom = "t"))
+
     })
   })
 
@@ -665,6 +666,7 @@ server <- function(input, output, session) {
     re <- res_estadistica()[[as.character(ag)]]
     if (is.null(re) || re$distribution_type == "Neither") return(NULL)
 
+
     centro  <- if (re$distribution_type == "Lognormal") re$MG else re$MA
     label_c <- if (re$distribution_type == "Lognormal") "MG" else "MA"
     nombre  <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
@@ -703,6 +705,7 @@ server <- function(input, output, session) {
            x = texto_grafico("ED (mg/m³)", "Daily exposure (mg/m³)"),
            y = texto_grafico("Densidad", "Density")) +
       theme_minimal()
+
   })
 
   output$grafico_probabilidad <- renderPlot({

@@ -25,8 +25,8 @@ test_that("inrs_hazard_class prioritises VLA and H/R phrases, falls back to clas
 test_that("inrs_potential_exposure_class and potential_risk_class query the tables correctly", {
   expect_equal(inrs_potential_exposure_class("2", "3"), "2")
   expect_equal(inrs_potential_risk_class("2", "2"), "1")
-  expect_equal(inrs_potential_risk_score("1"), 1)
-  expect_equal(inrs_potential_risk_score("5"), 10000)
+  expect_equal(inrs_potential_risk_score("1"), 1, tolerance = 1e-12)
+  expect_equal(inrs_potential_risk_score("5"), 10000, tolerance = 1e-12)
 })
 
 test_that("inrs_liquid_volatility_graph uses the official INRS graph lines", {
@@ -49,22 +49,22 @@ test_that("inrs_solid_dustiness maps the three valid descriptions", {
 test_that("inrs_process_type and inrs_collective_protection return class and score", {
   proc <- inrs_process_type("Open")
   expect_equal(proc$class, "3")
-  expect_equal(proc$score, 0.5)
+  expect_equal(proc$score, 0.5, tolerance = 1e-12)
 
   prot <- inrs_collective_protection("Moderate dispersion conditions")
   expect_equal(prot$class, "3")
-  expect_equal(prot$score, 0.7)
+  expect_equal(prot$score, 0.7, tolerance = 1e-12)
 })
 
 test_that("inrs_oel_correction_factor classifies VLA thresholds correctly", {
-  expect_equal(inrs_oel_correction_factor(50),     1)
-  expect_equal(inrs_oel_correction_factor(0.05),   10)
-  expect_equal(inrs_oel_correction_factor(0.005),  30)
-  expect_equal(inrs_oel_correction_factor(0.0005), 100)
+  expect_equal(inrs_oel_correction_factor(50),     1, tolerance = 1e-12)
+  expect_equal(inrs_oel_correction_factor(0.05),   10, tolerance = 1e-12)
+  expect_equal(inrs_oel_correction_factor(0.005),  30, tolerance = 1e-12)
+  expect_equal(inrs_oel_correction_factor(0.0005), 100, tolerance = 1e-12)
 })
 
 test_that("inrs_inhalation_risk and inrs_risk_characterisation are consistent in English (default)", {
-  expect_equal(inrs_inhalation_risk(1, 1, 0.5, 0.7, 1), 0.35)
+  expect_equal(inrs_inhalation_risk(1, 1, 0.5, 0.7, 1), 0.35, tolerance = 1e-12)
   expect_true(is.na(inrs_inhalation_risk(1, NA, 0.5, 0.7, 1)))
   expect_match(inrs_risk_characterisation(0.35), "low")
   expect_match(inrs_risk_characterisation(500),  "Moderate")
@@ -99,6 +99,30 @@ test_that("inrs_evaluate chains the full workflow correctly", {
   expect_equal(res$potential_exposure_class, "2")
   expect_equal(res$potential_risk_class, "1")
   expect_equal(res$volatility_dustiness_class, "3")
-  expect_equal(res$inhalation_risk, 35)
+  expect_equal(res$inhalation_risk, 35, tolerance = 1e-12)
   expect_match(res$risk_characterisation, "low")
+})
+
+test_that("inrs_volatility_score returns expected numeric scores", {
+  expect_equal(
+    inrs_volatility_score("1"),
+    1,
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    inrs_volatility_score("2"),
+    10,
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    inrs_volatility_score("3"),
+    100,
+    tolerance = 1e-12
+  )
+
+  expect_true(
+    is.na(inrs_volatility_score(NA_character_))
+  )
 })
