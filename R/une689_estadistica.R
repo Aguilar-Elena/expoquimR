@@ -267,6 +267,20 @@ une689_evaluate_statistical <- function(ed, vla) {
   }
 
   stats_ed <- une689_statistics(ed)
+  # EXPOQUIMR_CONSTANT_ED_GUARD_V1
+  # Una serie constante impide Shapiro-Wilk y no permite estimar la dispersion.
+  if (length(unique(ed)) == 1L) {
+    return(list(
+      n = n, distribution_type = "Neither",
+      MA = stats_ed$MA, DS = stats_ed$DS,
+      MG = stats_ed$MG, DSG = stats_ed$DSG,
+      W_normal = NA_real_, pval_normal = NA_real_,
+      W_lognormal = NA_real_, pval_lognormal = NA_real_,
+      ut = une689_ut(n), lsc = NA_real_, ur = NA_real_,
+      conformity = NA_character_,
+      diagnostic_status = "CONSTANT_EXPOSURES"
+    ))
+  }
   test <- une689_normality_test(ed)
   distribution_type <- une689_distribution_type(test$pval_normal, test$pval_lognormal)
   ut <- une689_ut(n)

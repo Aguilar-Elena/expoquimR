@@ -189,10 +189,18 @@ test_that("UNE-EN 689 handles all-NA and identical exposure vectors", {
   expect_equal(identical_stats$MG, 0.5, tolerance = 1e-12)
   expect_equal(identical_stats$DSG, 1, tolerance = 1e-12)
 
-  expect_error(
-    une689_evaluate_statistical(rep(0.5, 6), vla = 1),
-    "identical"
-  )
+  resultado_constante <- une689_evaluate_statistical(rep(0.5, 6), vla = 1)
+  expect_identical(resultado_constante$diagnostic_status, "CONSTANT_EXPOSURES")
+  expect_identical(resultado_constante$distribution_type, "Neither")
+  expect_equal(resultado_constante$MA, 0.5, tolerance = 1e-12)
+  expect_equal(resultado_constante$DS, 0, tolerance = 1e-12)
+  expect_equal(resultado_constante$MG, 0.5, tolerance = 1e-12)
+  expect_equal(resultado_constante$DSG, 1, tolerance = 1e-12)
+  expect_true(is.na(resultado_constante$pval_normal))
+  expect_true(is.na(resultado_constante$pval_lognormal))
+  expect_true(is.na(resultado_constante$lsc))
+  expect_true(is.na(resultado_constante$ur))
+  expect_true(is.na(resultado_constante$conformity))
 })
 
 test_that("UNE-EN 689 rejects data outside the statistical evaluation domain", {

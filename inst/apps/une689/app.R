@@ -692,6 +692,15 @@ server <- function(input, output, session) {
     nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
     cat(tr("Agente:", "Agent:"), nombre, "\n")
     cat(tr("N.º jornadas totales:", "Total measurement days:"), re$n, "\n")
+    if (identical(re$diagnostic_status, "CONSTANT_EXPOSURES")) {
+      cat(tr("Distribución: no determinada (exposiciones constantes).\n",
+             "Distribution: undetermined (constant exposures).\n"))
+      cat(tr("Shapiro-Wilk no es aplicable; la dispersión observada es nula.\n",
+             "Shapiro-Wilk is not applicable; observed dispersion is zero.\n"))
+      cat(tr("Resultado: NO DETERMINADO. Revise resolución analítica, redondeos y condiciones del GES.\n",
+             "Result: UNDETERMINED. Review analytical resolution, rounding and SEG conditions.\n"))
+      return(invisible(NULL))
+    }
     cat(tr("Distribución seleccionada automáticamente:", "Automatically selected distribution:"), re$distribution_type, "\n\n")
     if (re$distribution_type == "Lognormal") {
       cat("MG =",  round(re$MG,  4), "\n")
@@ -825,6 +834,12 @@ server <- function(input, output, session) {
     re <- res_estadistica()[[as.character(ag)]]
     if (is.null(re)) {
       showNotification(tr("Realiza antes la evaluación estadística.", "Run the statistical assessment first."), type = "error")
+      return()
+    }
+    if (identical(re$diagnostic_status, "CONSTANT_EXPOSURES")) {
+      showNotification(tr("Periodicidad no determinada: revise primero las exposiciones constantes.",
+                          "Monitoring interval undetermined: review constant exposures first."),
+                       type = "warning")
       return()
     }
     texto <- if (input$opcion_periodicidad == "opc1") {
