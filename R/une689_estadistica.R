@@ -28,9 +28,13 @@ une689_ut_table <- c(
 #'
 #' @export
 une689_ut <- function(n) {
-  if (is.na(n) || n < 6) return(NA_real_)
+  .assert_numeric_scalar(n, "n")
+  if (n != floor(n) || n < 0) {
+    stop("`n` must be a non-negative integer count.", call. = FALSE)
+  }
+  if (n < 6) return(NA_real_)
   if (n > 30) return(1.820)
-  unname(une689_ut_table[as.character(round(n))])
+  unname(une689_ut_table[as.character(n)])
 }
 
 #' Descriptive statistics of daily exposure (UNE-EN 689)
@@ -130,6 +134,14 @@ une689_normality_test <- function(ed) {
 #'
 #' @export
 une689_distribution_type <- function(pval_normal, pval_lognormal, alpha = 0.05) {
+  for (nm in c("pval_normal", "pval_lognormal", "alpha")) {
+    value <- get(nm)
+    .assert_numeric_scalar(value, nm)
+    if (value < 0 || value > 1 || (nm == "alpha" && (value == 0 || value == 1))) {
+      stop(sprintf("`%s` must be within its valid probability range.", nm),
+           call. = FALSE)
+    }
+  }
   if (pval_lognormal > alpha) {
     .t("une689_lognormal")
   } else if (pval_normal > alpha) {
@@ -183,10 +195,20 @@ une689_lsc <- function(distribution_type, ut, MA = NA_real_, DS = NA_real_, MG =
 #'
 #' @export
 une689_ur <- function(distribution_type, vla, MA = NA_real_, DS = NA_real_, MG = NA_real_, DSG = NA_real_) {
+  .assert_numeric_scalar(vla, "vla")
+  if (vla <= 0) stop("`vla` must be strictly positive.", call. = FALSE)
   # distribution_type uses internal English keys: "Lognormal", "Normal", "Neither"
   if (identical(distribution_type, .t("une689_lognormal")) || identical(distribution_type, "Lognormal")) {
+    .assert_numeric_scalar(MG, "MG")
+    .assert_numeric_scalar(DSG, "DSG")
+    if (MG <= 0 || DSG <= 1) {
+      stop("Lognormal UR requires MG > 0 and DSG > 1.", call. = FALSE)
+    }
     (log(vla) - log(MG)) / log(DSG)
   } else if (identical(distribution_type, .t("une689_normal")) || identical(distribution_type, "Normal")) {
+    .assert_numeric_scalar(MA, "MA")
+    .assert_numeric_scalar(DS, "DS")
+    if (DS <= 0) stop("Normal UR requires DS > 0.", call. = FALSE)
     (vla - MA) / DS
   } else {
     NA_real_
@@ -208,7 +230,10 @@ une689_ur <- function(distribution_type, vla, MA = NA_real_, DS = NA_real_, MG =
 #'
 #' @export
 une689_statistical_conformity <- function(ur, ut) {
-  if (is.na(ur)) return(NA_character_)
+  if (length(ur) == 1L && is.numeric(ur) && is.na(ur)) return(NA_character_)
+  .assert_numeric_scalar(ur, "ur")
+  .assert_numeric_scalar(ut, "ut")
+  if (ut <= 0) stop("`ut` must be positive.", call. = FALSE)
   if (ur >= ut) .t("une689_conformity") else .t("une689_no_conformity")
 }
 
@@ -233,6 +258,9 @@ une689_statistical_conformity <- function(ur, ut) {
 #'
 #' @export
 une689_evaluate_statistical <- function(ed, vla) {
+  .assert_numeric_scalar(vla, "vla")
+  if (vla <= 0) stop("`vla` must be strictly positive.", call. = FALSE)
+  .assert_numeric_vector(ed, "ed", positive = TRUE)
   n <- length(ed)
   if (!une689_validate_min_days(n, minimum = 6L)) {
     stop(.t("min_jornadas", 6L, n), call. = FALSE)

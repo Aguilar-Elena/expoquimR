@@ -70,3 +70,25 @@ test_that("une689_evaluate_preliminary detects NON-CONFORMITY", {
   res <- une689_evaluate_preliminary(data, vla = 10)
   expect_equal(res$result, .t("une689_no_conformity"))
 })
+
+test_that("preliminary assessment cannot classify fewer than three measured days", {
+  one <- data.frame(day = 1, concentration = 0.5, time = 8)
+  expect_error(une689_evaluate_preliminary(one, vla = 10), "At least 3")
+  two <- rbind(one, transform(one, day = 2))
+  expect_error(une689_evaluate_preliminary(two, vla = 10), "At least 3")
+})
+
+test_that("preliminary assessment rejects invalid OEL and partial samples", {
+  x <- data.frame(day = 1:3, concentration = c(1, 2, 3),
+                  time = c(8, 8, 8))
+  expect_error(une689_evaluate_preliminary(x, vla = 0), "positive")
+  expect_error(une689_evaluate_preliminary(x, vla = Inf), "finite")
+  x$time[2] <- NA_real_
+  expect_error(une689_evaluate_preliminary(x, vla = 10), "incomplete")
+})
+
+test_that("fully blank slots do not count as measured days", {
+  x <- data.frame(day = 1:3, concentration = c(1, 2, NA_real_),
+                  time = c(8, 8, NA_real_))
+  expect_error(une689_evaluate_preliminary(x, vla = 10), "At least 3")
+})

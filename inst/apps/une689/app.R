@@ -47,7 +47,12 @@ recoger_muestras_bloque <- function(input, ag, prefijo, n_j, offset = 0L) {
                concentration = conc, time = tiem)
   })
   datos <- do.call(rbind, filas)
-  datos[!is.na(datos$concentration) & !is.na(datos$time), ]
+  if (any(xor(is.na(datos$concentration), is.na(datos$time)))) {
+    stop(tr("Hay muestras con concentración o tiempo sin completar.",
+            "Some samples have an incomplete concentration/time pair."),
+         call. = FALSE)
+  }
+  datos[!is.na(datos$concentration) & !is.na(datos$time), , drop = FALSE]
 }
 
 # ---------- UI ---------------------------------------------------------------
@@ -337,13 +342,30 @@ server <- function(input, output, session) {
         return()
       }
 
-      datos <- recoger_muestras_bloque(input, ag, "pre", np, offset = 0L)
+      res_pre <- res_preliminar()
+      res_pre[[as.character(ag)]] <- NULL
+      res_preliminar(res_pre)
+      datos <- tryCatch(
+        recoger_muestras_bloque(input, ag, "pre", np, offset = 0L),
+        error = function(e) {
+          showNotification(conditionMessage(e), type = "error")
+          NULL
+        }
+      )
+      if (is.null(datos)) return()
       if (nrow(datos) == 0) {
         showNotification(paste(tr("Sin datos válidos para", "No valid data for"), nombre), type = "error")
         return()
       }
 
-      res <- une689_evaluate_preliminary(datos, vla = vla)
+      res <- tryCatch(
+        une689_evaluate_preliminary(datos, vla = vla),
+        error = function(e) {
+          showNotification(conditionMessage(e), type = "error")
+          NULL
+        }
+      )
+      if (is.null(res)) return()
 
       # Si NO DECISION -> desbloquear jornadas adicionales
       na <- n_add()
@@ -599,13 +621,22 @@ server <- function(input, output, session) {
     }
 
     # jornadas preliminares + adicionales juntas
-    datos_pre <- recoger_muestras_bloque(input, ag, "pre", np, offset = 0L)
-    datos_add <- if (na > 0L) {
-      recoger_muestras_bloque(input, ag, "add", na, offset = np)
-    } else {
-      data.frame(day = integer(), concentration = numeric(), time = numeric())
-    }
-    datos <- rbind(datos_pre, datos_add)
+    re_old <- res_estadistica()
+    re_old[[key]] <- NULL
+    res_estadistica(re_old)
+    datos <- tryCatch({
+      datos_pre <- recoger_muestras_bloque(input, ag, "pre", np, offset = 0L)
+      datos_add <- if (na > 0L) {
+        recoger_muestras_bloque(input, ag, "add", na, offset = np)
+      } else {
+        data.frame(day = integer(), concentration = numeric(), time = numeric())
+      }
+      rbind(datos_pre, datos_add)
+    }, error = function(e) {
+      showNotification(conditionMessage(e), type = "error")
+      NULL
+    })
+    if (is.null(datos)) return()
 
     if (nrow(datos) == 0) {
       showNotification(tr("Sin datos válidos.", "No valid data."), type = "error")
@@ -627,7 +658,14 @@ server <- function(input, output, session) {
       return()
     }
 
-    res <- une689_evaluate_statistical(eds, vla = vla)
+    res <- tryCatch(
+      une689_evaluate_statistical(eds, vla = vla),
+      error = function(e) {
+        showNotification(conditionMessage(e), type = "error")
+        NULL
+      }
+    )
+    if (is.null(res)) return()
     re  <- res_estadistica()
     re[[key]] <- c(res, list(eds = eds, vla = vla))
     res_estadistica(re)

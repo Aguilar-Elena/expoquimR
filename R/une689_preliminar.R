@@ -121,6 +121,12 @@ une689_classify_conformity <- function(ie) {
 #'
 #' @export
 une689_validate_min_days <- function(n_days, minimum = 3L) {
+  .assert_numeric_scalar(n_days, "n_days")
+  .assert_numeric_scalar(minimum, "minimum")
+  if (n_days < 0 || n_days != floor(n_days) ||
+      minimum < 1 || minimum != floor(minimum)) {
+    stop("`n_days` and `minimum` must be valid integer counts.", call. = FALSE)
+  }
   n_days >= minimum
 }
 
@@ -155,9 +161,17 @@ une689_validate_min_days <- function(n_days, minimum = 3L) {
 #'
 #' @export
 une689_evaluate_preliminary <- function(data, vla) {
+  .assert_numeric_scalar(vla, "vla")
+  if (vla <= 0) stop("`vla` must be strictly positive.", call. = FALSE)
   data <- .normalize_une689_preliminary_data(data)
 
+  # Entirely blank slots do not constitute measurements or measurement days.
+  data <- data[!is.na(data$concentration) & !is.na(data$time), , drop = FALSE]
   days <- sort(unique(data$day))
+  if (length(days) < 3L) {
+    stop("At least 3 measurement days with complete sample pairs are required.",
+         call. = FALSE)
+  }
   rows <- lapply(days, function(d) {
     subset_d <- data[data$day == d, ]
     ed <- une689_daily_exposure(subset_d$concentration, subset_d$time)

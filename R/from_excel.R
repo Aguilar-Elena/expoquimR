@@ -189,7 +189,12 @@ une689_from_excel <- function(path) {
       trimws(tolower(meas_df$agent)) == trimws(tolower(name)) &
         trimws(tolower(meas_df$type)) == "pre",
     ]
-    sub <- sub[!is.na(sub$concentration_mg_m3) & !is.na(sub$time_h), ]
+    incomplete_pre <- xor(is.na(sub$concentration_mg_m3), is.na(sub$time_h))
+    if (any(incomplete_pre)) {
+      stop(sprintf("Incomplete concentration/time pair for agent: %s", name),
+           call. = FALSE)
+    }
+    sub <- sub[!is.na(sub$concentration_mg_m3) & !is.na(sub$time_h), , drop = FALSE]
 
     if (nrow(sub) == 0 || is.na(vla)) {
       return(list(name = name, vla = vla,
@@ -202,6 +207,25 @@ une689_from_excel <- function(path) {
       time          = sub$time_h
     )
 
+    if (anyNA(data$day) || any(!is.finite(data$day))) {
+      stop(sprintf("Invalid measurement day for agent: %s", name), call. = FALSE)
+    }
+    if (!is.finite(vla) || vla <= 0) {
+      stop(sprintf("Invalid VLA for agent: %s", name), call. = FALSE)
+    }
+    .normalize_une689_preliminary_data(data)
+    n_days <- length(unique(data$day))
+    if (n_days < 3L) {
+      day_ids <- sort(unique(data$day))
+      days_table <- do.call(rbind, lapply(day_ids, function(d) {
+        s <- data[data$day == d, , drop = FALSE]
+        ed <- une689_daily_exposure(s$concentration, s$time)
+        data.frame(day = d, ED = ed, IE = une689_exposure_index(ed, vla))
+      }))
+      rownames(days_table) <- NULL
+      return(list(name = name, vla = vla, days_table = days_table,
+                  result = NA_character_, insufficient_days = TRUE))
+    }
     res <- une689_evaluate_preliminary(data, vla = vla)
 
     # If NO DECISION, try statistical assessment with additional days
@@ -210,8 +234,14 @@ une689_from_excel <- function(path) {
         trimws(tolower(meas_df$agent)) == trimws(tolower(name)) &
           trimws(tolower(meas_df$type)) == "add",
       ]
+      incomplete_add <- xor(is.na(sub_add$concentration_mg_m3),
+                            is.na(sub_add$time_h))
+      if (any(incomplete_add)) {
+        stop(sprintf("Incomplete additional sample for agent: %s", name),
+             call. = FALSE)
+      }
       sub_add <- sub_add[!is.na(sub_add$concentration_mg_m3) &
-                           !is.na(sub_add$time_h), ]
+                           !is.na(sub_add$time_h), , drop = FALSE]
 
       if (nrow(sub_add) > 0) {
         n_pre <- max(data$day, na.rm = TRUE)
@@ -263,7 +293,8 @@ une689_from_excel <- function(path) {
 
       ie_per_agent <- vapply(group_agents, function(ag) {
         pre <- preliminary[[ag]]
-        if (is.null(pre) || is.null(pre$days_table)) return(NA_real_)
+        if (is.null(pre) || is.null(pre$days_table) ||
+            isTRUE(pre$insufficient_days)) return(NA_real_)
         mean(pre$days_table$IE, na.rm = TRUE)
       }, numeric(1))
 

@@ -104,3 +104,27 @@ test_that("une689_monitoring_interval_opt2 classifies the 3 intervals and final 
   expect_match(une689_monitoring_interval_opt2(8,  vla = 10), "24")
   expect_match(une689_monitoring_interval_opt2(11, vla = 10), "review|revisar")
 })
+
+test_that("UT rejects fractional and non-finite sample counts", {
+  expect_error(une689_ut(6.4), "integer")
+  expect_error(une689_ut(Inf), "finite")
+  expect_equal(une689_ut(31), 1.820)
+})
+
+test_that("distribution selection rejects invalid probabilities", {
+  expect_error(une689_distribution_type(1.5, 0.2), "probability")
+  expect_error(une689_distribution_type(0.2, -0.1), "probability")
+  expect_error(une689_distribution_type(0.2, 0.2, alpha = 0), "probability")
+})
+
+test_that("statistical assessment rejects invalid OEL", {
+  expect_error(une689_evaluate_statistical(5:10, vla = 0), "positive")
+  expect_error(une689_evaluate_statistical(5:10, vla = Inf), "finite")
+})
+
+test_that("UR rejects degenerate dispersion", {
+  expect_error(une689_ur("Lognormal", 10, MG = 5, DSG = 1), "DSG > 1")
+  expect_error(une689_ur("Normal", 10, MA = 5, DS = 0), "DS > 0")
+  expect_error(une689_ur("Lognormal", 0, MG = 5, DSG = 1.5), "positive")
+  expect_error(une689_statistical_conformity(Inf, 2.187), "finite")
+})

@@ -216,6 +216,27 @@
     )
   }
 
+  # Preserve unused sample slots (both values missing), but reject
+  # partially entered rows: silently dropping them can understate ED.
+  partial <- xor(is.na(data$concentration), is.na(data$time))
+  if (any(partial)) {
+    stop("`data` contains incomplete sample pairs (concentration/time).", call. = FALSE)
+  }
+  .assert_numeric_vector(data$concentration, "data$concentration",
+                         allow_na = TRUE, allow_empty = TRUE)
+  .assert_numeric_vector(data$time, "data$time",
+                         allow_na = TRUE, allow_empty = TRUE)
+  if (any(data$concentration[!is.na(data$concentration)] < 0)) {
+    stop("`data$concentration` must be non-negative.", call. = FALSE)
+  }
+  if (any(data$time[!is.na(data$time)] <= 0)) {
+    stop("`data$time` must be strictly positive.", call. = FALSE)
+  }
+  if (anyNA(data$day) ||
+      any(is.character(data$day) & !nzchar(trimws(as.character(data$day)))) ||
+      (is.numeric(data$day) && any(!is.finite(data$day)))) {
+    stop("`data$day` must contain valid non-missing identifiers.", call. = FALSE)
+  }
   data
 }
 
