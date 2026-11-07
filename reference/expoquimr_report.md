@@ -94,7 +94,7 @@ expoquimr_report(
   output    = out1,
   open      = FALSE
 )
-#> Report saved to: /tmp/Rtmptzy9Im/file19b52061e658.html
+#> Report saved to: /tmp/RtmpKA9U1w/file18ec74c6d9a3.html
 
 # All three methods
 path <- system.file("plantillas", "plantilla_une689.xlsx",
@@ -111,6 +111,6 @@ expoquimr_report(
   lang      = "en",
   open      = FALSE
 )
-#> Report saved to: /tmp/Rtmptzy9Im/file19b532ededb6.html
+#> Report saved to: /tmp/RtmpKA9U1w/file18ec7d00361b.html
 # }
 ```
