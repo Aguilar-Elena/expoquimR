@@ -264,7 +264,7 @@ res$additive
 
 expoquimr_lang("es")
 une689_classify_conformity(c(0.02, 0.05))
-#> [1] "CONFORMIDAD"
+#> [1] "NO DECISIÓN"
 une689_distribution_type(0.5, 0.5)
 #> [1] "Lognormal"
 une689_monitoring_interval_opt1(0.5, vla = 10)

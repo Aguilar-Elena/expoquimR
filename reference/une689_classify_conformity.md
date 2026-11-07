@@ -44,7 +44,7 @@ judgement call.
 
 ``` r
 une689_classify_conformity(c(0.02))
-#> [1] "CONFORMITY"
+#> [1] "NO DECISION"
 une689_classify_conformity(c(1, 0.9, 0.56))
 #> [1] "NO DECISION"
 une689_classify_conformity(c(1.2, 0.05))
