@@ -47,7 +47,9 @@ Description: Provides a unified toolkit for occupational chemical exposure
     "Méthodologie d'évaluation simplifiée du risque chimique: un outil d'aide à la décision" INRS ND 2233;
     European Committee for Standardisation (2018)
     <https://www.en-standard.eu/bs-en-689-2018-workplace-exposure-measurement-of-exposure-by-inhalation-to-chemical-agents-strategy-for-testing-compliance-with-occupational-exposure-limit-values/>;
-    Lorenzale Algarra and colleagues (2026) <doi:10.1080/10803548.2025.2575603>.
+    Lorenzale Algarra, Sanchez-Toledo, Guillen Riquelme,
+ Agun-Gonzalez and Aguilar-Elena (2026)
+ <doi:10.1080/10803548.2025.2575603>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
