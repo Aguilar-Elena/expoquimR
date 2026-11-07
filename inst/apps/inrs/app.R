@@ -68,87 +68,107 @@ labels_detalle <- c(
   "FC (VLA)"
 )
 
-ui <- fluidPage(
-  titlePanel("Evaluaci\u00f3n del Riesgo por Inhalaci\u00f3n \u00b7 INRS"),
+app_ui <- function(lang, values = list()) {
+  t <- function(es, en) if (identical(lang, "es")) es else en
+  v <- function(id, default) if (is.null(values[[id]])) default else values[[id]]
+  fluidPage(
+  titlePanel(t("Evaluaci\u00f3n del Riesgo por Inhalaci\u00f3n \u00b7 INRS", "INRS Inhalation Risk Assessment")),
   sidebarLayout(
     sidebarPanel(
-      textInput("nombre", "Producto qu\u00edmico"),
+      textInput("nombre", t("Producto qu\u00edmico", "Chemical product"), value = v("nombre", "")),
 
       radioButtons(
-        "criterio_peligro", "Criterio para la clase de peligro:",
-        choices = c("Frases H" = "H", "Frases R" = "R", "Material y proceso" = "PROC"),
-        selected = "H", inline = TRUE
+        "criterio_peligro", t("Criterio para la clase de peligro:", "Hazard class criterion:"),
+        choices = stats::setNames(c("H", "R", "PROC"), c(t("Frases H", "H statements"), t("Frases R", "R statements"), t("Material y proceso", "Material and process"))),
+        selected = v("criterio_peligro", "H"), inline = TRUE
       ),
       conditionalPanel(
         condition = "input.criterio_peligro == 'H'",
-        textInput("frasesH", "Frases H (separadas por comas)", "")
+        textInput("frasesH", t("Frases H (separadas por comas)", "H statements (comma-separated)"), value = v("frasesH", ""))
       ),
       conditionalPanel(
         condition = "input.criterio_peligro == 'R'",
-        textInput("frasesR", "Frases R (separadas por comas)", "")
+        textInput("frasesR", t("Frases R (separadas por comas)", "R statements (comma-separated)"), value = v("frasesR", ""))
       ),
       conditionalPanel(
         condition = "input.criterio_peligro == 'PROC'",
-        selectInput("proceso", "Material y proceso", choices = c("", sort(materiales_procesos)))
+        selectInput("proceso", t("Material y proceso", "Material and process"), choices = c("", sort(materiales_procesos)), selected = v("proceso", ""))
       ),
-      numericInput("vla", "VLA (mg/m\u00b3)", value = NA, min = 0),
+      numericInput("vla", t("VLA (mg/m\u00b3)", "OEL (mg/m³)"), value = v("vla", NA), min = 0),
 
       hr(),
-      numericInput("cantidad_valor", "Cantidad diaria manipulada:", value = NA, min = 0),
-      selectInput("cantidad_unidad", "Unidad", choices = c("g", "ml", "kg", "l")),
-      numericInput("frecuencia_valor", "Frecuencia de uso:", value = NA, min = 0),
-      selectInput("frecuencia_unidad", "Unidad de frecuencia", choices = unidades_frecuencia),
+      numericInput("cantidad_valor", t("Cantidad diaria manipulada:", "Daily quantity handled:"), value = v("cantidad_valor", NA), min = 0),
+      selectInput("cantidad_unidad", t("Unidad", "Unit"), choices = c("g", "ml", "kg", "l"), selected = v("cantidad_unidad", "g")),
+      numericInput("frecuencia_valor", t("Frecuencia de uso:", "Frequency of use:"), value = v("frecuencia_valor", NA), min = 0),
+      selectInput("frecuencia_unidad", t("Unidad de frecuencia", "Frequency unit"), choices = if (lang == "es") unidades_frecuencia else stats::setNames(unname(unidades_frecuencia), c("Minutes", "Hours", "Days", "Months", "Not used")), selected = v("frecuencia_unidad", "minutes")),
 
       hr(),
-      radioButtons("tipo_sustancia", "Tipo de sustancia:",
-        choices = c("L\u00edquida" = "liquid", "S\u00f3lida" = "solid"), inline = TRUE),
+      radioButtons("tipo_sustancia", t("Tipo de sustancia:", "Substance type:"),
+        choices = stats::setNames(c("liquid", "solid"), c(t("L\u00edquida", "Liquid"), t("S\u00f3lida", "Solid"))), selected = v("tipo_sustancia", "liquid"), inline = TRUE),
       conditionalPanel(
         condition = "input.tipo_sustancia == 'liquid'",
-        radioButtons("metodo_liquido", "M\u00e9todo para la volatilidad:",
-          choices = c(
-            "Gr\u00e1fico (T\u00ba uso / punto ebullici\u00f3n)" = "graph",
-            "Presi\u00f3n de vapor" = "pressure"
-          )
+        radioButtons("metodo_liquido", t("M\u00e9todo para la volatilidad:", "Volatility method:"),
+          choices = stats::setNames(c("graph", "pressure"), c(
+            t("Gr\u00e1fico (T\u00ba uso / punto ebullici\u00f3n)", "Graph (use / boiling temperature)"),
+            t("Presi\u00f3n de vapor", "Vapour pressure"))), selected = v("metodo_liquido", "graph")
         ),
         conditionalPanel(
           condition = "input.metodo_liquido == 'graph'",
-          numericInput("temperatura_uso",   "Temperatura de uso (\u00b0C):",    value = NA),
-          numericInput("punto_ebullicion",  "Punto de ebullici\u00f3n (\u00b0C):", value = NA)
+          numericInput("temperatura_uso",   t("Temperatura de uso (\u00b0C):", "Use temperature (°C):"),    value = v("temperatura_uso", NA)),
+          numericInput("punto_ebullicion",  t("Punto de ebullici\u00f3n (\u00b0C):", "Boiling point (°C):"), value = v("punto_ebullicion", NA))
         ),
         conditionalPanel(
           condition = "input.metodo_liquido == 'pressure'",
-          numericInput("presion_vapor", "Presi\u00f3n de vapor (kPa):", value = NA)
+          numericInput("presion_vapor", t("Presi\u00f3n de vapor (kPa):", "Vapour pressure (kPa):"), value = v("presion_vapor", NA))
         )
       ),
       conditionalPanel(
         condition = "input.tipo_sustancia == 'solid'",
-        selectInput("descripcion_solida", "Descripci\u00f3n del s\u00f3lido:", choices = descripciones_solido)
+        selectInput("descripcion_solida", t("Descripci\u00f3n del s\u00f3lido:", "Solid description:"), choices = if (lang == "es") descripciones_solido else stats::setNames(unname(descripciones_solido), c("Dust that generates a lot of visible dispersion in the air", "Fine dust with little visible dispersion", "Compact solid with no visible dust")), selected = v("descripcion_solida", "Dust that generates a lot of visible dispersion in the air"))
       ),
 
       hr(),
-      selectInput("procedimiento", "Tipo de procedimiento:",        choices = procedimientos_validos),
-      selectInput("proteccion",    "Protecci\u00f3n colectiva:", choices = protecciones_validas),
+      selectInput("procedimiento", t("Tipo de procedimiento:", "Process type:"),        choices = if (lang == "es") procedimientos_validos else stats::setNames(unname(procedimientos_validos), c("Dispersive", "Open", "Closed/opened regularly", "Permanently closed")), selected = v("procedimiento", "Dispersive")),
+      selectInput("proteccion",    t("Protecci\u00f3n colectiva:", "Collective protection:"), choices = if (lang == "es") protecciones_validas else stats::setNames(unname(protecciones_validas), c("Confined space without ventilation", "No mechanical ventilation", "Moderate dispersion conditions", "Local exhaust or ventilated enclosures", "Enclosing hood / full enclosure")), selected = v("proteccion", "Confined space without ventilation")),
 
-      actionButton("evaluar", "Evaluar producto", class = "btn-primary"),
-      actionButton("reset",   "Reiniciar")
+      actionButton("evaluar", t("Evaluar producto", "Assess product"), class = "btn-primary"),
+      actionButton("reset",   t("Reiniciar", "Reset"))
     ),
 
     mainPanel(
-      h4("Resumen de resultados"),
+      h4(t("Resumen de resultados", "Results summary")),
       DT::dataTableOutput("tabla_resumen"),
       br(),
       tags$details(
         tags$summary(
           style = "cursor:pointer; font-weight:bold; font-size:1em; margin-bottom:6px;",
-          "\u25b6 Ver puntuaciones intermedias (detalle del c\u00e1lculo)"
+          t("\u25b6 Ver puntuaciones intermedias (detalle del c\u00e1lculo)", "▶ View intermediate scores (calculation details)")
         ),
         DT::dataTableOutput("tabla_detalle")
       )
     )
   )
 )
+}
+
+ui <- fluidPage(
+  selectInput("app_lang", "Language / Idioma",
+    choices = c("English" = "en", "Español" = "es"), selected = "en", width = "180px"),
+  uiOutput("app_content")
+)
 
 server <- function(input, output, session) {
+  lang <- reactive(input$app_lang %||% "en")
+  ids <- c("nombre", "frasesH", "frasesR", "vla", "cantidad_valor",
+           "cantidad_unidad", "frecuencia_valor", "frecuencia_unidad",
+           "tipo_sustancia", "metodo_liquido", "temperatura_uso",
+           "punto_ebullicion", "presion_vapor", "descripcion_solida",
+           "procedimiento", "proteccion", "criterio_peligro", "proceso")
+  output$app_content <- renderUI({
+    current <- lang()
+    values <- isolate(setNames(lapply(ids, function(id) input[[id]]), ids))
+    app_ui(current, values)
+  })
 
   productos <- reactiveVal(data.frame(
     product = character(),
@@ -164,11 +184,11 @@ server <- function(input, output, session) {
 
   observeEvent(input$evaluar, {
     if (nrow(productos()) >= 10) {
-      showNotification("Ya se han evaluado 10 productos.", type = "warning")
+      showNotification(if (lang() == "es") "Ya se han evaluado 10 productos." else "A maximum of 10 products can be assessed.", type = "warning")
       return()
     }
     if (!nzchar(trimws(input$nombre))) {
-      showNotification("Introduce un nombre para el producto.", type = "error")
+      showNotification(if (lang() == "es") "Introduce un nombre para el producto." else "Enter a product name.", type = "error")
       return()
     }
 
@@ -206,7 +226,13 @@ server <- function(input, output, session) {
   # Tabla de RESUMEN: columnas clave, con etiquetas legibles
   output$tabla_resumen <- DT::renderDataTable({
     df <- productos()[, cols_resumen, drop = FALSE]
-    colnames(df) <- labels_resumen
+    # Translate characterisation without modifying stored evaluations.
+    df$risk_characterisation <- expoquimR:::.localize_result_labels(
+      df$risk_characterisation, paste0("inrs_char_", 1:3), lang())
+    colnames(df) <- if (lang() == "es") labels_resumen else c(
+      "Product", "Hazard class", "Potential exposure class", "Potential risk class",
+      "Volatility/dustiness", "Process", "Collective protection",
+      "Inhalation risk", "Risk characterisation")
     DT::datatable(
       df, rownames = FALSE,
       options = list(dom = "t", pageLength = 10, autoWidth = TRUE)
@@ -216,7 +242,9 @@ server <- function(input, output, session) {
   # Tabla de DETALLE: puntuaciones intermedias, colapsada por defecto
   output$tabla_detalle <- DT::renderDataTable({
     df <- productos()[, cols_detalle, drop = FALSE]
-    colnames(df) <- labels_detalle
+    colnames(df) <- if (lang() == "es") labels_detalle else c(
+      "Product", "Quantity class", "Frequency class", "Potential risk score",
+      "Volatility score", "Process score", "Protection score", "OEL factor")
     DT::datatable(
       df, rownames = FALSE,
       options = list(dom = "t", pageLength = 10, scrollX = TRUE)

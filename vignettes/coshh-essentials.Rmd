@@ -170,3 +170,8 @@ run_coshh()
   control chemicals.* Available at: https://www.hse.gov.uk/coshh/
 - European Chemicals Agency (ECHA). *Understanding CLP — Hazard statements.*
   Available at: https://echa.europa.eu/
+- Lorenzale Algarra P, Sánchez-Toledo A, Guillen Riquelme A, Agún-González JJ,
+  Aguilar-Elena R (2025). Evaluation of the suitability of COSHH Essentials for
+  qualitative assessment of inhalation risk from chemical agents in perfume
+  laboratories: a new perspective. *International Journal of Occupational
+  Safety and Ergonomics*. https://doi.org/10.1080/10803548.2025.2575603

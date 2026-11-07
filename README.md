@@ -76,6 +76,8 @@ It helps answer questions such as:
 | `une689_statistics()` | UNE-EN 689 | Computes MA, DS, MG, DSG from ED values |
 | `une689_normality_test()` | UNE-EN 689 | Shapiro-Wilk test for normality and lognormality |
 | `une689_distribution_type()` | UNE-EN 689 | Infers the best-fitting distribution |
+| `une689_probability_data()` | UNE-EN 689 | Plotting positions and straight-line fit for the graphical examination of the similar exposure group |
+| `une689_probability_plot()` | UNE-EN 689 | Probability-paper plot (log-normal or normal) to examine the similar exposure group |
 | `une689_lsc()` | UNE-EN 689 | Computes the one-sided tolerance limit LSC(95,70) |
 | `une689_ur()` | UNE-EN 689 | Computes the risk index UR |
 | `une689_statistical_conformity()` | UNE-EN 689 | Declares conformity or non-conformity (UR vs UT) |
@@ -268,16 +270,34 @@ The statistical assessment in UNE-EN 689 assumes that measurements are represent
 
 <hr>
 
+## Related publication
+
+`expoquimR` was developed as a follow-up to the study reported in:
+
+> Lorenzale Algarra P, Sánchez-Toledo A, Guillen Riquelme A, Agún-González JJ,
+> Aguilar-Elena R (2025). Evaluation of the suitability of COSHH Essentials for
+> qualitative assessment of inhalation risk from chemical agents in perfume
+> laboratories: a new perspective. *International Journal of Occupational
+> Safety and Ergonomics*. <https://doi.org/10.1080/10803548.2025.2575603>
+
+The article is related research that predates the publication of `expoquimR`.
+The package implements the standard COSHH Essentials procedure, alongside
+the INRS method and statistical tools for UNE-EN 689. The molecular-level
+enhancement discussed in the article is not implemented in this package.
+The article does not describe or validate `expoquimR`.
+
+<hr>
+
 ## Citation
 
 If you use `expoquimR` in your research, please cite:
 
 ```
-Aguilar-Elena, R., Delgado-Garcia, A. & Guillem-Riquelme, A. (2025).
+Aguilar-Elena, R., Delgado-Garcia, A. & Guillén Riquelme, A. (2026).
 expoquimR: Qualitative and Quantitative Assessment of Occupational Chemical
-Exposure Risk. R package version 0.1.0. Universidad Internacional de Valencia
+Exposure Risk. R package version 0.2.0. Universidad Internacional de Valencia
 (VIU) & Universidad de Salamanca (USAL).
-https://github.com/Aguilar-Elena/expoquimR
+https://CRAN.R-project.org/package=expoquimR
 ```
 
 <hr>
@@ -292,7 +312,7 @@ Universidad Internacional de Valencia (VIU), Valencia, Spain
 BISITE Research Group  
 Universidad de Salamanca (USAL), Salamanca, Spain
 
-**PhD. Alejandro Guillem-Riquelme** &middot; aguillem@universidadviu.com  
+**PhD. Alejandro Guillén Riquelme** &middot; aguillem@universidadviu.com
 Occupational Risk Prevention and Occupational Health Research Group  
 Universidad Internacional de Valencia (VIU), Valencia, Spain
 

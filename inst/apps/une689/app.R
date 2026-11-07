@@ -17,7 +17,7 @@ bloque_jornadas <- function(ag, prefijo, max_j) {
   lapply(seq_len(max_j), function(j) {
     div(
       id = paste0(prefijo, "_ag", ag, "_j", j),
-      h6(paste("Jornada", j)),
+      h6(textOutput(paste0("titulo_", prefijo, "_ag", ag, "_j", j), inline = TRUE)),
       lapply(seq_len(MUESTRAS_POR_JORNADA), function(k) {
         fluidRow(
           column(6, numericInput(
@@ -54,6 +54,9 @@ recoger_muestras_bloque <- function(input, ag, prefijo, n_j, offset = 0L) {
 
 ui <- fluidPage(
   useShinyjs(),
+  tags$head(tags$script(src = "i18n.js")),
+  tags$script(HTML("Shiny.addCustomMessageHandler(\"expoquimr_une689_labels\", function(d) { Object.keys(d).forEach(function(k) { if(k === \"__en\") return; var el=document.getElementById(k); if(!el)return; if(el.tagName===\"BUTTON\")el.textContent=d[k]; else {var group=el.closest(\".form-group\"); var label=group && group.querySelector(\"label\"); if(label)label.textContent=d[k];} }); });")),
+  selectInput("idioma_app", "Idioma / Language", choices = c("Español" = "es", "English" = "en"), selected = "es", width = "210px"),
   titlePanel("UNE-EN 689: Evaluaci\u00f3n de la exposici\u00f3n"),
 
   tags$head(tags$style(HTML("
@@ -104,7 +107,9 @@ ui <- fluidPage(
         ),
         mainPanel(
           verbatimTextOutput("resumen_estadistica"),
-          plotOutput("grafico_densidad")
+          plotOutput("grafico_densidad"),
+          textOutput("nota_grafico_ges"),
+          plotOutput("grafico_probabilidad")
         )
       )
     ),
@@ -152,10 +157,79 @@ server <- function(input, output, session) {
 
   pestanas_creadas <- reactiveVal(0L)
 
+  # La numeracion de las jornadas adicionales continua la preliminar.
+  # Los identificadores de los inputs permanecen inalterados.
+  for (ag in seq_len(MAX_AGENTES)) {
+    for (j in seq_len(MAX_JORNADAS_PRE)) {
+      local({
+        agent_id <- ag
+        day_id <- j
+        output[[paste0("titulo_pre_ag", agent_id, "_j", day_id)]] <-
+          renderText(paste(texto_grafico("Jornada", "Day"), day_id))
+        output[[paste0("titulo_add_ag", agent_id, "_j", day_id)]] <-
+          renderText({
+            np <- n_pre()[[as.character(agent_id)]] %||% 3L
+            paste(texto_grafico("Jornada", "Day"), np + day_id)
+          })
+      })
+    }
+  }
+
+  # Textos bilingües de los gráficos; no altera el idioma interno del paquete.
+  idioma_graficos <- reactive(input$idioma_app %||% "es")
+  texto_grafico <- function(es, en) {
+    if (identical(idioma_graficos(), "en")) en else es
+  }
+  tr <- function(es, en) texto_grafico(es, en)
+  clasificar <- function(x) {
+    switch(x %||% "", "CONFORMITY" = tr("CONFORMIDAD", "CONFORMITY"),
+      "NON-CONFORMITY" = tr("NO CONFORMIDAD", "NON-CONFORMITY"),
+      "NO DECISION" = tr("SIN DECISIÓN", "NO DECISION"),
+      "INSUFFICIENT DATA" = tr("DATOS INSUFICIENTES", "INSUFFICIENT DATA"),
+      x %||% tr("Sin datos suficientes", "Insufficient data"))
+  }
+  observeEvent(input$idioma_app, {
+    es <- !identical(input$idioma_app, "en")
+    pares <- list(
+      nuevo_agente=c("+ Añadir agente", "+ Add agent"),
+      evaluar_estadistica=c("Realizar evaluación", "Run assessment"),
+      calcular_periodicidad=c("Calcular periodicidad", "Calculate monitoring interval"),
+      opcion_periodicidad=c("Criterio:", "Criterion:"),
+      idioma_app=c("Idioma / Language", "Language / Idioma")
+    )
+    session$sendCustomMessage("expoquimr_une689_labels", c(lapply(pares, function(v) v[if (es) 1 else 2]), list(`__en` = !es)))
+  }, ignoreInit = FALSE)
+  # Translate only untouched, automatically generated agent names.
+  # User-entered names must never be replaced on a language switch.
+  observeEvent(input$idioma_app, {
+    target <- if (identical(input$idioma_app, "en")) "Agent" else "Agente"
+    for (ag in seq_len(n_agentes())) {
+      id <- paste0("nombre_ag", ag)
+      current <- isolate(input[[id]])
+      defaults <- paste(c("Agente", "Agent"), ag)
+      if (!is.null(current) && current %in% defaults) {
+        session$onFlushed(local({
+          input_id <- id
+          new_value <- paste(target, ag)
+          function() updateTextInput(session, input_id, value = new_value)
+        }), once = TRUE)
+      }
+    }
+  }, ignoreInit = FALSE)
+
+  formato_grafico <- function(x, digits = 4L) {
+    formatC(x, format = "f", digits = digits, decimal.mark =
+              if (identical(idioma_graficos(), "en")) "." else ",")
+  }
+  output$nota_grafico_ges <- renderText(texto_grafico(
+    "Examen gráfico del GES: examine la alineación y posibles valores atípicos. Ni Shapiro-Wilk ni R² acreditan por sí solos la homogeneidad del grupo.",
+    "SEG probability plot: inspect point alignment and potential outliers. Neither Shapiro-Wilk nor R² alone establishes group homogeneity."
+  ))
+
   # ---- nuevo agente ---------------------------------------------------------
   observeEvent(input$nuevo_agente, {
     if (n_agentes() >= MAX_AGENTES) {
-      showNotification(paste("M\u00e1ximo", MAX_AGENTES, "agentes."), type = "warning")
+      showNotification(paste(tr("Máximo", "Maximum"), MAX_AGENTES, tr("agentes.", "agents.")), type = "warning")
       return()
     }
     nuevo_id <- n_agentes() + 1L
@@ -183,32 +257,32 @@ server <- function(input, output, session) {
 
     tagList(
       textInput(paste0("nombre_ag", ag),
-                paste("Nombre agente", ag),
+                paste(tr("Nombre del agente", "Agent name"), ag),
                 value = isolate(input[[paste0("nombre_ag", ag)]]) %||%
-                        paste("Agente", ag)),
+                        paste(tr("Agente", "Agent"), ag)),
       numericInput(paste0("vla_ag", ag), "VLA (mg/m\u00b3)",
                    value = isolate(input[[paste0("vla_ag", ag)]]) %||% NA_real_,
                    min = 0),
       hr(),
-      strong("Jornadas preliminares: ", np),
+      strong(tr("Jornadas preliminares: ", "Preliminary days: "), np),
       br(),
-      actionButton("add_pre",    "\u002b Preliminar",
+      actionButton("add_pre",    tr("+ Preliminar", "+ Preliminary"),
                    class = "btn-default btn-sm"),
-      actionButton("quitar_pre", "\u2212 Preliminar",
+      actionButton("quitar_pre", tr("− Preliminar", "− Preliminary"),
                    class = "btn-default btn-sm"),
       br(), br(),
       actionButton(paste0("evaluar_pre_ag", ag),
-                   paste("Evaluar preliminar \u2014 Agente", ag),
+                   paste(tr("Evaluar preliminar — Agente", "Preliminary assessment — Agent"), ag),
                    class = "btn-primary btn-sm", width = "100%"),
 
       # Jornadas adicionales: solo si n_add > 0
       if (na > 0) tagList(
         hr(),
-        strong("Jornadas adicionales: ", na),
+        strong(tr("Jornadas adicionales: ", "Additional days: "), na),
         br(),
-        actionButton("add_add",    "\u002b Adicional",
+        actionButton("add_add",    tr("+ Adicional", "+ Additional"),
                      class = "btn-info btn-sm"),
-        actionButton("quitar_add", "\u2212 Adicional",
+        actionButton("quitar_add", tr("− Adicional", "− Additional"),
                      class = "btn-info btn-sm")
       )
     )
@@ -249,23 +323,23 @@ server <- function(input, output, session) {
   # ---- evaluacion preliminar por agente (boton dinamico) --------------------
   lapply(seq_len(MAX_AGENTES), function(ag) {
     observeEvent(input[[paste0("evaluar_pre_ag", ag)]], {
-      nombre <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
+      nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
       vla    <- input[[paste0("vla_ag", ag)]]
       np     <- n_pre()[[as.character(ag)]] %||% 3L
 
       if (is.null(vla) || is.na(vla) || vla <= 0) {
-        showNotification(paste("VLA inv\u00e1lido para", nombre), type = "warning")
+        showNotification(paste(tr("VLA inválido para", "Invalid OEL for"), nombre), type = "warning")
         return()
       }
       if (!une689_validate_min_days(np, minimum = 3L)) {
-        showNotification(paste(nombre, ": m\u00ednimo 3 jornadas preliminares."),
+        showNotification(paste(nombre, tr(": mínimo 3 jornadas preliminares.", ": at least 3 preliminary days required.")),
                          type = "warning")
         return()
       }
 
       datos <- recoger_muestras_bloque(input, ag, "pre", np, offset = 0L)
       if (nrow(datos) == 0) {
-        showNotification(paste("Sin datos v\u00e1lidos para", nombre), type = "error")
+        showNotification(paste(tr("Sin datos válidos para", "No valid data for"), nombre), type = "error")
         return()
       }
 
@@ -284,8 +358,7 @@ server <- function(input, output, session) {
           # 3. ocultar las demas por si acaso
           for (j in 4:MAX_JORNADAS_PRE) shinyjs::hide(paste0("add_ag", ag, "_j", j))
           showNotification(
-            paste0(nombre, ": NO DECISI\u00d3N. Se han desbloqueado las jornadas
-                   adicionales para completar la evaluaci\u00f3n estad\u00edstica."),
+            paste0(nombre, tr(": SIN DECISIÓN. Se han desbloqueado las jornadas adicionales para completar la evaluación estadística.", ": NO DECISION. Additional days have been unlocked to complete the statistical assessment.")),
             type = "message", duration = 6
           )
         }
@@ -303,13 +376,15 @@ server <- function(input, output, session) {
 
   # ---- pestanas dinamicas ---------------------------------------------------
   output$pestanas_agentes <- renderUI({
+    # Language changes must not recreate measurement inputs (which would lose data).
+    tr_tabs <- function(es, en) isolate(tr(es, en))
     nag <- n_agentes()
     np  <- isolate(n_pre())
     na  <- isolate(n_add())
 
     tabs <- lapply(seq_len(nag), function(ag) {
       nombre_tab <- isolate(input[[paste0("nombre_ag", ag)]]) %||%
-                    paste("Agente", ag)
+                    paste(tr_tabs("Agente", "Agent"), ag)
       tabPanel(
         title = nombre_tab,
         value = paste0("agente_", ag),
@@ -317,7 +392,7 @@ server <- function(input, output, session) {
 
         # Bloque preliminar
         div(class = "bloque-pre",
-          h5("\ud83d\udccc Jornadas preliminares"),
+          h5(tr_tabs("Jornadas preliminares", "Preliminary measurement days")),
           bloque_jornadas(ag, "pre", MAX_JORNADAS_PRE)
         ),
 
@@ -328,7 +403,7 @@ server <- function(input, output, session) {
         div(id = paste0("div_add_ag", ag),
           style = "display:none;",
           div(class = "bloque-add",
-            h5("\ud83d\udcc5 Jornadas adicionales (desbloqueadas tras NO DECISI\u00d3N)"),
+            h5(tr_tabs("Jornadas adicionales (desbloqueadas tras SIN DECISIÓN)", "Additional days (unlocked after NO DECISION)")),
             bloque_jornadas(ag, "add", MAX_JORNADAS_PRE)
           )
         )
@@ -371,18 +446,24 @@ server <- function(input, output, session) {
       )
       tagList(
         br(),
-        h5(paste("Resultado preliminar \u2014", rp$name)),
+        h5(paste(tr("Resultado preliminar —", "Preliminary result —"), rp$name)),
         DT::dataTableOutput(paste0("tbl_pre_", ag)),
         div(class = paste0("alert alert-", color),
-            strong("Resultado: "),
-            rp$result %||% "Sin datos suficientes"),
+            strong(tr("Resultado: ", "Result: ")),
+            clasificar(rp$result)),
         hr()
       )
     })
     output[[paste0("tbl_pre_", ag)]] <- DT::renderDataTable({
       rp <- res_preliminar()[[as.character(ag)]]
       if (is.null(rp)) return(NULL)
-      DT::datatable(rp$table, rownames = FALSE, options = list(dom = "t"))
+      tabla <- rp$table
+      if ("ED" %in% names(tabla)) tabla$ED <- sprintf("%.5f", tabla$ED)
+      if ("IE" %in% names(tabla)) tabla$IE <- sprintf("%.3f", tabla$IE)
+      if (identical(idioma_graficos(), "en")) {
+        names(tabla) <- sub("^Jornada$", "Day", names(tabla))
+      }
+      DT::datatable(tabla, rownames = FALSE, options = list(dom = "t"))
     })
   })
 
@@ -395,16 +476,15 @@ server <- function(input, output, session) {
     opciones <- setNames(
       as.character(seq_len(nag)),
       vapply(seq_len(nag), function(ag)
-        input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag),
+        input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag),
         character(1))
     )
 
     tagList(
       hr(),
-      strong("\u2295 Efectos aditivos"),
-      helpText("Crea grupos de agentes que comparten \u00f3rgano diana.
-                Cada grupo calcula su propio IE combinado."),
-      actionButton("nuevo_grupo", "\u002b Nuevo grupo aditivo",
+      strong(tr("⊕ Efectos aditivos", "⊕ Additive effects")),
+      helpText(tr("Crea grupos de agentes que comparten órgano diana. Cada grupo calcula su propio IE combinado.", "Create groups of agents sharing a target organ. Each group calculates its combined exposure index.")),
+      actionButton("nuevo_grupo", tr("+ Nuevo grupo aditivo", "+ New additive group"),
                    class = "btn-warning btn-sm", width = "100%"),
       br(), br(),
       if (ng > 0L) {
@@ -412,7 +492,7 @@ server <- function(input, output, session) {
           div(
             style = "border:1px solid #ffc107; border-radius:4px;
                      padding:8px; margin-bottom:8px; background:#fffdf0;",
-            strong(paste("Grupo", g)),
+            strong(paste(tr("Grupo", "Group"), g)),
             checkboxGroupInput(
               paste0("grupo_", g),
               label = NULL,
@@ -420,7 +500,7 @@ server <- function(input, output, session) {
               selected = isolate(input[[paste0("grupo_", g)]])
             ),
             actionButton(paste0("borrar_grupo_", g),
-                         "Eliminar grupo", class = "btn-danger btn-xs")
+                         tr("Eliminar grupo", "Delete group"), class = "btn-danger btn-xs")
           )
         }))
       }
@@ -470,18 +550,18 @@ server <- function(input, output, session) {
       # Guardar df en output independiente para evitar renderTable anidado
       output[[paste0("tbl_aditivo_", g)]] <- renderTable({
         rbind(df, data.frame(
-          Agente = "SUMA",
+          Agente = tr("SUMA", "TOTAL"),
           `IE medio` = round(ie_total, 4),
           check.names = FALSE
         ))
       }, striped = TRUE, bordered = TRUE)
 
       div(class = "aditivo-box",
-        h5(paste("\u2295 Grupo aditivo", g)),
+        h5(paste(tr("⊕ Grupo aditivo", "⊕ Additive group"), g)),
         tableOutput(paste0("tbl_aditivo_", g)),
         div(class = paste0("alert alert-", color_res),
-            strong("IE combinado = "), round(ie_total, 4),
-            strong("  \u2192  "), texto_res)
+            strong(tr("IE combinado = ", "Combined EI = ")), round(ie_total, 4),
+            strong("  \u2192  "), clasificar(texto_res))
       )
     })
 
@@ -495,14 +575,14 @@ server <- function(input, output, session) {
       opciones <- setNames(
         as.character(seq_len(nag)),
         vapply(seq_len(nag), function(ag)
-          input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag),
+          input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag),
           character(1))
       )
       selectInput(id, label, choices = opciones)
     })
   }
-  output$selector_agente_est <- selector_ui("agente_est", "Agente a evaluar:")
-  output$selector_agente_per <- selector_ui("agente_per", "Agente:")
+  output$selector_agente_est <- selector_ui("agente_est", tr("Agente a evaluar:", "Agent to assess:"))
+  output$selector_agente_per <- selector_ui("agente_per", tr("Agente:", "Agent:"))
 
   # ---- evaluacion estadistica -----------------------------------------------
   observeEvent(input$evaluar_estadistica, {
@@ -513,7 +593,7 @@ server <- function(input, output, session) {
     na  <- n_add()[[key]] %||% 0L
 
     if (is.null(vla) || is.na(vla) || vla <= 0) {
-      showNotification("Introduce un VLA v\u00e1lido en la pesta\u00f1a 1.", type = "error")
+      showNotification(tr("Introduce un VLA válido en la pestaña 1.", "Enter a valid OEL in tab 1."), type = "error")
       return()
     }
 
@@ -527,7 +607,7 @@ server <- function(input, output, session) {
     datos <- rbind(datos_pre, datos_add)
 
     if (nrow(datos) == 0) {
-      showNotification("Sin datos v\u00e1lidos.", type = "error")
+      showNotification(tr("Sin datos válidos.", "No valid data."), type = "error")
       return()
     }
 
@@ -540,7 +620,7 @@ server <- function(input, output, session) {
 
     if (!une689_validate_min_days(length(eds), minimum = 6L)) {
       showNotification(
-        paste0("M\u00ednimo 6 jornadas v\u00e1lidas en total (hay ", length(eds), ")."),
+        paste0(tr("Mínimo 6 jornadas válidas en total (hay ", "At least 6 valid days required (found "), length(eds), ")."),
         type = "error"
       )
       return()
@@ -555,29 +635,29 @@ server <- function(input, output, session) {
   output$resumen_estadistica <- renderPrint({
     ag <- as.integer(input$agente_est %||% "1")
     re <- res_estadistica()[[as.character(ag)]]
-    if (is.null(re)) { cat("Pulsa 'Realizar evaluaci\u00f3n'.\n"); return() }
+    if (is.null(re)) { cat(tr("Pulsa 'Realizar evaluación'.\n", "Click 'Run assessment'.\n")); return() }
 
-    nombre <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
-    cat("Agente:", nombre, "\n")
-    cat("N\u00ba jornadas totales:", re$n, "\n")
-    cat("Distribuci\u00f3n inferida:", re$distribution_type, "\n\n")
+    nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
+    cat(tr("Agente:", "Agent:"), nombre, "\n")
+    cat(tr("N.º jornadas totales:", "Total measurement days:"), re$n, "\n")
+    cat(tr("Distribución inferida:", "Inferred distribution:"), re$distribution_type, "\n\n")
     if (re$distribution_type == "Lognormal") {
       cat("MG =",  round(re$MG,  4), "\n")
       cat("DSG =", round(re$DSG, 4), "\n")
       cat("W (Shapiro-Wilk, log(ED)) =", round(re$W_lognormal,   3), "\n")
-      cat("p-valor =",                    round(re$pval_lognormal, 4), "\n")
+      cat(tr("p-valor =", "p-value ="),                    round(re$pval_lognormal, 4), "\n")
     } else if (re$distribution_type == "Normal") {
       cat("MA =", round(re$MA, 4), "\n")
       cat("DS =", round(re$DS, 4), "\n")
       cat("W (Shapiro-Wilk, ED) =", round(re$W_normal,   3), "\n")
-      cat("p-valor =",               round(re$pval_normal, 4), "\n")
+      cat(tr("p-valor =", "p-value ="),               round(re$pval_normal, 4), "\n")
     } else {
-      cat("Ni normal ni lognormal son adecuados (p <= 0.05 en ambos).\n")
+      cat(tr("Ni normal ni lognormal son adecuados (p <= 0.05 en ambos).\n", "Neither normal nor lognormal distribution is suitable (p <= 0.05 for both).\n"))
     }
-    cat("\nUT de referencia:", round(re$ut, 3), "\n")
+    cat(tr("\nUT de referencia:", "\nReference UT:"), round(re$ut, 3), "\n")
     if (!is.na(re$lsc)) cat("LSC\u2089\u2085,\u2087\u2080 =", round(re$lsc, 4), "\n")
     if (!is.na(re$ur))  cat("UR =",              round(re$ur,  3), "\n")
-    cat("\nResultado:", if (is.na(re$conformity)) "No determinado" else re$conformity, "\n")
+    cat(tr("\nResultado:", "\nResult:"), if (is.na(re$conformity)) tr("No determinado", "Undetermined") else clasificar(re$conformity), "\n")
   })
 
   output$grafico_densidad <- renderPlot({
@@ -585,28 +665,66 @@ server <- function(input, output, session) {
     re <- res_estadistica()[[as.character(ag)]]
     if (is.null(re) || re$distribution_type == "Neither") return(NULL)
 
-    df      <- data.frame(ED = re$eds)
     centro  <- if (re$distribution_type == "Lognormal") re$MG else re$MA
     label_c <- if (re$distribution_type == "Lognormal") "MG" else "MA"
-    nombre  <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
+    nombre  <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
 
-    ggplot(df, aes(x = ED)) +
-      geom_density(color = "orange", fill = "orange", alpha = 0.3) +
+    # Densidad parametrica de la distribucion seleccionada; con muestras
+    # pequenas, una KDE puede sugerir multimodalidad espuria.
+    x_max <- max(c(re$eds, re$vla, re$lsc), na.rm = TRUE) * 1.10
+    x_vals <- seq(max(0, min(re$eds) * 0.01), x_max, length.out = 500L)
+    dens <- if (re$distribution_type == "Lognormal") {
+      stats::dlnorm(x_vals, meanlog = log(re$MG), sdlog = log(re$DSG))
+    } else {
+      stats::dnorm(x_vals, mean = re$MA, sd = re$DS)
+    }
+    dens_df <- data.frame(ED = x_vals, densidad = dens)
+
+    ggplot(dens_df, aes(x = ED, y = densidad)) +
+      geom_line(color = "orange", linewidth = 0.9) +
+      geom_area(fill = "orange", alpha = 0.2) +
       geom_vline(xintercept = centro,  color = "green4",  linetype = "dashed") +
       geom_vline(xintercept = re$vla,  color = "red",     linetype = "dashed") +
       geom_vline(xintercept = re$lsc,  color = "darkred", linetype = "dotted") +
       annotate("text", x = centro, y = 0,
-               label = paste0(label_c, ": ", round(centro, 3)),
+               label = paste0(label_c, ": ", formato_grafico(centro)),
                color = "green4", vjust = -1) +
       annotate("text", x = re$vla, y = 0,
-               label = paste0("VLA: ", round(re$vla, 3)),
+               label = paste0(texto_grafico("VLA: ", "OEL: "), formato_grafico(re$vla)),
                color = "red", vjust = -1) +
       annotate("text", x = re$lsc, y = 0,
-               label = paste0("LSC\u2089\u2085,\u2087\u2080: ", round(re$lsc, 3)),
+               label = paste0(texto_grafico("LSC\u2089\u2085,\u2087\u2080: ", "UCL\u2089\u2085,\u2087\u2080: "), formato_grafico(re$lsc)),
                color = "darkred", vjust = -1) +
-      labs(title = paste0("Distribuci\u00f3n de la ED \u2014 ", nombre),
-           x = "ED (mg/m\u00b3)", y = "Densidad") +
+      labs(title = paste0(texto_grafico("Distribución de la ED — ", "Daily exposure distribution — "), nombre),
+           subtitle = texto_grafico(
+             if (identical(re$distribution_type, "Lognormal")) "Densidad log-normal ajustada" else "Densidad normal ajustada",
+             if (identical(re$distribution_type, "Lognormal")) "Fitted lognormal density" else "Fitted normal density"
+           ),
+           x = texto_grafico("ED (mg/m³)", "Daily exposure (mg/m³)"),
+           y = texto_grafico("Densidad", "Density")) +
       theme_minimal()
+  })
+
+  output$grafico_probabilidad <- renderPlot({
+    ag <- as.integer(input$agente_est %||% "1")
+    re <- res_estadistica()[[as.character(ag)]]
+    if (is.null(re)) return(NULL)
+    if (re$distribution_type %in% c("Neither", "Ninguna")) {
+      plot.new()
+      text(0.5, 0.5, texto_grafico("No se seleccionó una distribución normal o lognormal.\nRevise los datos y el GES.", "Neither a normal nor a lognormal distribution was selected.\nReview the data and the SEG."))
+      return(invisible(NULL))
+    }
+    nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
+    papel <- if (identical(re$distribution_type, "Lognormal")) "log-normal" else "normal"
+    une689_probability_plot(
+      ed = re$eds,
+      distribution = re$distribution_type,
+      vla = re$vla,
+      title = paste0(texto_grafico("Examen gráfico del GES en papel ", "SEG probability plot on "), papel, " — ", nombre),
+      x_label = texto_grafico("ED (mg/m³)", "Daily exposure (mg/m³)"),
+      y_label = texto_grafico("Probabilidad acumulada P_k (%)", "Cumulative probability P_k (%)"),
+      vla_label = texto_grafico("VLA", "OEL")
+    )
   })
 
   # ---- periodicidad ---------------------------------------------------------
@@ -614,7 +732,7 @@ server <- function(input, output, session) {
     ag <- as.integer(input$agente_per %||% "1")
     re <- res_estadistica()[[as.character(ag)]]
     if (is.null(re)) {
-      showNotification("Realiza antes la evaluaci\u00f3n estad\u00edstica.", type = "error")
+      showNotification(tr("Realiza antes la evaluación estadística.", "Run the statistical assessment first."), type = "error")
       return()
     }
     texto <- if (input$opcion_periodicidad == "opc1") {
@@ -623,10 +741,11 @@ server <- function(input, output, session) {
     } else {
       une689_monitoring_interval_opt2(re$lsc, vla = re$vla)
     }
-    nombre <- input[[paste0("nombre_ag", ag)]] %||% paste("Agente", ag)
+    nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
     output$resultado_periodicidad <- renderPrint({
-      cat("Agente:", nombre, "\n\n")
-      cat(if (is.na(texto)) "No se pudo calcular." else texto, "\n")
+      idioma_graficos()
+      cat(tr("Agente:", "Agent:"), nombre, "\n\n")
+      cat(if (is.na(texto)) tr("No se pudo calcular.", "Could not calculate.") else texto, "\n")
     })
   })
 

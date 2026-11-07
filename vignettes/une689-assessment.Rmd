@@ -134,6 +134,34 @@ une689_statistical_conformity(ur = une689_ur(distribution_type, vla = 10,
                                 ut = une689_ut(6))
 ```
 
+### Graphical validation of the similar exposure group
+
+Besides the Shapiro-Wilk tests, the similar exposure group (SEG) can be
+validated graphically on probability paper. The ED values are ranked in
+ascending order and each rank `k` receives the plotting position
+`P_k = (k - 3/8) / (n + 1/4)`. The points are then plotted against `P_k` on
+log-normal paper (logarithmic horizontal axis) when the data are lognormal, or
+on normal paper (linear horizontal axis) when the data are normal. If all
+points lie close to a straight line and none is exceptionally separated from
+the rest, the SEG is consistent with the assumed distribution.
+
+```{r probability_data}
+pd <- une689_probability_data(eds)
+
+pd$distribution
+pd$data[, c("k", "ed", "pk")]
+```
+
+```{r probability_plot, eval = requireNamespace("ggplot2", quietly = TRUE), fig.alt = "Log-normal probability paper with the six daily exposure values and a fitted straight line."}
+une689_probability_plot(eds, vla = 10)
+```
+
+The coefficient of determination of the line (`pd$r_squared`) is shown in the
+plot subtitle as a descriptive aid only: the check is visual, and the package
+applies no numerical cut-off to it. With `distribution = "auto"` (the default)
+the paper is chosen from the Shapiro-Wilk results; use `"lognormal"` or
+`"normal"` to force one.
+
 ## Periodic assessment (monitoring interval)
 
 Once conformity has been established, the standard requires defining how

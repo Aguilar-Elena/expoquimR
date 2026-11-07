@@ -1,26 +1,53 @@
+year <- "2026"
+vers <- paste("R package version", meta$Version)
+
 citHeader("To cite expoquimR in publications use:")
 
 bibentry(
   bibtype  = "Manual",
   title    = "{expoquimR}: Qualitative and Quantitative Assessment of Occupational Chemical Exposure Risk",
   author   = c(
-    person("Ra\u00fal",      "Aguilar Elena",     comment = c(ORCID = "0000-0001-8656-8155")),
+    person("Ra\u00fal",      "Aguilar-Elena",      comment = c(ORCID = "0000-0001-8656-8155")),
     person("Ana",          "Delgado-Garcia",     comment = c(ORCID = "0009-0003-7079-5507")),
-    person("Alejandro",    "Guillem-Riquelme",   comment = c(ORCID = "0000-0002-6373-5237"))
+    person("Alejandro",    "Guill\u00e9n Riquelme",   comment = c(ORCID = "0000-0002-6373-5237"))
   ),
-  year         = "2025",
-  note         = "R package version 0.1.0",
-  url          = "https://github.com/Aguilar-Elena/expoquimR",
+  year         = year,
+  note         = vers,
+  url          = "https://CRAN.R-project.org/package=expoquimR",
   institution  = paste(
     "Universidad Internacional de Valencia (VIU);",
     "Universidad de Salamanca (USAL)"
   ),
-  textVersion  = paste(
-    "Aguilar-Elena, R., Delgado-Garcia, A. & Guillem-Riquelme, A. (2025).",
-    "expoquimR: Qualitative and Quantitative Assessment of Occupational",
-    "Chemical Exposure Risk. R package version 0.1.0.",
-    "Universidad Internacional de Valencia (VIU) &",
-    "Universidad de Salamanca (USAL).",
-    "https://github.com/Aguilar-Elena/expoquimR"
+  textVersion  = paste0(
+    "Aguilar-Elena, R., Delgado-Garcia, A. & Guill\u00e9n Riquelme, A. (", year, "). ",
+    "expoquimR: Qualitative and Quantitative Assessment of Occupational ",
+    "Chemical Exposure Risk. ", vers, ". ",
+    "Universidad Internacional de Valencia (VIU) & ",
+    "Universidad de Salamanca (USAL). ",
+    "https://CRAN.R-project.org/package=expoquimR"
   )
+)
+
+bibentry(
+  bibtype  = "Article",
+  header   = "Related publication:",
+  title    = paste(
+    "Evaluation of the suitability of COSHH Essentials for qualitative",
+    "assessment of inhalation risk from chemical agents in perfume",
+    "laboratories: a new perspective"
+  ),
+  author   = c(
+    person("Pilar",       "Lorenzale Algarra"),
+    person("Agust\u00edn", "S\u00e1nchez-Toledo", comment = c(ORCID = "0000-0003-4799-5212")),
+    person("Alejandro",   "Guillen Riquelme",    comment = c(ORCID = "0000-0002-6373-5237")),
+    person("Juan Jos\u00e9", "Ag\u00fan-Gonz\u00e1lez", comment = c(ORCID = "0000-0002-2677-7198")),
+    person("Ra\u00fal",    "Aguilar-Elena",       comment = c(ORCID = "0000-0001-8656-8155"))
+  ),
+  journal  = "International Journal of Occupational Safety and Ergonomics",
+  year     = "2026",
+  volume   = "32",
+  number   = "2",
+  pages    = "683-692",
+  doi      = "10.1080/10803548.2025.2575603",
+  note     = "Published online 10 November 2025"
 )
