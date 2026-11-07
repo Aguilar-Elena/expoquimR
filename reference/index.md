@@ -84,6 +84,12 @@
   : Recommended monitoring interval, option 2 (LSC95,70 vs VLA)
 - [`une689_normality_test()`](https://aguilar-elena.github.io/expoquimR/reference/une689_normality_test.md)
   : Normality and lognormality tests (UNE-EN 689)
+- [`une689_probability_data()`](https://aguilar-elena.github.io/expoquimR/reference/une689_probability_data.md)
+  : Probability-paper data for examining a similar exposure group
+  (UNE-EN 689)
+- [`une689_probability_plot()`](https://aguilar-elena.github.io/expoquimR/reference/une689_probability_plot.md)
+  : Probability paper plot for examining a similar exposure group
+  (UNE-EN 689)
 - [`une689_statistical_conformity()`](https://aguilar-elena.github.io/expoquimR/reference/une689_statistical_conformity.md)
   : Conformity of the statistical assessment (UNE-EN 689)
 - [`une689_statistics()`](https://aguilar-elena.github.io/expoquimR/reference/une689_statistics.md)

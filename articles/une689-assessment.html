@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">expoquimR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -235,6 +235,41 @@ performed on the combined dataset.</p>
 <span>                                ut <span class="op">=</span> <span class="fu"><a href="../reference/une689_ut.html">une689_ut</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "NON-CONFORMITY"</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="graphical-validation-of-the-similar-exposure-group">Graphical validation of the similar exposure group<a class="anchor" aria-label="anchor" href="#graphical-validation-of-the-similar-exposure-group"></a>
+</h3>
+<p>Besides the Shapiro-Wilk tests, the similar exposure group (SEG) can
+be validated graphically on probability paper. The ED values are ranked
+in ascending order and each rank <code>k</code> receives the plotting
+position <code>P_k = (k - 3/8) / (n + 1/4)</code>. The points are then
+plotted against <code>P_k</code> on log-normal paper (logarithmic
+horizontal axis) when the data are lognormal, or on normal paper (linear
+horizontal axis) when the data are normal. If all points lie close to a
+straight line and none is exceptionally separated from the rest, the SEG
+is consistent with the assumed distribution.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/une689_probability_data.html">une689_probability_data</a></span><span class="op">(</span><span class="va">eds</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pd</span><span class="op">$</span><span class="va">distribution</span></span>
+<span><span class="co">#&gt; [1] "lognormal"</span></span>
+<span><span class="va">pd</span><span class="op">$</span><span class="va">data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"k"</span>, <span class="st">"ed"</span>, <span class="st">"pk"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;   k     ed   pk</span></span>
+<span><span class="co">#&gt; 1 1  5.625 0.10</span></span>
+<span><span class="co">#&gt; 2 2  8.000 0.26</span></span>
+<span><span class="co">#&gt; 3 3  9.000 0.42</span></span>
+<span><span class="co">#&gt; 4 4 10.000 0.58</span></span>
+<span><span class="co">#&gt; 5 5 11.000 0.74</span></span>
+<span><span class="co">#&gt; 6 6 13.000 0.90</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/une689_probability_plot.html">une689_probability_plot</a></span><span class="op">(</span><span class="va">eds</span>, vla <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p><img src="une689-assessment_files/figure-html/probability_plot-1.png" class="r-plt" alt="Log-normal probability paper with the six daily exposure values and a fitted straight line." width="700"></p>
+<p>The coefficient of determination of the line
+(<code>pd$r_squared</code>) is shown in the plot subtitle as a
+descriptive aid only: the check is visual, and the package applies no
+numerical cut-off to it. With <code>distribution = "auto"</code> (the
+default) the paper is chosen from the Shapiro-Wilk results; use
+<code>"lognormal"</code> or <code>"normal"</code> to force one.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="periodic-assessment-monitoring-interval">Periodic assessment (monitoring interval)<a class="anchor" aria-label="anchor" href="#periodic-assessment-monitoring-interval"></a>
@@ -242,7 +277,7 @@ performed on the combined dataset.</p>
 <p>Once conformity has been established, the standard requires defining
 how frequently measurements should be repeated. Two options are
 available:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Option 1: MG or MA versus the OEL</span></span>
 <span><span class="fu"><a href="../reference/une689_monitoring_interval_opt1.html">une689_monitoring_interval_opt1</a></span><span class="op">(</span>reference_value <span class="op">=</span> <span class="va">res_est</span><span class="op">$</span><span class="va">MG</span>, vla <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Recommended monitoring interval: 12 months"</span></span>
@@ -260,7 +295,7 @@ the same target organ, the European standard requires that the
 <pre><code><span><span class="va">IE_combined</span> <span class="op">=</span> <span class="va">IE_agent1</span> <span class="op">+</span> <span class="va">IE_agent2</span> <span class="op">+</span> <span class="va">...</span> <span class="op">+</span> <span class="va">IE_agentN</span></span></code></pre>
 <p>Conformity requires IE_combined ≤ 1. For example, if toluene (IE =
 0.20) and xylene (IE = 0.30) both affect the central nervous system:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ie_toluene</span> <span class="op">&lt;-</span> <span class="fl">0.20</span></span>
 <span><span class="va">ie_xylene</span>  <span class="op">&lt;-</span> <span class="fl">0.30</span></span>
 <span><span class="va">ie_combined</span> <span class="op">&lt;-</span> <span class="va">ie_toluene</span> <span class="op">+</span> <span class="va">ie_xylene</span></span>
@@ -289,7 +324,7 @@ automatically.</p>
 <strong>Additive_effects</strong> (optional): groups of agents
 sharing a target organ.</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ruta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"plantillas"</span>, <span class="st">"plantilla_une689.xlsx"</span>, package <span class="op">=</span> <span class="st">"expoquimR"</span><span class="op">)</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/une689_from_excel.html">une689_from_excel</a></span><span class="op">(</span><span class="va">ruta</span><span class="op">)</span></span>
 <span></span>
@@ -303,7 +338,7 @@ sharing a target organ.</li>
 <div class="section level2">
 <h2 id="language">Language<a class="anchor" aria-label="anchor" href="#language"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expoquimr_lang.html">expoquimr_lang</a></span><span class="op">(</span><span class="st">"es"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/une689_classify_conformity.html">une689_classify_conformity</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.02</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "CONFORMIDAD"</span></span>
@@ -316,7 +351,7 @@ sharing a target organ.</li>
 <div class="section level2">
 <h2 id="interactive-application">Interactive application<a class="anchor" aria-label="anchor" href="#interactive-application"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/run_une689.html">run_une689</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The UNE-EN 689 Shiny application supports:</p>
 <ul>
@@ -360,7 +395,7 @@ AENOR.</li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Raúl Aguilar-Elena, Ana Delgado-Garcia, Alejandro Guillem-Riquelme.</p>
+  <p>Developed by Raúl Aguilar-Elena, Ana Delgado-Garcia, Alejandro Guillén Riquelme.</p>
 </div>
 
 <div class="pkgdown-footer-right">

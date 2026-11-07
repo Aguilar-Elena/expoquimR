@@ -118,6 +118,8 @@ Shiny application, and via Excel-based input:
 | [`une689_statistics()`](https://aguilar-elena.github.io/expoquimR/reference/une689_statistics.md) | UNE-EN 689 | Computes MA, DS, MG, DSG from ED values |
 | [`une689_normality_test()`](https://aguilar-elena.github.io/expoquimR/reference/une689_normality_test.md) | UNE-EN 689 | Shapiro-Wilk test for normality and lognormality |
 | [`une689_distribution_type()`](https://aguilar-elena.github.io/expoquimR/reference/une689_distribution_type.md) | UNE-EN 689 | Infers the best-fitting distribution |
+| [`une689_probability_data()`](https://aguilar-elena.github.io/expoquimR/reference/une689_probability_data.md) | UNE-EN 689 | Plotting positions and straight-line fit for the graphical examination of the similar exposure group |
+| [`une689_probability_plot()`](https://aguilar-elena.github.io/expoquimR/reference/une689_probability_plot.md) | UNE-EN 689 | Probability-paper plot (log-normal or normal) to examine the similar exposure group |
 | [`une689_lsc()`](https://aguilar-elena.github.io/expoquimR/reference/une689_lsc.md) | UNE-EN 689 | Computes the one-sided tolerance limit LSC(95,70) |
 | [`une689_ur()`](https://aguilar-elena.github.io/expoquimR/reference/une689_ur.md) | UNE-EN 689 | Computes the risk index UR |
 | [`une689_statistical_conformity()`](https://aguilar-elena.github.io/expoquimR/reference/une689_statistical_conformity.md) | UNE-EN 689 | Declares conformity or non-conformity (UR vs UT) |
@@ -357,29 +359,49 @@ measurement strategy design.
 
 ------------------------------------------------------------------------
 
+## Related publication
+
+`expoquimR` was developed as a follow-up to the study reported in:
+
+> Lorenzale Algarra P, Sánchez-Toledo A, Guillen Riquelme A,
+> Agún-González JJ, Aguilar-Elena R (2025). Evaluation of the
+> suitability of COSHH Essentials for qualitative assessment of
+> inhalation risk from chemical agents in perfume laboratories: a new
+> perspective. *International Journal of Occupational Safety and
+> Ergonomics*. <https://doi.org/10.1080/10803548.2025.2575603>
+
+The article is related research that predates the publication of
+`expoquimR`. The package implements the standard COSHH Essentials
+procedure, alongside the INRS method and statistical tools for UNE-EN
+689. The molecular-level enhancement discussed in the article is not
+implemented in this package. The article does not describe or validate
+`expoquimR`.
+
+------------------------------------------------------------------------
+
 ## Citation
 
 If you use `expoquimR` in your research, please cite:
 
-    Aguilar-Elena, R., Delgado-Garcia, A. & Guillem-Riquelme, A. (2025).
+    Aguilar-Elena, R., Delgado-Garcia, A. & Guillén Riquelme, A. (2026).
     expoquimR: Qualitative and Quantitative Assessment of Occupational Chemical
-    Exposure Risk. R package version 0.1.0. Universidad Internacional de Valencia
+    Exposure Risk. R package version 0.2.0. Universidad Internacional de Valencia
     (VIU) & Universidad de Salamanca (USAL).
-    https://github.com/Aguilar-Elena/expoquimR
+    https://CRAN.R-project.org/package=expoquimR
 
 ------------------------------------------------------------------------
 
 ## Authors
 
-**PhD. Raúl Aguilar-Elena** · <raguilar@universidadviu.com>  
-Occupational Risk Prevention and Occupational Health Research Group  
+**PhD. Raúl Aguilar-Elena** · <raguilar@universidadviu.com> Occupational
+Risk Prevention and Occupational Health Research Group  
 Universidad Internacional de Valencia (VIU), Valencia, Spain
 
 **Ana Delgado-Garcia** · <a.delgado@usal.es>  
 BISITE Research Group  
 Universidad de Salamanca (USAL), Salamanca, Spain
 
-**PhD. Alejandro Guillem-Riquelme** · <aguillem@universidadviu.com>  
+**PhD. Alejandro Guillén Riquelme** · <aguillem@universidadviu.com>
 Occupational Risk Prevention and Occupational Health Research Group  
 Universidad Internacional de Valencia (VIU), Valencia, Spain
 
@@ -475,6 +497,12 @@ MIT © 2025 Raúl Aguilar-Elena & Ana Delgado-Garcia
   : Recommended monitoring interval, option 2 (LSC95,70 vs VLA)
 - [`une689_normality_test()`](https://aguilar-elena.github.io/expoquimR/reference/une689_normality_test.md)
   : Normality and lognormality tests (UNE-EN 689)
+- [`une689_probability_data()`](https://aguilar-elena.github.io/expoquimR/reference/une689_probability_data.md)
+  : Probability-paper data for examining a similar exposure group
+  (UNE-EN 689)
+- [`une689_probability_plot()`](https://aguilar-elena.github.io/expoquimR/reference/une689_probability_plot.md)
+  : Probability paper plot for examining a similar exposure group
+  (UNE-EN 689)
 - [`une689_statistical_conformity()`](https://aguilar-elena.github.io/expoquimR/reference/une689_statistical_conformity.md)
   : Conformity of the statistical assessment (UNE-EN 689)
 - [`une689_statistics()`](https://aguilar-elena.github.io/expoquimR/reference/une689_statistics.md)

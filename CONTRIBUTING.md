@@ -105,8 +105,7 @@ professional evaluation is required.
 For questions about contributing, open a GitHub issue or contact the
 package maintainer:
 
-Raúl Aguilar-Elena  
-<raguilar@universidadviu.com>
+Raúl Aguilar-Elena <raguilar@universidadviu.com>
 
 ## Life cycle
 
