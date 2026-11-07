@@ -21,7 +21,7 @@ test_that("une689_exposure_index divides ED by VLA and validates VLA > 0", {
 })
 
 test_that("une689_classify_conformity classifies the 3 normal cases in English", {
-  expect_equal(une689_classify_conformity(c(0.02, 0.05)),
+  expect_equal(une689_classify_conformity(c(0.02, 0.05, 0.07)),
                .t("une689_conformity"))
   expect_equal(une689_classify_conformity(c(1, 0.9, 0.5625)),
                .t("une689_no_decision"))
@@ -32,7 +32,7 @@ test_that("une689_classify_conformity classifies the 3 normal cases in English",
 test_that("une689_classify_conformity returns Spanish labels when lang = 'es'", {
   expoquimr_lang("es")
   on.exit(expoquimr_lang("en"))
-  expect_equal(une689_classify_conformity(c(0.02, 0.05)), "CONFORMIDAD")
+  expect_equal(une689_classify_conformity(c(0.02, 0.05, 0.07)), "CONFORMIDAD")
   expect_equal(une689_classify_conformity(c(1.2, 0.05)),  "NO CONFORMIDAD")
 })
 
@@ -92,3 +92,28 @@ test_that("fully blank slots do not count as measured days", {
                   time = c(8, 8, NA_real_))
   expect_error(une689_evaluate_preliminary(x, vla = 10), "At least 3")
 })
+
+test_that("preliminary thresholds depend on 3, 4 or 5 measurements", {
+  expect_equal(une689_classify_conformity(c(.05, .07, .09)), .t("une689_conformity"))
+  expect_equal(une689_classify_conformity(c(.12, .13, .14)), .t("une689_no_decision"))
+  expect_equal(une689_classify_conformity(c(.12, .13, .14, .14)), .t("une689_conformity"))
+  expect_equal(une689_classify_conformity(c(.16, .17, .18, .19)), .t("une689_no_decision"))
+  expect_equal(une689_classify_conformity(c(.16, .17, .18, .19, .19)), .t("une689_conformity"))
+  expect_equal(une689_classify_conformity(c(.30, .40, 1.20)), .t("une689_no_conformity"))
+})
+
+test_that("preliminary threshold boundaries are strict", {
+  expect_equal(une689_classify_conformity(c(.01, .02, .10)), .t("une689_no_decision"))
+  expect_equal(une689_classify_conformity(c(.01, .02, .03, .15)), .t("une689_no_decision"))
+  expect_equal(une689_classify_conformity(c(.01, .02, .03, .04, .20)), .t("une689_no_decision"))
+  expect_equal(une689_classify_conformity(c(.01, .02, 1.00)), .t("une689_no_decision"))
+})
+
+test_that("insufficient or invalid IE never leads to conformity", {
+  expect_equal(une689_classify_conformity(c(.01, .02)), .t("une689_no_decision"))
+  expect_equal(une689_classify_conformity(rep(.01, 6)), .t("une689_no_decision"))
+  expect_error(une689_classify_conformity(c(.01, NA_real_, .02)), "NA")
+  expect_error(une689_classify_conformity(c(.01, Inf, .02)), "finite")
+  expect_error(une689_classify_conformity(c(-.01, .02, .03)), "non-negative")
+})
+

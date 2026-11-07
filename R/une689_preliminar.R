@@ -89,19 +89,21 @@ une689_exposure_index <- function(ed, vla) {
 #'
 #' @export
 une689_classify_conformity <- function(ie) {
-  valid_ie <- ie[!is.na(ie)]
-  if (length(valid_ie) == 0) return(NA_character_)
-
-  if (all(valid_ie < 0.1)) {
-    .t("une689_conformity")
-  } else if (any(valid_ie > 1)) {
-    .t("une689_no_conformity")
-  } else if (any(valid_ie >= 0.1 & valid_ie <= 1)) {
-    .t("une689_no_decision")
-  } else {
-    # Should never be reached with valid data; kept for completeness.
-    .t("une689_indeterminate")
+  if (is.numeric(ie) && length(ie) > 0L && all(is.na(ie))) return(NA_character_)
+  .assert_numeric_vector(ie, "ie", allow_na = FALSE, allow_empty = TRUE)
+  if (length(ie) == 0L) return(NA_character_)
+  if (any(ie < 0)) stop("`ie` must be non-negative.", call. = FALSE)
+  # An exceedance has priority over a preliminary conformity decision.
+  if (any(ie > 1)) return(.t("une689_no_conformity"))
+  n <- length(ie)
+  # For 3, 4, and 5 measurements the preliminary conformity
+  # thresholds differ. For >=6 use the statistical assessment.
+  limite <- switch(as.character(n),
+                   "3" = 0.10, "4" = 0.15, "5" = 0.20, NA_real_)
+  if (!is.na(limite) && all(ie < limite)) {
+    return(.t("une689_conformity"))
   }
+  .t("une689_no_decision")
 }
 
 #' Check the minimum number of days for the preliminary assessment
