@@ -692,7 +692,7 @@ server <- function(input, output, session) {
     nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
     cat(tr("Agente:", "Agent:"), nombre, "\n")
     cat(tr("N.º jornadas totales:", "Total measurement days:"), re$n, "\n")
-    cat(tr("Distribución inferida:", "Inferred distribution:"), re$distribution_type, "\n\n")
+    cat(tr("Distribución seleccionada automáticamente:", "Automatically selected distribution:"), re$distribution_type, "\n\n")
     if (re$distribution_type == "Lognormal") {
       cat("MG =",  round(re$MG,  4), "\n")
       cat("DSG =", round(re$DSG, 4), "\n")
@@ -709,7 +709,22 @@ server <- function(input, output, session) {
     cat(tr("\nUT de referencia:", "\nReference UT:"), round(re$ut, 3), "\n")
     if (!is.na(re$lsc)) cat("LSC\u2089\u2085,\u2087\u2080 =", round(re$lsc, 4), "\n")
     if (!is.na(re$ur))  cat("UR =",              round(re$ur,  3), "\n")
-    cat(tr("\nResultado:", "\nResult:"), if (is.na(re$conformity)) tr("No determinado", "Undetermined") else clasificar(re$conformity), "\n")
+    # TRAZABILIDAD_RESULTADO_ESTADISTICO_V2
+    diag <- re$diagnostico_distribuciones
+    hay_discordancia <- !is.null(diag) && isTRUE(diag$discordant)
+    etiqueta_resultado <- if (hay_discordancia)
+      tr("\nResultado del modelo seleccionado automáticamente:",
+         "\nResult of the automatically selected model:")
+    else tr("\nResultado:", "\nResult:")
+    cat(etiqueta_resultado,
+        if (is.na(re$conformity)) tr("No determinado", "Undetermined")
+        else clasificar(re$conformity), "\n")
+    if (hay_discordancia) {
+      cat("\n", tr(
+        "ADVERTENCIA: los modelos normal y lognormal ofrecen decisiones diferentes. La conclusión técnica definitiva requiere revisar la distribución, los datos y el GES; la selección automática no sustituye esa revisión.",
+        "WARNING: normal and lognormal models yield different decisions. The definitive technical conclusion requires review of the distribution, data and SEG; automatic selection does not replace that review."
+      ), "\n", sep = "")
+    }
   })
 
   output$diagnostico_distribuciones_ui <- renderUI({
