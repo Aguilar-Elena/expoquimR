@@ -164,7 +164,10 @@ effects sheet.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   2 20 0.2597403</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Xylene$result</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NO DECISION"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Xylene$insufficient_days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Lead</span>
@@ -304,18 +307,25 @@ effects sheet.</p></dd>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">additive</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            group                                 description     agent mean_ie</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Toluene        1         CNS effect (central nervous system)   Toluene  0.1642</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Xylene         1         CNS effect (central nervous system)    Xylene  0.2597</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Xylene         1         CNS effect (central nervous system)    Xylene      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Lead           2                       Haematopoietic effect      Lead  0.4222</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Manganese      2                       Haematopoietic effect Manganese  0.6000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Manganese1     3 CNS effect (manganese also affects the CNS) Manganese  0.6000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Toluene1       3 CNS effect (manganese also affects the CNS)   Toluene  0.1642</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            combined_ie   group_result</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Toluene         0.4239    NO DECISION</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Xylene          0.4239    NO DECISION</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Lead            1.0222 NON-CONFORMITY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Manganese       1.0222 NON-CONFORMITY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Manganese1      0.7642    NO DECISION</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Toluene1        0.7642    NO DECISION</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            combined_ie</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Toluene             NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Xylene              NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Lead            1.0222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Manganese       1.0222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Manganese1      0.7642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Toluene1        0.7642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                     group_result</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Toluene    INSUFFICIENT DATA (one or more agents in this group have no valid IE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Xylene     INSUFFICIENT DATA (one or more agents in this group have no valid IE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Lead                                                              NON-CONFORMITY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Manganese                                                         NON-CONFORMITY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Manganese1                                                           NO DECISION</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Toluene1                                                             NO DECISION</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -118,7 +118,10 @@ res$preliminary
 #> 2   2 20 0.2597403
 #> 
 #> $Xylene$result
-#> [1] "NO DECISION"
+#> [1] NA
+#> 
+#> $Xylene$insufficient_days
+#> [1] TRUE
 #> 
 #> 
 #> $Lead
@@ -258,16 +261,23 @@ res$preliminary
 res$additive
 #>            group                                 description     agent mean_ie
 #> Toluene        1         CNS effect (central nervous system)   Toluene  0.1642
-#> Xylene         1         CNS effect (central nervous system)    Xylene  0.2597
+#> Xylene         1         CNS effect (central nervous system)    Xylene      NA
 #> Lead           2                       Haematopoietic effect      Lead  0.4222
 #> Manganese      2                       Haematopoietic effect Manganese  0.6000
 #> Manganese1     3 CNS effect (manganese also affects the CNS) Manganese  0.6000
 #> Toluene1       3 CNS effect (manganese also affects the CNS)   Toluene  0.1642
-#>            combined_ie   group_result
-#> Toluene         0.4239    NO DECISION
-#> Xylene          0.4239    NO DECISION
-#> Lead            1.0222 NON-CONFORMITY
-#> Manganese       1.0222 NON-CONFORMITY
-#> Manganese1      0.7642    NO DECISION
-#> Toluene1        0.7642    NO DECISION
+#>            combined_ie
+#> Toluene             NA
+#> Xylene              NA
+#> Lead            1.0222
+#> Manganese       1.0222
+#> Manganese1      0.7642
+#> Toluene1        0.7642
+#>                                                                     group_result
+#> Toluene    INSUFFICIENT DATA (one or more agents in this group have no valid IE)
+#> Xylene     INSUFFICIENT DATA (one or more agents in this group have no valid IE)
+#> Lead                                                              NON-CONFORMITY
+#> Manganese                                                         NON-CONFORMITY
+#> Manganese1                                                           NO DECISION
+#> Toluene1                                                             NO DECISION
 ```
