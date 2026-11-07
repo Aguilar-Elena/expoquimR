@@ -347,3 +347,44 @@ une689_monitoring_interval_opt2 <- function(lsc, vla) {
 #' @noRd
 NULL
 # ---- end rOpenSci statistical standards ----
+
+#' Diagnostic comparison of normal and lognormal UNE-EN 689 models
+#'
+#' Returns both model calculations without selecting a normative distribution.
+#' The existing statistical assessment and its outputs are unchanged.
+#' @param ed Numeric vector of at least six positive, finite daily exposures.
+#' @param vla Positive, finite occupational exposure limit.
+#' @param alpha Shapiro-Wilk significance threshold, strictly between 0 and 1.
+#' @return A list containing models, discordant, and requires_review.
+#' @export
+une689_compare_distributions <- function(ed, vla, alpha = 0.05)
+ {
+  .assert_numeric_scalar(vla, 'vla')
+  .assert_numeric_scalar(alpha, 'alpha')
+  if (vla <= 0) stop('`vla` must be strictly positive.', call. = FALSE)
+  if (alpha <= 0 || alpha >= 1) stop('`alpha` must be between 0 and 1.', call. = FALSE)
+  .assert_numeric_vector(ed, 'ed', positive = TRUE)
+  n <- length(ed)
+  if (n < 6L) stop('At least six exposure measurements are required.', call. = FALSE)
+  if (n > 30L) stop('UT for n > 30 has not been independently verified; diagnostic unavailable.', call. = FALSE)
+  if (length(unique(ed)) == 1L) stop('Constant exposures require a separate assessment; Shapiro-Wilk is not applicable.', call. = FALSE)
+  s <- une689_statistics(ed)
+  p <- une689_normality_test(ed)
+  ut <- une689_ut(n)
+  model <- c('Normal', 'Lognormal')
+  lsc <- c(une689_lsc('Normal', ut, MA = s$MA, DS = s$DS),
+           une689_lsc('Lognormal', ut, MG = s$MG, DSG = s$DSG))
+  ur <- c(une689_ur('Normal', vla, MA = s$MA, DS = s$DS),
+          une689_ur('Lognormal', vla, MG = s$MG, DSG = s$DSG))
+  pv <- c(p$pval_normal, p$pval_lognormal)
+  acceptable <- pv > alpha
+  decision <- ifelse(ur >= ut, 'CONFORMITY', 'NON-CONFORMITY')
+  # Decisions for rejected models are displayed for comparison only.
+  models <- data.frame(model = model, p_value = pv, not_rejected = acceptable,
+                       ut = rep(ut, 2L), lsc = lsc, ur = ur,
+                       mathematical_decision = decision, stringsAsFactors = FALSE)
+  discordant <- all(acceptable) && length(unique(decision)) > 1L
+  list(models = models, discordant = discordant,
+       requires_review = discordant || !all(acceptable),
+       note = 'Diagnostic only: model selection and GES validation require assessor review.')
+}
