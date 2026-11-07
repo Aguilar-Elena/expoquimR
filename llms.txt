@@ -477,6 +477,8 @@ MIT © 2025 Raúl Aguilar-Elena & Ana Delgado-Garcia
   and periodic assessment)
 - [`une689_classify_conformity()`](https://aguilar-elena.github.io/expoquimR/reference/une689_classify_conformity.md)
   : Classify the conformity of the UNE-EN 689 preliminary assessment
+- [`une689_compare_distributions()`](https://aguilar-elena.github.io/expoquimR/reference/une689_compare_distributions.md)
+  : Diagnostic comparison of normal and lognormal UNE-EN 689 models
 - [`une689_daily_exposure()`](https://aguilar-elena.github.io/expoquimR/reference/une689_daily_exposure.md)
   : Daily exposure (ED) for a measurement day, per UNE-EN 689
 - [`une689_distribution_type()`](https://aguilar-elena.github.io/expoquimR/reference/une689_distribution_type.md)
