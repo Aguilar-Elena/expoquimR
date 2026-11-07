@@ -344,35 +344,23 @@ if (!is.null(params$une689$preliminary)) {
     est <- ag$statistics
     eds <- if (!is.null(est)) est$eds else NULL
 
-    if (!is.null(eds) && length(eds) >= 3 && !is.null(est$lsc)) {
-      center  <- ifelse(!is.na(est$MG), est$MG, est$MA)
-      label_c <- ifelse(!is.na(est$MG), "MG", "MA")
-
-      p <- ggplot(data.frame(ED = eds), aes(x = ED)) +
-        geom_density(fill="#F0A500", alpha=0.35, color="#F0A500", linewidth=1) +
-        geom_rug(color="#1F4E79", alpha=0.7) +
-        geom_vline(xintercept=center,  color="#28a745", linetype="dashed", linewidth=1) +
-        geom_vline(xintercept=ag$vla,  color="#dc3545", linetype="dashed", linewidth=1) +
-        geom_vline(xintercept=est$lsc, color="#8B0000", linetype="dotted", linewidth=1) +
-        annotate("label", x=center,  y=Inf, vjust=1.5,
-                 label=paste0(label_c," = ",round(center,4)),
-                 color="#28a745", fill="white", size=3.2) +
-        annotate("label", x=ag$vla,  y=Inf, vjust=3.5,
-                 label=paste0(L("OEL = ", "VLA = "),round(ag$vla,4)),
-                 color="#dc3545", fill="white", size=3.2) +
-        annotate("label", x=est$lsc, y=Inf, vjust=5.5,
-                 label=paste0("LSC = ",round(est$lsc,4)),
-                 color="#8B0000", fill="white", size=3.2) +
-        labs(title=paste0(L("ED distribution — ", "Distribución de ED — "), ag$name,
-                          "  |  ", est$distribution_type),
-             subtitle=paste0("n=",est$n," | UR=",round(est$ur,3),
-                              " | UT=",round(est$ut,3),
-                              " | ",if (identical(params$lang, "es") && identical(est$conformity, "NON-CONFORMITY")) "NO CONFORMIDAD" else est$conformity %||% "?"),
-             x=L("Daily exposure ED (mg/m³)", "Exposición diaria ED (mg/m³)"), y=L("Density", "Densidad")) +
-        theme_minimal(base_size=12) +
-        theme(plot.title=element_text(color="#1F4E79", face="bold"),
-              plot.subtitle=element_text(color="#555555"))
-
+    if (!is.null(eds) && length(eds) >= 3 &&
+        !is.null(est$distribution_type) &&
+        est$distribution_type %in% c("Normal", "Lognormal")) {
+      p <- expoquimR:::.une689_parametric_density_plot(
+        eds = eds, distribution = est$distribution_type,
+        ma = est$MA, ds = est$DS, mg = est$MG, dsg = est$DSG,
+        vla = ag$vla, lsc = est$lsc,
+        title = paste0(L("ED distribution — ", "Distribución de ED — "), ag$name),
+        subtitle = L(
+          if (identical(est$distribution_type, "Lognormal")) "Fitted lognormal density" else "Fitted normal density",
+          if (identical(est$distribution_type, "Lognormal")) "Densidad log-normal ajustada" else "Densidad normal ajustada"
+        ),
+        x_label = L("Daily exposure ED (mg/m³)", "Exposición diaria ED (mg/m³)"),
+        y_label = L("Density", "Densidad"),
+        vla_label = L("OEL", "VLA"),
+        lsc_label = L("UCL₉₅,₇₀", "LSC₉₅,₇₀")
+      )
       print(p)
       # Graphical examination of the exposure distribution on probability paper.
       if (!est$distribution_type %in% c("Neither", "Ninguna")) {
@@ -382,9 +370,9 @@ if (!is.null(params$une689$preliminary)) {
           x_label = L("Daily exposure ED (mg/m³)", "Exposición diaria ED (mg/m³)")
         )
         print(pp)
-      } else {
-        cat(L("\nNo normal or lognormal distribution selected; probability paper omitted.\n", "\nNo se ha seleccionado una distribución normal o log-normal; se omite el papel probabilístico.\n"))
       }
+    } else if (!is.null(eds) && length(eds) >= 3) {
+      cat(L("\nNo fitted normal or lognormal density: no valid model selected.\n", "\nNo se representa densidad ajustada: no hay modelo normal o log-normal seleccionado.\n"))
     }
   }
 }

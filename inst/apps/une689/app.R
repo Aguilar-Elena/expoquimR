@@ -664,48 +664,23 @@ server <- function(input, output, session) {
   output$grafico_densidad <- renderPlot({
     ag <- as.integer(input$agente_est %||% "1")
     re <- res_estadistica()[[as.character(ag)]]
-    if (is.null(re) || re$distribution_type == "Neither") return(NULL)
+    if (is.null(re) || !re$distribution_type %in% c("Normal", "Lognormal")) return(NULL)
 
-
-    centro  <- if (re$distribution_type == "Lognormal") re$MG else re$MA
-    label_c <- if (re$distribution_type == "Lognormal") "MG" else "MA"
-    nombre  <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
-
-    # Densidad parametrica de la distribucion seleccionada; con muestras
-    # pequenas, una KDE puede sugerir multimodalidad espuria.
-    x_max <- max(c(re$eds, re$vla, re$lsc), na.rm = TRUE) * 1.10
-    x_vals <- seq(max(0, min(re$eds) * 0.01), x_max, length.out = 500L)
-    dens <- if (re$distribution_type == "Lognormal") {
-      stats::dlnorm(x_vals, meanlog = log(re$MG), sdlog = log(re$DSG))
-    } else {
-      stats::dnorm(x_vals, mean = re$MA, sd = re$DS)
-    }
-    dens_df <- data.frame(ED = x_vals, densidad = dens)
-
-    ggplot(dens_df, aes(x = ED, y = densidad)) +
-      geom_line(color = "orange", linewidth = 0.9) +
-      geom_area(fill = "orange", alpha = 0.2) +
-      geom_vline(xintercept = centro,  color = "green4",  linetype = "dashed") +
-      geom_vline(xintercept = re$vla,  color = "red",     linetype = "dashed") +
-      geom_vline(xintercept = re$lsc,  color = "darkred", linetype = "dotted") +
-      annotate("text", x = centro, y = 0,
-               label = paste0(label_c, ": ", formato_grafico(centro)),
-               color = "green4", vjust = -1) +
-      annotate("text", x = re$vla, y = 0,
-               label = paste0(texto_grafico("VLA: ", "OEL: "), formato_grafico(re$vla)),
-               color = "red", vjust = -1) +
-      annotate("text", x = re$lsc, y = 0,
-               label = paste0(texto_grafico("LSC\u2089\u2085,\u2087\u2080: ", "UCL\u2089\u2085,\u2087\u2080: "), formato_grafico(re$lsc)),
-               color = "darkred", vjust = -1) +
-      labs(title = paste0(texto_grafico("Distribución de la ED — ", "Daily exposure distribution — "), nombre),
-           subtitle = texto_grafico(
-             if (identical(re$distribution_type, "Lognormal")) "Densidad log-normal ajustada" else "Densidad normal ajustada",
-             if (identical(re$distribution_type, "Lognormal")) "Fitted lognormal density" else "Fitted normal density"
-           ),
-           x = texto_grafico("ED (mg/m³)", "Daily exposure (mg/m³)"),
-           y = texto_grafico("Densidad", "Density")) +
-      theme_minimal()
-
+    nombre <- input[[paste0("nombre_ag", ag)]] %||% paste(tr("Agente", "Agent"), ag)
+    expoquimR:::.une689_parametric_density_plot(
+      eds = re$eds, distribution = re$distribution_type,
+      ma = re$MA, ds = re$DS, mg = re$MG, dsg = re$DSG,
+      vla = re$vla, lsc = re$lsc,
+      title = paste0(texto_grafico("Distribución de la ED — ", "Daily exposure distribution — "), nombre),
+      subtitle = texto_grafico(
+        if (identical(re$distribution_type, "Lognormal")) "Densidad log-normal ajustada" else "Densidad normal ajustada",
+        if (identical(re$distribution_type, "Lognormal")) "Fitted lognormal density" else "Fitted normal density"
+      ),
+      x_label = texto_grafico("ED (mg/m³)", "Daily exposure (mg/m³)"),
+      y_label = texto_grafico("Densidad", "Density"),
+      vla_label = texto_grafico("VLA", "OEL"),
+      lsc_label = texto_grafico("LSC₉₅,₇₀", "UCL₉₅,₇₀")
+    )
   })
 
   output$grafico_probabilidad <- renderPlot({

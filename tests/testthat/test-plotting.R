@@ -120,3 +120,43 @@ test_that("UNE-EN 689 density plot validates graphical inputs", {
     "non-negative integer"
   )
 })
+
+
+test_that("parametric normal curve matches dnorm and exposes fitted model", {
+  skip_if_not_installed("ggplot2")
+  p <- expoquimR:::.une689_parametric_density_plot(
+    eds = c(5, 6, 7, 8, 9, 10), distribution = "Normal",
+    ma = 7.5, ds = 1.5, mg = NA_real_, dsg = NA_real_,
+    vla = 10, lsc = 11.2)
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$data$density, stats::dnorm(p$data$ED, 7.5, 1.5))
+  expect_equal(length(p$data$ED), 500L)
+  expect_equal(p$labels$y, "Density")
+})
+
+test_that("parametric lognormal curve matches dlnorm", {
+  skip_if_not_installed("ggplot2")
+  p <- expoquimR:::.une689_parametric_density_plot(
+    eds = c(5, 6, 7, 8, 9, 10), distribution = "Lognormal",
+    ma = NA_real_, ds = NA_real_, mg = 7.5, dsg = 1.5,
+    vla = 10, lsc = NA_real_)
+  expect_equal(p$data$density,
+               stats::dlnorm(p$data$ED, log(7.5), log(1.5)))
+  expect_equal(length(p$layers), 7L)
+})
+
+test_that("parametric density rejects unselected or degenerate models", {
+  skip_if_not_installed("ggplot2")
+  args <- list(eds = c(5, 6, 7), distribution = "Neither",
+               ma = 6, ds = 1, mg = 6, dsg = 1.5, vla = 10)
+  expect_error(do.call(expoquimR:::.une689_parametric_density_plot, args),
+               "distribution")
+  args$distribution <- "Lognormal"
+  args$dsg <- 1
+  expect_error(do.call(expoquimR:::.une689_parametric_density_plot, args),
+               "DSG > 1")
+  args$distribution <- "Normal"
+  args$ds <- 0
+  expect_error(do.call(expoquimR:::.une689_parametric_density_plot, args),
+               "DS > 0")
+})
